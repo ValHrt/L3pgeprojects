@@ -1,0 +1,109 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Study about military power between USA / CHINA / RUSSIA
+
+## Military expenditure (% of GDP)
+
+```{r}
+library(WDI)
+ME <-WDI(indicator = "MS.MIL.XPND.GD.ZS",
+country = c("USA", "CN", "RU"),
+                   start = 1995,
+                   end = 2018)
+ME
+```
+
+```{r}
+ME$iso2c <- NULL
+ME
+```
+
+
+```{r}
+library(ggplot2)
+ggplot(ME) +
+ aes(x = year, y = MS.MIL.XPND.GD.ZS, colour = country) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "Military expenditures", title = "Military expenditures in % of GDP") +
+ theme_minimal()
+```
+
+## Military expenditure (% of general government expenditure)
+
+```{r}
+library(WDI)
+GE <-WDI(indicator = "MS.MIL.XPND.ZS",
+country = c("USA", "CN", "RU"),
+                   start = 1995,
+                   end = 2018)
+GE
+```
+
+```{r}
+GE$iso2c <- NULL
+GE
+```
+
+```{r}
+ggplot(GE) +
+ aes(x = year, y = MS.MIL.XPND.ZS, colour = country) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "ME in % of GE", title = "Military expenditures in % of government expenditures") +
+ theme_minimal()
+```
+
+```{r}
+library(WDI)
+GE <-WDI(indicator = "NY.GDP.PETR.RT.ZS",
+country = c("USA", "CN", "RU"),
+                   start = 1995,
+                   end = 2018)
+GE
+```
+
+```{r}
+library(WDI)
+Birth <-WDI(indicator = "SP.DYN.IMRT.IN",
+country = c("USA", "CN", "RU", "FRA"),
+                   start = 1970,
+                   end = 2018)
+Birth
+```
+
+```{r}
+Birth$iso2c <- NULL
+Birth
+```
+
+
+```{r}
+library(ggplot2)
+ggplot(Birth) +
+ aes(x = year, y = SP.DYN.IMRT.IN, colour = country) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ theme_minimal()
+```
+
+```{r}
+library(WDI)
+Forest <-WDI(indicator = "ER.FST.DFST.ZG",
+country = c("USA", "CN", "RU", "FRA"),
+                   start = 1970,
+                   end = 2018)
+Forest
+```
+
+```{r}
+library(WDI)
+listOfIndicators <- WDIsearch("forest")
+listOfIndicators
+```
+
+
+

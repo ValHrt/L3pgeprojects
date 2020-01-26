@@ -1,0 +1,257 @@
+---
+title: "Country Report Switzerland"
+author: "Valentin"
+date: "18/01/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Switzerland main economic indicators
+
+## Analysis of the GDP
+
+```{r search indicator GDP}
+library(WDI)
+CHGDP <-WDI(indicator = "NY.GDP.MKTP.KD.ZG",
+country = c("CH"),
+                   start = 1971,
+                   end = 2018)
+CHGDP
+```
+
+```{r delete iso2c column}
+CHGDP$iso2c <- NULL
+CHGDP
+```
+
+```{r graphic about Switzerland GDP growth in %}
+library(ggplot2)
+ggplot(CHGDP) +
+ aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
+ geom_line(size = 1L, colour = "#0c4c8a") +
+ labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)") +
+ theme_minimal()
+```
+
+```{r summary Switzerland GDP}
+CHmeangdp <- summary(CHGDP$NY.GDP.MKTP.KD.ZG)
+CHmeangdp
+```
+
+### Conclusion about the GDP growth in %
+
+As we can see on the graph, the Switzerland GDP growth is sometimes under 0, but the most of the time, it's higher than 0. To better understand these data, i have choosen to compute the mean (1,68) and the median (1,82) of the GDP growth on the period 1971 - 2018.
+As we can see on the graphic, there is an important decrease in 1975 due to the first oil crisis.
+
+## Comparison with three european countries (France, Italy, Germany)
+
+```{r compare countries GDP}
+comparecountries <-WDI(indicator = "NY.GDP.MKTP.KD.ZG",
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 1971,
+                   end = 2018)
+comparecountries
+```
+
+### Comparison of the data between the 4 countries
+
+```{r summary of the 4 countries}
+library(dplyr)
+comparecountries %>% group_by(country) %>% summarise(mean_gdp = mean(NY.GDP.MKTP.KD.ZG), max_gdp = max(NY.GDP.MKTP.KD.ZG), min_gdp = min(NY.GDP.MKTP.KD.ZG), median_gdp = median(NY.GDP.MKTP.KD.ZG))
+```
+
+
+### Conclusion about the comparison 
+
+As we can see, Switzerland doesn't have the best results in terms of the variation of his GDP. In fact, Switzerland has the worst results compared to this others countries.
+It'll be interesting to understand why Switzerland has a better economy than these 3 countries even if the results about the variation of his gdp are less good than his neighbours.
+
+## Analysis of the GDP per capita of Switzerland
+
+```{r Switzerland GDP per capita}
+CHGdpPerCapita<- WDI(indicator = "NY.GDP.PCAP.PP.CD",
+country = c("CH"),
+                   start = 1990,  #the data start in 1990 for this information
+                   end = 2018)
+CHGdpPerCapita
+```
+
+```{r Switzerland Gdp per capita evolution graphic}
+ggplot(CHGdpPerCapita) +
+ aes(x = year, y = NY.GDP.PCAP.PP.CD) +
+ geom_line(size = 1L, colour = "#0c4c8a") +
+ labs(y = "Gdp per capita", title = "Switzerland Gdp per capita evolution (in $ constant)") +
+ theme_minimal()
+```
+
+### Conclusion about the evolution of the GDP per capita of Switzerland
+
+We can see that the GDP per capita increase during this period, he was at 27594.63 in 1990 and at 68060.94 in 2018 (146,6% increase). It'll be now interesting to compare with the three others countries to see if Switzerland is better in this category.
+
+## Comparison with three european countries (France, Italy, Germany)
+
+```{r Compare countries GDP per capita}
+GdpPerCapitaComparison <- WDI(indicator = "NY.GDP.PCAP.PP.CD",
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 1990,
+                   end = 2018)
+GdpPerCapitaComparison
+```
+
+```{r Comparison graphic about GDP per capita}
+ggplot(GdpPerCapitaComparison) +
+ aes(x = year, y = NY.GDP.PCAP.PP.CD, colour = country) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "GDP per capita", title = "Comparison GDP per capita") +
+ theme_minimal()
+```
+
+### Conclusion about the comparison 
+
+Switzerland seems to be far away from his neighbours regarding the gdp per capita. Germany is in the second place with 53074.54 in 2018 (28% less than Switzerland), France in the third place with 45342.40 in 2018 (50% less than Switzerland).
+The conclusion of this analysis is that Switzerland is better when speaking about economic health into an individual citizens perspective.
+
+## How Switzerland deals with unemployment?
+
+```{r Unemployment advanced education}
+CHUnemploymentadvancededucation <- WDI(indicator = "SL.UEM.ADVN.ZS", #Unemployment with advanced education (% of total labor force with advanced education)
+country = c("CH"),
+                   start = 1998,
+                   end = 2018)
+CHUnemploymentadvancededucation
+```
+
+```{r Renaming column Advanced_Education}
+base::colnames(CHUnemploymentadvancededucation)[colnames(CHUnemploymentadvancededucation)=="SL.UEM.ADVN.ZS"] <- "Advanced_Education"
+CHUnemploymentadvancededucation
+```
+
+
+```{r Unemployment intermediate education}
+CHUnemploymentintermediateeducation <- WDI(indicator = "SL.UEM.INTM.ZS", #Unemployment with intermediate education (% of total labor force with intermediate education)
+country = c("CH"),
+                   start = 1998,
+                   end = 2018)
+CHUnemploymentintermediateeducation
+```
+
+```{r Renaming column Intermediate_Education}
+base::colnames(CHUnemploymentintermediateeducation)[colnames(CHUnemploymentintermediateeducation)=="SL.UEM.INTM.ZS"] <- "Intermediate_Education"
+CHUnemploymentintermediateeducation
+```
+
+
+```{r Unemployment basic education}
+CHUnemploymentbasiceducation <- WDI(indicator = "SL.UEM.BASC.ZS", #Unemployment with basic education (% of total labor force with basic education)
+country = c("CH"),
+                   start = 1998,
+                   end = 2018)
+CHUnemploymentbasiceducation
+```
+
+```{r Renaming column Basic_Education}
+base::colnames(CHUnemploymentbasiceducation)[colnames(CHUnemploymentbasiceducation)=="SL.UEM.BASC.ZS"] <- "Basic_Education"
+CHUnemploymentbasiceducation
+```
+
+
+```{r First left-join}
+library(dplyr)
+CHjoin1 <- left_join(CHUnemploymentadvancededucation, CHUnemploymentintermediateeducation, by="year") 
+CHjoin1
+```
+
+```{r Second left-join}
+CHjoin2 <- left_join(CHjoin1, CHUnemploymentbasiceducation, by="year")
+CHjoin2
+```
+
+```{r Delete some columns}
+CHjoin2$iso2c.y <- NULL
+CHjoin2$iso2c <-  NULL
+CHjoin2$country.y <- NULL
+CHjoin2$country <- NULL
+CHjoin2
+```
+
+```{r Re-arrange columns}
+CHjoin2 <- CHjoin2[c(1,2,4,3,5,6)]
+CHjoin2
+```
+
+## Graphic of the comparison about unemployment rate by education level
+
+```{r Graphic about unemployment rate by education level}
+library(tidyr)
+
+CHjoin2 <- gather(
+  data = CHjoin2,
+  key = TYPE,
+  value = VAL,
+  CHjoin2$Advanced_Education, CHjoin2$Intermediate_Education, CHjoin2$Basic_Education)
+
+library(ggplot2)
+
+ggplot(
+  CHjoin2,
+  aes(x = year, y = VAL, color = TYPE)
+) +
+  labs(y = "Unemployment rate", title = "Unemployment rate by education level") +
+geom_line()
+```
+
+### Conclusion about unemployment rate (TO DO)
+
+
+## What are Switzerland's sources of income?
+
+```{r Merchandise exports to high-income economies}
+CHExports <- WDI(indicator = "TX.VAL.MRCH.HI.ZS", #Merchandise exports to high-income economies (% of total merchandise exports)
+country = c("CH"),
+                   start = 1971,
+                   end = 2018)
+CHExports
+```
+
+
+
+```{r Merchandise exports to high-income economies graphic}
+library(ggplot2)
+ggplot(CHExports) +
+ aes(x = year, y = TX.VAL.MRCH.HI.ZS) +
+ geom_line(size = 1L, colour = "#0c4c8a") +
+ labs(y = "Merchandise Exports", title = "Merchandise exports to high-income economies (% of total 
+      merchandise exports)") +
+ theme_minimal()
+```
+
+
+
+```{r Merchandise imports from low- and middle-income economies}
+CHImports <- WDI(indicator = "TM.VAL.MRCH.OR.ZS", #Merchandise imports from low- and middle-income economies outside region (% of total merchandise imports)
+country = c("CH"),
+                   start = 1971,
+                   end = 2018)
+CHImports
+```
+
+```{r Merchandise imports from low- and middle-income economies graphic}
+library(ggplot2)
+ggplot(CHImports) +
+ aes(x = year, y = TM.VAL.MRCH.OR.ZS) +
+ geom_line(size = 1L, colour = "#0c4c8b") +
+ labs(y = "Imports from low_middle economies", title = "Merchandise imports from low- and middle-income economies") +
+ theme_minimal()
+```
+
+### Conclusion about Switzerland imports and exports partners (correct the sentences)
+
+We can see that the Switzerland imports a bit (19,24%) from low / middle economies in 2017 but this is really increasing since 2010. About the exports, Switzerland exports a lot to high-income economies (75,15%) in 2017 but this is decreasing since 2010.
+As a conclusion, we can say that Switzerland tend to import more from low / middle economies but also to export more to these economies. However, the most of exports / imports of Switzerland are made with high-income economies but the low / middle economies increase their parts during last decade.
+
+
+
