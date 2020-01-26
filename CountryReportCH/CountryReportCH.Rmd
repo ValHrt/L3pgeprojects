@@ -192,7 +192,7 @@ CHjoin2 <- gather(
   data = CHjoin2,
   key = TYPE,
   value = VAL,
-  CHjoin2$Advanced_Education, CHjoin2$Intermediate_Education, CHjoin2$Basic_Education)
+  Advanced_Education, Intermediate_Education, Basic_Education)
 
 library(ggplot2)
 
@@ -205,6 +205,49 @@ geom_line()
 ```
 
 ### Conclusion about unemployment rate (TO DO)
+
+## Unemployment comparison with France, Germany and Italy
+
+```{r Unemployment with advanced education comparison}
+UAEcomparison<- WDI(indicator = "SL.UEM.ADVN.ZS", #Unemployment with advanced education (% of total labor force with advanced education)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2017,
+                   end = 2018)
+UAEcomparison
+```
+
+```{r Renaming column Advanced_Education comparison}
+base::colnames(UAEcomparison)[colnames(UAEcomparison)=="SL.UEM.ADVN.ZS"] <- "Advanced_EducationC"
+UAEcomparison
+```
+
+```{r Unemployment intermediate education comparison}
+UIEcomparison<- WDI(indicator = "SL.UEM.INTM.ZS", #Unemployment with intermediate education (% of total labor force with advanced education)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2017,
+                   end = 2018)
+UIEcomparison
+```
+
+```{r Renaming column Intermediate_Education comparison}
+base::colnames(UIEcomparison)[colnames(UIEcomparison)=="SL.UEM.INTM.ZS"] <- "Intermediate_EducationC"
+UIEcomparison
+```
+
+```{r Unemployment basic education comparison}
+UBEcomparison <- WDI(indicator = "SL.UEM.BASC.ZS", #Unemployment with basic education (% of total labor force with advanced education)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2017,
+                   end = 2018)
+UBEcomparison
+```
+
+```{r Renaming column Basic_Education comparison}
+base::colnames(UBEcomparison)[colnames(UBEcomparison)=="SL.UEM.BASC.ZS"] <- "Basic_EducationC"
+UBEcomparison
+```
+
+### Conclusion about unemployment rate comparison (TO DO)
 
 
 ## What are Switzerland's sources of income?
