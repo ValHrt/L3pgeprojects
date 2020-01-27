@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(readxl)
-MineralWater <- read_excel("~/Bootcamp1-DSsignatureTrack/EauxMinérales.xls", col_names = TRUE)
+MineralWater <- read_excel("~/L3pgeprojects/EauxMinérales.xls", col_names = TRUE)
 MineralWater
 ```
 
@@ -34,7 +34,7 @@ MineralWater$`Prix/litre` <- as.numeric(MineralWater$`Prix/litre`)
 
 ```{r}
 library(readxl)
-MineralWater <- read_excel("~/Bootcamp1-DSsignatureTrack/EauxMinérales.xls")
+MineralWater <- read_excel("~/L3pgeprojects/EauxMinérales.xls")
 EauxMinerales_norm <- MineralWater
 EauxMinerales_norm[,2:10] <- as.data.frame(apply(EauxMinerales_norm[, 2:10], 2, function(x) (x - min(x))/(max(x)-min(x))))
 EauxMinerales_norm
