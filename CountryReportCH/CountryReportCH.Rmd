@@ -247,6 +247,49 @@ base::colnames(UBEcomparison)[colnames(UBEcomparison)=="SL.UEM.BASC.ZS"] <- "Bas
 UBEcomparison
 ```
 
+```{r Combining columns}
+library(dplyr)
+UCjoin <- bind_cols(UAEcomparison, UIEcomparison, UBEcomparison)
+UCjoin
+```
+
+```{r Delete some columns}
+UCjoin$iso2c <- NULL
+UCjoin$iso2c1 <- NULL
+UCjoin$country1 <- NULL
+UCjoin$year1 <- NULL
+UCjoin$iso2c2 <- NULL
+UCjoin$country2 <- NULL
+UCjoin$year2 <- NULL
+UCjoin
+```
+
+```{r Re-arrange columns}
+UCjoin <- UCjoin[c(1,3,2,4,5)]
+UCjoin
+```
+
+### Graphique à retravailler
+
+```{r Graphic about unemployment rate by education level comparison}
+library(tidyr)
+
+UCjoin <- gather(
+  data = UCjoin,
+  key = TYPE,
+  value = VAL,
+  Advanced_EducationC, Intermediate_EducationC, Basic_EducationC)
+
+library(ggplot2)
+
+ggplot(
+  UCjoin,
+  aes(x = year, y = VAL, color = TYPE)
+) +
+  labs(y = "Unemployment rate", title = "Unemployment rate by education level") +
+geom_line()
+```
+
 ### Conclusion about unemployment rate comparison (TO DO)
 
 
