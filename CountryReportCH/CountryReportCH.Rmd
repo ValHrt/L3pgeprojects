@@ -30,12 +30,12 @@ CHGDP
 ```
 
 ```{r graphic about Switzerland GDP growth in %}
-#library(ggplot2)
-#ggplot(CHGDP) +
-# aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
-# geom_line(size = 1L, colour = "#0c4c8a") +
-# labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)") +
-# theme_minimal()
+library(ggplot2)
+ggplot(CHGDP) +
+ aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
+ geom_line(size = 1L, colour = "#0c4c8a") +
+ labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)") +
+ theme_minimal()
 ```
 
 ```{r summary Switzerland GDP}
