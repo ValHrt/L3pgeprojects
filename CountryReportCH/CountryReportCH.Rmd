@@ -204,6 +204,11 @@ ggplot(
 geom_line()
 ```
 
+```{r}
+
+```
+
+
 ### Conclusion about unemployment rate (TO DO)
 
 ## Unemployment comparison with France, Germany and Italy
@@ -282,12 +287,15 @@ UCjoin <- gather(
 
 library(ggplot2)
 
-ggplot(
-  UCjoin,
-  aes(x = year, y = VAL, color = TYPE)
-) +
-  labs(y = "Unemployment rate", title = "Unemployment rate by education level") +
-geom_line()
+library(JLutils)
+ggplot(UCjoin) +
+  aes(x = country, fill = year) +
+  geom_bar(position = "fill") +
+  stat_fill_labels() +
+  xlab("CSP") +
+  ylab("Proportion") +
+  labs(fill = "Pratique du sport") +
+  scale_y_continuous(labels = percent)
 ```
 
 ### Conclusion about unemployment rate comparison (TO DO)
