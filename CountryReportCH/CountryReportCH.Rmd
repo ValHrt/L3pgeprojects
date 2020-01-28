@@ -2,11 +2,13 @@
 title: "Country Report Switzerland"
 author: "Valentin"
 date: "18/01/2020"
-output: html_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 # Switzerland main economic indicators
@@ -28,12 +30,12 @@ CHGDP
 ```
 
 ```{r graphic about Switzerland GDP growth in %}
-library(ggplot2)
-ggplot(CHGDP) +
- aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
- geom_line(size = 1L, colour = "#0c4c8a") +
- labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)") +
- theme_minimal()
+#library(ggplot2)
+#ggplot(CHGDP) +
+# aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
+# geom_line(size = 1L, colour = "#0c4c8a") +
+# labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)") +
+# theme_minimal()
 ```
 
 ```{r summary Switzerland GDP}
@@ -204,10 +206,6 @@ ggplot(
 geom_line()
 ```
 
-```{r}
-
-```
-
 
 ### Conclusion about unemployment rate (TO DO)
 
@@ -252,13 +250,13 @@ base::colnames(UBEcomparison)[colnames(UBEcomparison)=="SL.UEM.BASC.ZS"] <- "Bas
 UBEcomparison
 ```
 
-```{r Combining columns}
+```{r Combining columns comparison}
 library(dplyr)
 UCjoin <- bind_cols(UAEcomparison, UIEcomparison, UBEcomparison)
 UCjoin
 ```
 
-```{r Delete some columns}
+```{r Delete some columns comparison}
 UCjoin$iso2c <- NULL
 UCjoin$iso2c1 <- NULL
 UCjoin$country1 <- NULL
@@ -269,7 +267,7 @@ UCjoin$year2 <- NULL
 UCjoin
 ```
 
-```{r Re-arrange columns}
+```{r Re-arrange columns comparison}
 UCjoin <- UCjoin[c(1,3,2,4,5)]
 UCjoin
 ```
