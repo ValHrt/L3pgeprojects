@@ -340,10 +340,39 @@ As a conclusion, we can say that Switzerland tend to import more from low / midd
 
 ## Social progress index in Switzerland compared to France, Italy and Germany
 
-```{r}
+```{r Library call}
 library(spiR)
 library(kableExtra)
 library(ggplot2)
 library(dplyr)
 ```
 
+```{r Generate SPI data}
+SPIc <- sqs_spi_data(country = c("CHE", "FRA", "DEU", "ITA"), 
+                       year = c("2014","2015","2016", "2017", "2018", "2019"), 
+                       indicators = "SPI")
+SPIc
+```
+
+```{r Convert value to numeric SPI}
+SPIc$value <- as.numeric(SPIc$value)
+```
+
+```{r Generate new board SPI}
+kable(SPIc)%>%
+scroll_box(width = "100%", height = "200px")
+```
+
+```{r Generate SPI graphic}
+ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) + 
+  geom_line() +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  labs(title = "Social Progress Index of 4 different european countries since 2014",
+       x = "Years",
+       y = "Social Progress Index Score",
+       colour = "Countries",
+       caption = "Source: SKEMA Quantum Studio")
+```
+
+### Conclusion about comparison of SPI between Switzerland, France, Italy and Germany
