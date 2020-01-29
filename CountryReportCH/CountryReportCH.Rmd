@@ -3,8 +3,8 @@ title: "Country Report Switzerland"
 author: "Valentin"
 date: "18/01/2020"
 output:
-  html_document: default
-  pdf_document: default
+  html_document:
+    df_print: paged
 ---
 
 ```{r setup, include=FALSE}
@@ -31,7 +31,7 @@ CHGDP
 
 ```{r graphic about Switzerland GDP growth in %}
 library(ggplot2)
-ggplot(CHGDP) +
+ ggplot(CHGDP) +
  aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
  geom_line(size = 1L, colour = "#0c4c8a") +
  labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)") +
@@ -214,7 +214,7 @@ geom_line()
 ```{r Unemployment with advanced education comparison}
 UAEcomparison<- WDI(indicator = "SL.UEM.ADVN.ZS", #Unemployment with advanced education (% of total labor force with advanced education)
 country = c("CH", "DE", "FRA", "IT"),
-                   start = 2017,
+                   start = 2000,
                    end = 2018)
 UAEcomparison
 ```
@@ -227,7 +227,7 @@ UAEcomparison
 ```{r Unemployment intermediate education comparison}
 UIEcomparison<- WDI(indicator = "SL.UEM.INTM.ZS", #Unemployment with intermediate education (% of total labor force with advanced education)
 country = c("CH", "DE", "FRA", "IT"),
-                   start = 2017,
+                   start = 2000,
                    end = 2018)
 UIEcomparison
 ```
@@ -240,7 +240,7 @@ UIEcomparison
 ```{r Unemployment basic education comparison}
 UBEcomparison <- WDI(indicator = "SL.UEM.BASC.ZS", #Unemployment with basic education (% of total labor force with advanced education)
 country = c("CH", "DE", "FRA", "IT"),
-                   start = 2017,
+                   start = 2000,
                    end = 2018)
 UBEcomparison
 ```
@@ -274,27 +274,20 @@ UCjoin
 
 ### Graphique à retravailler
 
-```{r Graphic about unemployment rate by education level comparison}
+```{r Gather data about unemployment comparison}
 library(tidyr)
 
-UCjoin <- gather(
-  data = UCjoin,
-  key = TYPE,
-  value = VAL,
-  Advanced_EducationC, Intermediate_EducationC, Basic_EducationC)
-
-library(ggplot2)
-
-library(JLutils)
-ggplot(UCjoin) +
-  aes(x = country, fill = year) +
-  geom_bar(position = "fill") +
-  stat_fill_labels() +
-  xlab("CSP") +
-  ylab("Proportion") +
-  labs(fill = "Pratique du sport") +
-  scale_y_continuous(labels = percent)
+UCjoinTest <- gather(data = UCjoin, key = TYPE, value = VAL, Advanced_EducationC, Intermediate_EducationC, Basic_EducationC)
 ```
+
+### Ajouter les titres et labels
+
+```{r Graphic about unemployment rate by education level comparison}
+qplot(data = UCjoinTest, y = VAL, x = year, color = TYPE, geom = "line") + 
+  labs(y = "Unemployment rate in %", title = "Unemployment rate by education level") +
+  facet_wrap(~ country)
+```
+
 
 ### Conclusion about unemployment rate comparison (TO DO)
 
@@ -345,5 +338,12 @@ ggplot(CHImports) +
 We can see that the Switzerland imports a bit (19,24%) from low / middle economies in 2017 but this is really increasing since 2010. About the exports, Switzerland exports a lot to high-income economies (75,15%) in 2017 but this is decreasing since 2010.
 As a conclusion, we can say that Switzerland tend to import more from low / middle economies but also to export more to these economies. However, the most of exports / imports of Switzerland are made with high-income economies but the low / middle economies increase their parts during last decade.
 
+## Social progress index in Switzerland compared to France, Italy and Germany
 
+```{r}
+library(spiR)
+library(kableExtra)
+library(ggplot2)
+library(dplyr)
+```
 
