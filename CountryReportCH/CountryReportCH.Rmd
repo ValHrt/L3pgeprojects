@@ -333,6 +333,8 @@ ggplot(CHImports) +
  theme_minimal()
 ```
 
+### Try to cross data between import / export (maybe not)
+
 ### Conclusion about Switzerland imports and exports partners (correct the sentences)
 
 We can see that the Switzerland imports a bit (19,24%) from low / middle economies in 2017 but this is really increasing since 2010. About the exports, Switzerland exports a lot to high-income economies (75,15%) in 2017 but this is decreasing since 2010.
