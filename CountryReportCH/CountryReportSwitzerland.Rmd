@@ -1,0 +1,31 @@
+---
+title: "Country Report Switzerland"
+author: "Valentin"
+date: "30/01/2020"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+# Country report Suisse :
+
+## Préambule 
+
+J’ai choisi la Suisse pour mon rapport pays car il s’agit d’un pays au centre de l’Europe, n’appartenant pas à l’Union Européenne et qui pourtant possède une des économies les plus prospères au monde.
+
+## Autour de quoi va s'articuler l'étude ?
+
+Je vais donc étudier sur la base de quels éléments la Suisse s’en sort aussi bien économiquement, l’évolution de son économie mais aussi de ses composantes sociales (chômage, grèves, …) sur ces dernières années. Ainsi, il sera intéressant de faire une comparaison avec les pays voisins de la Suisse mais également avec l’UE dans sa globalité pour comprendre comment et pourquoi la Suisse est un modèle en matière d’économie.
+À cela s’ajoutera une analyse du bien être au sein de ce pays, notamment en étudiant les données relatives à la satisfaction des citoyens suisses vis-à-vis de son gouvernement et des mesures que ce dernier met en place.
+
+Le but étant à terme de bien comprendre sur la base de quels facteurs la Suisse arrive à tirer son épingle du jeu.
+Pour ce faire, je vais organiser mes recherches de la manière suivante :
+
+## Organisation de l'étude
+
+Dans un premier temps, j’effectuerai une analyse macro-économique du pays, visant à mettre en évidence les performances du pays par rapport à ses voisins européens. Puis, j’essayerai de comprendre à partir de quoi et comment la Suisse arrive à atteindre ces performances. Cela passera donc par une étude de ses exportations, importations mais aussi des secteurs dans lesquels elle excelle et ceux dans lesquels elle tire la majorité de ses revenus.
+
+Dans un second temps, je m’intéresserai à l’analyse micro-économique de pays, pour comprendre le comportement des agents économiques du pays et ainsi pouvoir mettre en avant des hypothèses expliquant leurs performances. Cela passera notamment par une étude de la productivité des entreprises (en comparaison avec les entreprises européennes) mais également une étude liée au comportement des consommateurs suisses.
+
+Enfin, j’essayerai de démontrer au travers d’une étude liée au bien-être des citoyens Suisses (sur divers sujets), le ressenti perçu par ces derniers vis-à-vis de leur pays. Et ainsi, affirmer ou infirmer qu’il peut subsister un lien entre la bonne santé économique du pays et le bien-être qui en découle pour ses citoyens.
+
