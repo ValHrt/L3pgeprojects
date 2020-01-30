@@ -29,7 +29,7 @@ CHGDP$iso2c <- NULL
 CHGDP
 ```
 
-```{r graphic about Switzerland GDP growth in %}
+```{r graphic about Switzerland GDP growth}
 library(ggplot2)
  ggplot(CHGDP) +
  aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
@@ -272,7 +272,7 @@ UCjoin <- UCjoin[c(1,3,2,4,5)]
 UCjoin
 ```
 
-### Graphique à retravailler
+### Graphic about unemployment by education level between 4 european countries
 
 ```{r Gather data about unemployment comparison}
 library(tidyr)
@@ -285,7 +285,8 @@ UCjoinTest <- gather(data = UCjoin, key = TYPE, value = VAL, Advanced_EducationC
 ```{r Graphic about unemployment rate by education level comparison}
 qplot(data = UCjoinTest, y = VAL, x = year, color = TYPE, geom = "line") + 
   labs(y = "Unemployment rate in %", title = "Unemployment rate by education level") +
-  facet_wrap(~ country)
+  facet_wrap(~ country) +
+  theme_linedraw()
 ```
 
 
@@ -333,9 +334,39 @@ ggplot(CHImports) +
  theme_minimal()
 ```
 
-### Try to cross data between import / export (maybe not)
+## Crossing data between imports/exports
 
-### Conclusion about Switzerland imports and exports partners (correct the sentences)
+```{r crossing board import export}
+library(dplyr)
+ImportExport <- bind_cols(CHExports, CHImports)
+ImportExport
+```
+
+```{r}
+base::colnames(ImportExport)[colnames(ImportExport)=="TX.VAL.MRCH.HI.ZS"] <- "ExportsToHighEconomies"
+base::colnames(ImportExport)[colnames(ImportExport)=="TM.VAL.MRCH.OR.ZS"] <- "ImportsFromLowEconomies"
+ImportExport
+```
+
+
+```{r}
+library(tidyr)
+
+CHImportExport <- gather(data = ImportExport, key = TYPE, value = VAL, ExportsToHighEconomies, ImportsFromLowEconomies)
+```
+
+```{r Comparison graphic about imports and exports}
+library(ggplot2)
+ggplot(CHImportExport) +
+ aes(x = year, y = VAL, colour = TYPE) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "In % of total trades", title = "Comparison about imports to high economies and 
+      exports from low/middle economies ") +
+ theme_gray()
+```
+
+### Conclusion about Switzerland imports and exports partners
 
 We can see that the Switzerland imports a bit (19,24%) from low / middle economies in 2017 but this is really increasing since 2010. About the exports, Switzerland exports a lot to high-income economies (75,15%) in 2017 but this is decreasing since 2010.
 As a conclusion, we can say that Switzerland tend to import more from low / middle economies but also to export more to these economies. However, the most of exports / imports of Switzerland are made with high-income economies but the low / middle economies increase their parts during last decade.
@@ -368,7 +399,7 @@ scroll_box(width = "100%", height = "200px")
 ```{r Generate SPI graphic}
 ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) + 
   geom_line() +
-  theme_bw() +
+  theme_grey() +
   theme(plot.title = element_text(hjust = 0.5)) + 
   labs(title = "Social Progress Index of 4 different european countries since 2014",
        x = "Years",
