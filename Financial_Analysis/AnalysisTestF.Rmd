@@ -30,6 +30,18 @@ barChart(AAPL)
 ```
 
 ```{r}
+getSymbols("SSUN.F",src="yahoo", from="2007-01-01", to="2020-01-01")
+```
+
+```{r}
+head(SSUN.F)
+```
+
+```{r}
+barChart(SSUN.F)
+```
+
+```{r}
 getSymbols("AMZN",src="yahoo", from="2007-01-01", to="2020-01-01") # Actions Amazon
 ```
 
@@ -100,4 +112,5 @@ head(MC.PA)
 ```{r}
 barChart(MC.PA)
 ```
+
 
