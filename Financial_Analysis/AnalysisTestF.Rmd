@@ -1,0 +1,91 @@
+---
+title: "Financial analysis"
+author: "Valentin"
+date: "31/01/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+library(quantmod)
+```
+
+```{r}
+getSymbols("AAPL",src="yahoo", from="2007-01-01", to="2020-01-01")
+```
+
+```{r}
+head(AAPL)
+```
+
+```{r}
+write.table(AAPL, file = "AAPL.csv", row.names=FALSE, col.names=TRUE, sep=",")
+```
+
+```{r}
+barChart(AAPL)
+```
+
+```{r}
+getSymbols("AMZN",src="yahoo", from="2007-01-01", to="2020-01-01")
+```
+
+```{r}
+head(AMZN)
+```
+
+```{r}
+barChart(AMZN)
+```
+
+```{r}
+getSymbols("BA",src="yahoo", from="2019-01-01", to="2020-01-01")
+```
+
+```{r}
+head(BA)
+```
+
+```{r}
+barChart(BA) # Crash 737 Max le 8 mars 2019
+```
+
+```{r}
+getSymbols("AIR.PA",src="yahoo", from="2019-01-01", to="2020-01-01")
+```
+
+```{r}
+head(AIR.PA)
+```
+
+```{r}
+barChart(AIR.PA)
+```
+
+```{r}
+getSymbols("GOOG",src="yahoo", from="2007-01-01", to="2020-01-01")
+```
+
+```{r}
+head(GOOG)
+```
+
+```{r}
+barChart(GOOG)
+```
+
+```{r}
+getSymbols("FB",src="yahoo", from="2018-01-01", to="2019-01-01")
+```
+
+```{r}
+head(FB)
+```
+
+```{r}
+barChart(FB) # Cambridge Analytica 17 mars 2018
+```
+
