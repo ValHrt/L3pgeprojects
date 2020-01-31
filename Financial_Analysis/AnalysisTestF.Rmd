@@ -14,7 +14,7 @@ library(quantmod)
 ```
 
 ```{r}
-getSymbols("AAPL",src="yahoo", from="2007-01-01", to="2020-01-01")
+getSymbols("AAPL",src="yahoo", from="2007-01-01", to="2020-01-01") # Actions Apple
 ```
 
 ```{r}
@@ -30,7 +30,7 @@ barChart(AAPL)
 ```
 
 ```{r}
-getSymbols("AMZN",src="yahoo", from="2007-01-01", to="2020-01-01")
+getSymbols("AMZN",src="yahoo", from="2007-01-01", to="2020-01-01") # Actions Amazon
 ```
 
 ```{r}
@@ -42,7 +42,7 @@ barChart(AMZN)
 ```
 
 ```{r}
-getSymbols("BA",src="yahoo", from="2019-01-01", to="2020-01-01")
+getSymbols("BA",src="yahoo", from="2019-01-01", to="2020-01-01") # Actions Boeing
 ```
 
 ```{r}
@@ -54,7 +54,7 @@ barChart(BA) # Crash 737 Max le 8 mars 2019
 ```
 
 ```{r}
-getSymbols("AIR.PA",src="yahoo", from="2019-01-01", to="2020-01-01")
+getSymbols("AIR.PA",src="yahoo", from="2019-01-01", to="2020-01-01") # Actions Airbus
 ```
 
 ```{r}
@@ -66,7 +66,7 @@ barChart(AIR.PA)
 ```
 
 ```{r}
-getSymbols("GOOG",src="yahoo", from="2007-01-01", to="2020-01-01")
+getSymbols("GOOG",src="yahoo", from="2007-01-01", to="2020-01-01") # Actions Google
 ```
 
 ```{r}
@@ -78,7 +78,7 @@ barChart(GOOG)
 ```
 
 ```{r}
-getSymbols("FB",src="yahoo", from="2018-01-01", to="2019-01-01")
+getSymbols("FB",src="yahoo", from="2018-01-01", to="2019-01-01") # Actions FB
 ```
 
 ```{r}
@@ -87,5 +87,17 @@ head(FB)
 
 ```{r}
 barChart(FB) # Cambridge Analytica 17 mars 2018
+```
+
+```{r}
+getSymbols("MC.PA",src="yahoo", from="2007-01-01", to="2020-01-01") #Actions LVMH
+```
+
+```{r}
+head(MC.PA)
+```
+
+```{r}
+barChart(MC.PA)
 ```
 
