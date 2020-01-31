@@ -1,0 +1,111 @@
+---
+title: "Organigramme BDS"
+author: "Valentin"
+date: "31/01/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+library(igraph)
+library(DiagrammeR)
+```
+
+```{r}
+DiagrammeR::grViz("digraph graph2 {graph [layout = dot] 
+
+node [shape = rectangle, width = 1, style = filled, color = grey]
+
+node [fillcolor = plum] # Président
+a
+
+node [fillcolor = azure] # VP
+b
+
+node [fillcolor = azure] # VP
+c
+
+node [fillcolor = GreenYellow] # Trésorerie
+d
+
+node [fillcolor = GreenYellow] # Trésorerie
+e
+
+node [fillcolor = gold] # Secrétaire
+f
+
+node [fillcolor = mistyrose] # Pôle event
+g 
+
+node [fillcolor = mistyrose] # Pôle event
+h
+
+node [fillcolor = navajowhite] # Pôle com
+i
+
+node [fillcolor = lavender] # Pôle sponsors
+j
+
+node [fillcolor = paleturquoise] # Pôle logistique
+k
+
+node [fillcolor = honeydew] # Pôle ambiance
+l
+
+node [fillcolor = seashell] # Pôle derby
+m
+
+
+# Assign a label to each node
+
+a [label = 'Président : Valentin Henriot']
+b [label = 'Vice Président : Franck Vasseur']
+c [label = 'Vice Président : Antoine Battesti']
+d [label = 'Trésorière : Léa Verdan']
+e [label = 'Vice-trésorier : Jules Bayer']
+f [label = 'Secrétaire : Auréliane Boutonnet']
+g [label = 'Respo event : Achraf Berrada']
+h [label = 'Adjoint event : Gabin Coutand']
+i [label = 'Respo com : Victor Depre']
+j [label = 'Respo sponsors : Alexis Chabert']
+k [label = 'Respo logistique : Aurélien Durand']
+l [label = 'Respo bonne ambiance : Florian Colin']
+m [label = 'Respo derby : Arthur Lannoy']
+
+a -> b
+a -> c
+a -> l
+a -> m
+a -> f
+b -> c
+c -> d
+d -> e
+e -> g
+e -> i
+e -> j
+e -> k
+g -> h
+
+}
+
+")
+```
+
+```{r}
+mermaid("
+sequenceDiagram
+  Pôle event->>Trésorerie: Demande de faisabilité
+  Alt Faisable
+  Pôle event->>Pôle com: Transmissions des infos de l'event
+  Pôle event->>Pôle logistique: Demande de moyens
+    Pôle com->>Pôle event: Envoi de la com pour vérif infos
+    Pôle logistique->>Pôle event: Met en place les moyens
+  else Infaisable
+    Trésorerie ->> Pôle event: Annulation event
+  end
+")
+```
+
