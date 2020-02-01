@@ -280,8 +280,6 @@ library(tidyr)
 UCjoinTest <- gather(data = UCjoin, key = TYPE, value = VAL, Advanced_EducationC, Intermediate_EducationC, Basic_EducationC)
 ```
 
-### Ajouter les titres et labels
-
 ```{r Graphic about unemployment rate by education level comparison}
 qplot(data = UCjoinTest, y = VAL, x = year, color = TYPE, geom = "line") + 
   labs(y = "Unemployment rate in %", title = "Unemployment rate by education level") +

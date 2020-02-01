@@ -1,0 +1,102 @@
+---
+title: "Impactful_VisualizationCH"
+author: "Valentin Henriot"
+date: "01/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, include=FALSE}
+library(WDI)
+```
+
+## Unemployment comparison between Switzerland, France, Germany and Italy
+
+```{r Unemployment with advanced education comparison, include=FALSE}
+UAEcomparison<- WDI(indicator = "SL.UEM.ADVN.ZS", #Unemployment with advanced education (% of total labor force with advanced education)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2000,
+                   end = 2018)
+UAEcomparison
+```
+
+```{r Renaming column Advanced_Education comparison, include=FALSE}
+base::colnames(UAEcomparison)[colnames(UAEcomparison)=="SL.UEM.ADVN.ZS"] <- "Advanced_EducationC"
+UAEcomparison
+```
+
+```{r Unemployment intermediate education comparison, include=FALSE}
+UIEcomparison<- WDI(indicator = "SL.UEM.INTM.ZS", #Unemployment with intermediate education (% of total labor force with advanced education)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2000,
+                   end = 2018)
+UIEcomparison
+```
+
+```{r Renaming column Intermediate_Education comparison, include=FALSE}
+base::colnames(UIEcomparison)[colnames(UIEcomparison)=="SL.UEM.INTM.ZS"] <- "Intermediate_EducationC"
+UIEcomparison
+```
+
+```{r Unemployment basic education comparison, include=FALSE}
+UBEcomparison <- WDI(indicator = "SL.UEM.BASC.ZS", #Unemployment with basic education (% of total labor force with advanced education)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2000,
+                   end = 2018)
+UBEcomparison
+```
+
+```{r Renaming column Basic_Education comparison, include=FALSE}
+base::colnames(UBEcomparison)[colnames(UBEcomparison)=="SL.UEM.BASC.ZS"] <- "Basic_EducationC"
+UBEcomparison
+```
+
+```{r Combining columns comparison, include=FALSE}
+library(dplyr)
+UCjoin <- bind_cols(UAEcomparison, UIEcomparison, UBEcomparison)
+UCjoin
+```
+
+```{r Delete some columns comparison, include=FALSE}
+UCjoin$iso2c <- NULL
+UCjoin$iso2c1 <- NULL
+UCjoin$country1 <- NULL
+UCjoin$year1 <- NULL
+UCjoin$iso2c2 <- NULL
+UCjoin$country2 <- NULL
+UCjoin$year2 <- NULL
+UCjoin
+```
+
+```{r Re-arrange columns comparison, include=FALSE}
+UCjoin <- UCjoin[c(1,3,2,4,5)]
+UCjoin
+```
+
+```{r Gather data about unemployment comparison, include=FALSE}
+library(tidyr)
+
+UCjoinTest <- gather(data = UCjoin, key = TYPE, value = VAL, Advanced_EducationC, Intermediate_EducationC, Basic_EducationC)
+```
+
+```{r Graphic about unemployment rate by education level comparison}
+library(ggplot2)
+qplot(data = UCjoinTest, y = VAL, x = year, color = TYPE, geom = "line") + 
+  labs(y = "Unemployment rate in %", title = "Unemployment rate by education level") +
+  facet_wrap(~ country) +
+  theme_linedraw()
+```
+
+## Conclusion of the comparison
+
+As we can see from the graph, *Switzerland* has had a relatively stable unemployment rate since the early 2000s. An increase of about **2.2% in 18 years for those with a high or intermediate level of education** and an increase of about **3.8% for those with a low level of education**.
+Only *Germany* is doing better than *Switzerland* in terms of unemployment at the end of 2018 for those with a high or intermediate level of education. Nevertheless, the gap remains small, **1.6% for the advanced education category** and **1.9% for the intermediate level**. *Switzerland* is doing better than *Germany* in terms of employability in the low education category, with a **0.7% gap** in favour of *Switzerland*.
+
+In contrast, *France and Italy* are the worst performers, with unemployment rates for all education categories combined far higher than *Germany and Switzerland*. 
+For example, the unemployment rate for the low and intermediate education categories is **twice as high** in *France* as in *Switzerland* in 2018.
+*Italy* shows similar results to *France*.
+
+Finally, it is interesting to note that *Germany* has seen its **unemployment rate fall since 2005**, *Switzerland* remains **stable**, while *France and Italy* have seen their **unemployment rates rise since 2006**, although there has been a **slight improvement over the last 5 years**.
