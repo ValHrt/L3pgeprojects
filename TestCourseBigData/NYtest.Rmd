@@ -1,6 +1,6 @@
 ---
 title: "New York Test"
-author: "Valentin"
+author: "Valentin Henriot, Gabin Coutand, Jules Bayer, ALexis Chabert, Cyprien"
 date: "03/02/2020"
 output:
   pdf_document: default
@@ -10,6 +10,8 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+# Big Data Analysis New York
 
 ```{r, include=FALSE}
 library(readxl)
@@ -35,12 +37,29 @@ library(corrplot)
 correlationData = cor(NYNnorm[2:13])
 corrplot(correlationData, method = "pie")
 ```
+### Part 2
+
+2-1) We only find « 1 » values on the diagonal of this matrix because those values represent the correlation coefficients between one same variable. 
+  
+2-2) The 5 largest correlations are those between:  
+  
+                        - 1 :  “shopping & services” and “affordability” 
+                        - 2 : “shopping & services” and “creative” 
+                        - 3 : “transit” and “affordability” 
+                        - 4 : “transit” and “shopping & services” 
+                        - 5 : “nightlife” and “food” 
+  
+1 : We could have predicted this result because the affordability often depends of the attractivity of the neighborhoods.  
+2 : They both correspond to the same kind of activity (free time activities…) 
+3 : We could have predicted this result because the affordability of a neighborhood is often related to the accessibility to the city.  
+4 : We could have predicted this result because stores want to be as close as possible of the people so the transit is an important variable for the implementation of shops. 
+5 : Nightlife and food are easily correlated because the attractivity for a neighborhood for the night highly depends of the restauration, pubs, snack... 
 
 ```{r, include=FALSE}
 library(FactoMineR)
 ```
 
-```{r, include=FALSE}
+```{r}
 PCA_NY <- PCA(NYNnorm[1:13], quali.sup = 1)
 ```
 
@@ -49,9 +68,17 @@ PCA_NY <- PCA(NYNnorm[1:13], quali.sup = 1)
 summary(PCA_NY, nbelements = Inf)
 ```
 
+### Part 3
+
+3-1) Eigenvalues measure the amount of variation in the total sample accounted for by each principal component. The ratio of eigenvalues is the ratio of explanatory importance of the principal component with respect to the variables. If a principal component has a low eigenvalue, then it is contributing little to the explanation of variances in the variables and may be ignored. 
+Eigenvectors represent the easiest way to represent data by avoiding redundancy.  
+
+3-2) 48,5% of the variance is represented by the first principal component, 19,9% by the second and 68,4% by the two first component together. 
+
 ```{r, include=FALSE}
 print(NYNnorm)
 ```
+
 
 ```{r}
 library(factoextra)
