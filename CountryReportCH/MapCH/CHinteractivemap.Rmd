@@ -34,12 +34,12 @@ View(CHdatamap)
 ```
 
 ```{r}
-CHdatamap1 <- CHdatamap[-1, -2,]
+CHdatamap1 <- tidyr::drop_na(CHdatamap)
 CHdatamap1
 ```
 
 ```{r}
-drop_na(CHdatamap1)
+CHdatamap1 <- rename(CHdatamap1, NAME_1=...1)
 CHdatamap1
 ```
 
@@ -51,13 +51,13 @@ myCHmap <- st_read("~/L3pgeprojects/CountryReportCH/MapCH/CHE_adm/CHE_adm1.shp",
 datamap <- inner_join(myCHmap, CHdatamap1)
 
 tm_shape(datamap) +
-tm_polygons("Density", id = "NAME_1", palette = "Blues")+ 
-#breaks = c(0, 5, 10, 100, 1000, 2000, 5000, 10000), labels = 1:7, right = F, ordered_result = T)
+tm_polygons("Total", id = "NAME_1", palette = "Blues")+ 
+#breaks = c(, 50000, 100000, 200000, 300000, 400000, 500000, 700000, 1000000, 1500000), labels = 1:7, right = F, ordered_result = T)
 
 tmap_mode("view")
 DensityMap <- tmap_last()
 
 
-tmap_save(DensityMap, "DensityMap.html")
+tmap_save(DensityMap, "PopulationMapCH.html")
 ```
 
