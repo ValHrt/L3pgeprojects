@@ -46,13 +46,31 @@ CHdatamap1
 ### Supprimer les lignes depuis Excel
 
 ```{r}
+CHdatamap2 <- ifelse(CHdatamap1$Total >= 1 & CHdatamap1$Total <= 50000, "1-50000", ifelse(CHdatamap1$Total >= 50001 & CHdatamap1$Total <= 100000, "50001-100000", ifelse(CHdatamap1$Total >= 100001 & CHdatamap1$Total <= 200000, "100001-200000", ifelse(CHdatamap1$Total >= 200001 & CHdatamap1$Total <= 300000, "200001-300000", ifelse(CHdatamap1$Total >= 300001 & CHdatamap1$Total <= 400000, "300001-400000", ifelse(CHdatamap1$Total >= 400001 & CHdatamap1$Total <= 500000, "400001-500000", ifelse(CHdatamap1$Total >= 500001 & CHdatamap1$Total <= 700000, "500001-700000", ifelse(CHdatamap1$Total >= 700001 & CHdatamap1$Total <= 1000000, "700001-1000000", ifelse(CHdatamap1$Total >= 1000000 & CHdatamap1$Total <= 1500000, "1000001-1500000", ifelse(CHdatamap1$Total >= 1500001, "1500000+", NA))))))))))
+CHdatamap2
+```
+
+```{r}
+cut(CHdatamap1$Total, breaks=c(0, 50000, 100000, 200000, 300000, 400000, 500000, 700000, 1000000, 1500000, Inf), labels=c("0-50000", "50001-100000", "100001-200000", "200001-300000", "300001-400000", "400001-500000", "500001-700000", "700001-1000000", "1000001-1500000", "1500000+"))
+```
+
+```{r}
+mylabels <- c("0-50000", "50001-100000", "100001-200000", "200001-300000", "300001-400000", "400001-500000", "500001-700000", "700001-1000000", "1000001-1500000", "1500000+")
+```
+
+```{r}
+CHdatamap1$Population <- base::cut(CHdatamap1$Total,
+                        breaks = c(0, 50000, 100000, 200000, 300000, 400000, 500000, 700000, 1000000, 1500000, 2000000), 
+                        labels = mylabels, right = F, ordered_result = T)
+```
+
+```{r}
 myCHmap <- st_read("~/L3pgeprojects/CountryReportCH/MapCH/CHE_adm/CHE_adm1.shp", stringsAsFactors = FALSE)
 
 datamap <- inner_join(myCHmap, CHdatamap1)
 
 tm_shape(datamap) +
-tm_polygons("Total", id = "NAME_1", palette = "Blues")+ 
-#breaks = c(, 50000, 100000, 200000, 300000, 400000, 500000, 700000, 1000000, 1500000), labels = 1:7, right = F, ordered_result = T)
+tm_polygons("Population", id = "NAME_1", palette = "Reds")+ 
 
 tmap_mode("view")
 DensityMap <- tmap_last()
