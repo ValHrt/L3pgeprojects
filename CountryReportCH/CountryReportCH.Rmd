@@ -407,3 +407,14 @@ ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) +
 ```
 
 ### Conclusion about comparison of SPI between Switzerland, France, Italy and Germany
+
+### TestTestTest
+
+```{r}
+TestTest <- WDI(indicator = "SE.XPD.TOTL.GD.ZS", #Government expenditure on education, total (% of GDP)
+country = c("CH", "FRA", "DE", "ITA"),
+                   start = 1996,
+                   end = 2016)
+TestTest
+```
+
