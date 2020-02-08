@@ -1,0 +1,43 @@
+---
+title: "Test DBnomics"
+author: "Valentin"
+date: "08/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(rdbnomics)
+library(dplyr)
+```
+
+```{r}
+homicidestats <- rdb(ids = c('Eurostat/crim_pris_off/A.ICCS0101.T.P_HTHAB.CH', "Eurostat/crim_pris_off/A.ICCS0101.T.P_HTHAB.FR", "Eurostat/crim_pris_off/A.ICCS0101.T.P_HTHAB.IT", "Eurostat/crim_pris_off/A.ICCS0101.T.P_HTHAB.DE")) %>%
+  filter(!is.na(value))
+homicidestats
+```
+
+```{r}
+library(ggplot2)
+ggplot(homicidestats, aes(x = period, y = value, color = series_name)) +
+  geom_line(size = 2) + 
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4))
+```
+
+```{r}
+FraFinancingSU <- rdb(ids = c("Eurostat/fobs_edu/A.ED1_2.C-E.203_E.FR", "Eurostat/fobs_edu/A.ED3.C-E.203_E.FR", "Eurostat/fobs_edu/A.ED5_6.C-E.203_E.FR")) %>%
+  filter(!is.na(value))
+FraFinancingSU
+```
+
+```{r}
+ggplot(FraFinancingSU, aes(x = period, y = value, color = series_name)) +
+  geom_point() + 
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 3))
+```
+
