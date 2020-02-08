@@ -66,3 +66,15 @@ ggplot(MercosurImportInt, aes(x = period, y = value, color = series_name)) +
    guides(col = guide_legend(nrow = 4))
 ```
 
+```{r}
+MercosurTradeNA <- rdb(ids = c('WTO/a2/AR.X.NAX.TO', "WTO/a2/BR.X.NAX.TO", "WTO/a2/UY.X.NAX.TO", "WTO/a2/VE.X.NAX.TO")) %>%
+  filter(!is.na(value)) #export to North America
+```
+
+```{r}
+ggplot(MercosurTradeNA, aes(x = period, y = value, color = series_name)) +
+  geom_line(size = 1) + 
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4))
+```
+
