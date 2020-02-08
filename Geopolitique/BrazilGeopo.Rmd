@@ -1,0 +1,68 @@
+---
+title: "Géopolitique Brésil"
+author: "Valentin"
+date: "08/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+library(rdbnomics)
+library(dplyr)
+```
+
+
+```{r}
+MercosurTradeExt <- rdb(ids = c('WTO/a2/BR.X.GXM.TO', "WTO/a2/AR.X.GXM.TO", "WTO/a2/UY.X.GXM.TO", "WTO/a2/VE.X.GXM.TO")) %>%
+  filter(!is.na(value))
+MercosurTradeExt
+```
+
+```{r}
+library(ggplot2)
+ggplot(MercosurTradeExt, aes(x = period, y = value, color = series_name)) +
+  geom_line(size = 1) + 
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4))
+```
+
+```{r}
+MercosurTradeInt <- rdb(ids = c('WTO/a2/AR.X.G27.TO', "WTO/a2/BR.X.G27.TO", "WTO/a2/UY.X.G27.TO", "WTO/a2/VE.X.G27.TO")) %>%
+  filter(!is.na(value))
+MercosurTradeInt
+```
+
+```{r}
+ggplot(MercosurTradeInt, aes(x = period, y = value, color = series_name)) +
+  geom_line(size = 1) + 
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4))
+```
+
+```{r}
+MercosurImportExt <- rdb(ids = c('WTO/a2/AR.M.GXM.TO', "WTO/a2/BR.M.GXM.TO", "WTO/a2/UY.M.GXM.TO", "WTO/a2/VE.M.GXM.TO")) %>%
+  filter(!is.na(value))
+```
+
+```{r}
+ggplot(MercosurImportExt, aes(x = period, y = value, color = series_name)) +
+  geom_line(size = 1) + 
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4))
+```
+
+```{r}
+MercosurImportInt <- rdb(ids = c('WTO/a2/AR.M.G27.TO', "WTO/a2/BR.M.G27.TO", "WTO/a2/UY.M.G27.TO", "WTO/a2/VE.M.G27.TO")) %>%
+  filter(!is.na(value))
+```
+
+```{r}
+ggplot(MercosurImportInt, aes(x = period, y = value, color = series_name)) +
+  geom_line(size = 1) + 
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4))
+```
+
