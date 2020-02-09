@@ -69,12 +69,49 @@ ggplot(MercosurImportInt, aes(x = period, y = value, color = series_name)) +
 ```{r}
 MercosurTradeNA <- rdb(ids = c('WTO/a2/AR.X.NAX.TO', "WTO/a2/BR.X.NAX.TO", "WTO/a2/UY.X.NAX.TO", "WTO/a2/VE.X.NAX.TO")) %>%
   filter(!is.na(value)) #export to North America
+MercosurTradeNA <- rename(MercosurTradeNA, Country = series_name)
 ```
 
 ```{r}
-ggplot(MercosurTradeNA, aes(x = period, y = value, color = series_name)) +
-  geom_line(size = 1) + 
+ggplot(MercosurTradeNA, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) +
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4))
+```
+
+```{r}
+MilitaryExpenditure <- WDI(indicator = "MS.MIL.XPND.CD", #Military expenditure $
+country = c("BRA", "UY", "VE", "ARG"),
+                   start = 1996,
+                   end = 2017)
+MilitaryExpenditure <- rename(MilitaryExpenditure, Military_Expenditure = MS.MIL.XPND.CD)
+MilitaryExpenditure
+```
+
+```{r}
+NbTroops <- WDI(indicator = "MS.MIL.TOTL.P1", #Armed forces personnel, total
+country = c("BRA", "UY", "VE", "ARG"),
+                   start = 1996,
+                   end = 2017)
+NbTroops <- rename(NbTroops, Troops = MS.MIL.TOTL.P1)
+NbTroops
+```
+
+```{r}
+TroopsAndExpenditure = bind_cols(MilitaryExpenditure, NbTroops)
+TroopsAndExpenditure
+```
+
+
+```{r}
+library(plotly)
+DynGraphTroopsExp <- ggplot(TroopsAndExpenditure, aes(year, Military_Expenditure, color = country)) +
+  geom_point(aes(size = Troops, frame = year)) +
+  scale_x_log10() +
+  hrbrthemes::theme_modern_rc() +
+  labs(y = "Dépenses militaires en $", title = "Comparaison entre dépenses militaires et nombre 
+       de militaires")
+DynGraphTroopsExp <- ggplotly(DynGraphTroopsExp)
+DynGraphTroopsExp
 ```
 

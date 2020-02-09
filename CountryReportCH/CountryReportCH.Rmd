@@ -411,10 +411,39 @@ ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) +
 ### TestTestTest
 
 ```{r}
-TestTest <- WDI(indicator = "SE.XPD.TOTL.GD.ZS", #Government expenditure on education, total (% of GDP)
+ExpenditureEducationC <- WDI(indicator = "SE.XPD.TOTL.GD.ZS", #Government expenditure on education, total (% of GDP)
 country = c("CH", "FRA", "DE", "ITA"),
                    start = 1996,
                    end = 2016)
-TestTest
+ExpenditureEducationC <- dplyr::rename(ExpenditureEducationC, Government_Expenditure = SE.XPD.TOTL.GD.ZS)
+ExpenditureEducationC
 ```
+
+```{r}
+GDPComparison <- WDI(indicator = "NY.GDP.MKTP.CD", #GDP
+country = c("CH", "FRA", "DE", "ITA"),
+                   start = 1996,
+                   end = 2016)
+GDPComparison <- dplyr::rename(GDPComparison, GDP = NY.GDP.MKTP.CD)
+GDPComparison
+```
+
+```{r}
+library(dplyr)
+PlotEducationGDP <- bind_cols(ExpenditureEducationC, GDPComparison)
+PlotEducationGDP
+```
+
+```{r}
+library(plotly)
+DynGraphPlotEducationGDP <- ggplot(PlotEducationGDP, aes(year, Government_Expenditure, color = country)) +
+  geom_point(aes(size = GDP, frame = year)) +
+  scale_x_log10() +
+  hrbrthemes::theme_modern_rc() +
+  labs(y = "Government Expenditure in % of GDP", title = "Expenditure on education in % of GDP")
+DynGraphPlotEducationGDP <- ggplotly(DynGraphPlotEducationGDP)
+DynGraphPlotEducationGDP 
+```
+
+
 
