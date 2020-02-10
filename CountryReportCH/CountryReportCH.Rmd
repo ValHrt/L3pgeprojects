@@ -462,3 +462,29 @@ ggplot(BalanceTransactionsC, aes(x = period, y = value, color = country)) +
   labs(y = "Balance transaction", title = "Balance on current transactions with the rest of the world")
 ```
 
+```{r Consumer Price Index, Base 2010=100}
+CPIc<- rdb(ids = c('BIS/long_cpi/A.CH.628', "BIS/long_cpi/A.FR.628", "BIS/long_cpi/A.IT.628", "BIS/long_cpi/A.DE.628")) %>%
+  filter(!is.na(value))
+CPIc <- rename(CPIc, Country = series_name)
+CPIc
+```
+
+```{r}
+ggplot(CPIc, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) + 
+  theme_dark() +
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4)) +
+  labs(y = "Consumer Price Index", title = "CPI comparison")
+```
+
+```{r}
+library(dygraphs)
+TestCPIc <- dygraph(nhtemp, main = "Country") %>% 
+  dyRangeSelector(CPIc = c("1921-01-01", "2019-01-01"))
+```
+
+```{r}
+str(CPIc)
+```
+
