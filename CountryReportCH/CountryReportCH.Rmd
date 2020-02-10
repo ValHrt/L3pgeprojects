@@ -445,5 +445,20 @@ DynGraphPlotEducationGDP <- ggplotly(DynGraphPlotEducationGDP)
 DynGraphPlotEducationGDP 
 ```
 
+```{r}
+library(rdbnomics)
+BalanceTransactionsC <- rdb(ids = c('AMECO/UBCA/CHE.1.0.0.0.UBCA', "AMECO/UBCA/FRA.1.0.0.0.UBCA", "AMECO/UBCA/ITA.1.0.0.0.UBCA", "AMECO/UBCA/DEU.1.0.0.0.UBCA")) %>%
+  filter(!is.na(value))
+BalanceTransactionsC <- rename(BalanceTransactionsC, country = series_name)
+BalanceTransactionsC
+```
 
+```{r}
+ggplot(BalanceTransactionsC, aes(x = period, y = value, color = country)) +
+  geom_line(size = 1) + 
+  theme_dark() +
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4)) +
+  labs(y = "Balance transaction", title = "Balance on current transactions with the rest of the world")
+```
 
