@@ -358,6 +358,8 @@ library(ggplot2)
 ggplot(CHImportExport) +
  aes(x = year, y = VAL, colour = TYPE) +
  geom_line(size = 1L) +
+  geom_vline(aes(xintercept = 2010), linetype=2, colour = "black", size = 1) +
+  geom_vline(aes(xintercept = 2017), linetype=2, colour = "black", size = 1) +
  scale_color_hue() +
  labs(y = "In % of total trades", title = "Comparison about imports to high economies and 
       exports from low/middle economies ") +
@@ -466,21 +468,8 @@ ggplot(BalanceTransactionsC, aes(x = period, y = value, color = country)) +
 CPIc<- rdb(ids = c('BIS/long_cpi/A.CH.628', "BIS/long_cpi/A.FR.628", "BIS/long_cpi/A.IT.628", "BIS/long_cpi/A.DE.628")) %>%
   filter(!is.na(value))
 CPIc <- rename(CPIc, Country = series_name)
-View(CPIc)
-```
-
-```{r}
-CPIc <- CPIc[c(9,2,3,4,5,6,7,8,1,10,11,12,13,14,15,16,17)]
 CPIc
 ```
-
-
-```{r}
-library(dygraphs)
-library(xts)
-CPIcPlot <- xts(x = CPIc$value, order.by = CPIc$period)
-```
-
 
 ```{r}
 ggplot(CPIc, aes(x = period, y = value, color = Country)) +
@@ -491,16 +480,9 @@ ggplot(CPIc, aes(x = period, y = value, color = Country)) +
   labs(y = "Consumer Price Index", title = "CPI comparison")
 ```
 
-```{r}
-library(dplyr)
-CPIcPlot %>% group_by(Country)
-```
 
 
-```{r}
-library(dygraphs)
-TestCPIc <- dygraph(CPIcPlot, main = "Country") %>% 
-  dyRangeSelector(CPIc$period = c("1921-01-01", "2019-01-01"))
-```
+
+
 
 
