@@ -119,6 +119,45 @@ For example, the unemployment rate for the low and intermediate education catego
 
 Finally, it is interesting to note that *Germany* has seen its **unemployment rate fall since 2005**, *Switzerland* remains **stable**, while *France and Italy* have seen their **unemployment rates rise since 2006**, although there has been a **slight improvement over the last 5 years**.
 
+### Government expenditure on education, in comparison with GDP
+
+```{r}
+ExpenditureEducationC <- WDI(indicator = "SE.XPD.TOTL.GD.ZS", #Government expenditure on education, total (% of GDP)
+country = c("CH", "FRA", "DE", "ITA"),
+                   start = 1996,
+                   end = 2016)
+ExpenditureEducationC <- dplyr::rename(ExpenditureEducationC, Government_Expenditure = SE.XPD.TOTL.GD.ZS)
+```
+
+```{r}
+GDPComparison <- WDI(indicator = "NY.GDP.MKTP.CD", #GDP
+country = c("CH", "FRA", "DE", "ITA"),
+                   start = 1996,
+                   end = 2016)
+GDPComparison <- dplyr::rename(GDPComparison, GDP = NY.GDP.MKTP.CD)
+```
+
+```{r}
+library(dplyr)
+PlotEducationGDP <- bind_cols(ExpenditureEducationC, GDPComparison)
+```
+
+```{r}
+library(plotly)
+DynGraphPlotEducationGDP <- ggplot(PlotEducationGDP, aes(year, Government_Expenditure, color = country)) +
+  geom_point(aes(size = GDP, frame = year)) +
+  scale_x_log10() +
+  hrbrthemes::theme_modern_rc() +
+  labs(y = "Government Expenditure in % of GDP", title = "Expenditure on education in % of GDP")
+DynGraphPlotEducationGDP <- ggplotly(DynGraphPlotEducationGDP)
+DynGraphPlotEducationGDP 
+```
+
+----------------------------------------
+
+As we can see between these four countries, *France* is the country that spends the most on education in relation to its GDP. *Switzerland* is in second place. It is interesting to note that France spends more on education but that nevertheless its **unemployment rate is much higher** than *Switzerland* (see previous graph). *Germany* is in third place, very close to *Switzerland*. *Italy* is the country that spends the least on education in relation to its GDP in all years. Finally, this graph highlights the fact that Switzerland is the country with the **lowest GDP** (among the 4 countries compared) but that it is the country with the **highest GDP per capita** (see previous graph). 
+To conclude, we can deduce that *Switzerland's* expenditure on education is certainly **lower** than *France's*, but that graduates will **find work more easily** and will **benefit from higher salaries** (although this must be balanced with the **Consumer Price Index**).
+
 ### Switzerland's imports and exports
 
 ```{r Merchandise exports to high-income economies}
@@ -169,44 +208,6 @@ ggplot(CHImportExport) +
 
 We can see that the *Switzerland* imports a bit (**19,24%**) from *low / middle economies* in 2017 but this is really **increasing since 2010**. About the exports, *Switzerland* exports a lot to *high-income economies* (**75,15%**) in 2017 but this is **decreasing since 2010**.
 As a conclusion, we can say that *Switzerland* tend to import more from low / middle economies but also to export more to these economies. However, the most of exports / imports of Switzerland are made with high-income economies but the low / middle economies **increase their parts during last decade**.
-
-### Government expenditure on education, in comparison with GDP
-
-```{r}
-ExpenditureEducationC <- WDI(indicator = "SE.XPD.TOTL.GD.ZS", #Government expenditure on education, total (% of GDP)
-country = c("CH", "FRA", "DE", "ITA"),
-                   start = 1996,
-                   end = 2016)
-ExpenditureEducationC <- dplyr::rename(ExpenditureEducationC, Government_Expenditure = SE.XPD.TOTL.GD.ZS)
-```
-
-```{r}
-GDPComparison <- WDI(indicator = "NY.GDP.MKTP.CD", #GDP
-country = c("CH", "FRA", "DE", "ITA"),
-                   start = 1996,
-                   end = 2016)
-GDPComparison <- dplyr::rename(GDPComparison, GDP = NY.GDP.MKTP.CD)
-```
-
-```{r}
-library(dplyr)
-PlotEducationGDP <- bind_cols(ExpenditureEducationC, GDPComparison)
-```
-
-```{r}
-library(plotly)
-DynGraphPlotEducationGDP <- ggplot(PlotEducationGDP, aes(year, Government_Expenditure, color = country)) +
-  geom_point(aes(size = GDP, frame = year)) +
-  scale_x_log10() +
-  hrbrthemes::theme_modern_rc() +
-  labs(y = "Government Expenditure in % of GDP", title = "Expenditure on education in % of GDP")
-DynGraphPlotEducationGDP <- ggplotly(DynGraphPlotEducationGDP)
-DynGraphPlotEducationGDP 
-```
-
-----------------------------------------
-
-Texte a mettre
 
 ### Switzerland population map
 
@@ -265,4 +266,5 @@ tmap_save(DensityMap, "PopulationMapCH.html")
 
 ----------------------------------------
 
-Texte a mettre
+Here is a map of *Switzerland* divided into **cantons**, showing the **total population** of each canton in **2018**.
+The canton of *Zurich* has the most inhabitants (**1520968 inhabitants**) and the canton of *Appenzell Innerrhoden* the least with only **16145 inhabitants**.
