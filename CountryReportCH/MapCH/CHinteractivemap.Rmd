@@ -21,7 +21,6 @@ library(tidyr)
 
 ```{r}
 library(readxl)
-library(readxl)
 CHdatamap <- read_excel("~/L3pgeprojects/CountryReportCH/MapCH/CHdatamap.xlsx", 
     sheet = "2018", col_types = c("text", 
         "numeric", "numeric", "numeric", 

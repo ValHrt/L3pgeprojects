@@ -1,0 +1,268 @@
+---
+title: "Flex Dashboard Switzerland"
+output: 
+  flexdashboard::flex_dashboard:
+    storyboard: true
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(ggplot2)
+library(WDI)
+library(plotly)
+library(sf)
+library(tmap)
+library(tmaptools)
+library(leaflet)
+library(dplyr)
+library(tidyr)
+```
+
+### GDP per capita comparison with France, Germany and Italy
+
+```{r Compare countries GDP per capita, include=FALSE}
+GdpPerCapitaComparison <- WDI(indicator = "NY.GDP.PCAP.PP.CD",
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 1990,
+                   end = 2018)
+GdpPerCapitaComparison
+```
+
+```{r Comparison graphic about GDP per capita}
+ggplot(GdpPerCapitaComparison) +
+ aes(x = year, y = NY.GDP.PCAP.PP.CD, colour = country) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "GDP per capita", title = "Comparison GDP per capita") +
+ theme_minimal()
+```
+
+---------------------------------------
+
+*Switzerland* seems to be **far away** from his neighbours regarding the gdp per capita. *Germany* is in the second place with 53074.54 in 2018 (28% less than *Switzerland*), *France* in the third place with 45342.40 in 2018 (**50%** less than *Switzerland*).
+The conclusion of this analysis is that *Switzerland* is better when speaking about economic health into an **individual citizens perspective**.
+
+### Unemployment comparison by education level with France, Germany and Italy
+
+```{r Unemployment with advanced education comparison}
+UAEcomparison<- WDI(indicator = "SL.UEM.ADVN.ZS", #Unemployment with advanced education (% of total labor force with advanced education)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2000,
+                   end = 2018)
+```
+
+```{r Renaming column Advanced_Education comparison}
+base::colnames(UAEcomparison)[colnames(UAEcomparison)=="SL.UEM.ADVN.ZS"] <- "Advanced_EducationC"
+```
+
+```{r Unemployment intermediate education comparison}
+UIEcomparison<- WDI(indicator = "SL.UEM.INTM.ZS", #Unemployment with intermediate education (% of total labor force with advanced education)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2000,
+                   end = 2018)
+```
+
+```{r Renaming column Intermediate_Education comparison}
+base::colnames(UIEcomparison)[colnames(UIEcomparison)=="SL.UEM.INTM.ZS"] <- "Intermediate_EducationC"
+```
+
+```{r Unemployment basic education comparison}
+UBEcomparison <- WDI(indicator = "SL.UEM.BASC.ZS", #Unemployment with basic education (% of total labor force with advanced education)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2000,
+                   end = 2018)
+```
+
+```{r Renaming column Basic_Education comparison}
+base::colnames(UBEcomparison)[colnames(UBEcomparison)=="SL.UEM.BASC.ZS"] <- "Basic_EducationC"
+```
+
+```{r Combining columns comparison}
+UCjoin <- bind_cols(UAEcomparison, UIEcomparison, UBEcomparison)
+```
+
+```{r Delete some columns comparison}
+UCjoin$iso2c <- NULL
+UCjoin$iso2c1 <- NULL
+UCjoin$country1 <- NULL
+UCjoin$year1 <- NULL
+UCjoin$iso2c2 <- NULL
+UCjoin$country2 <- NULL
+UCjoin$year2 <- NULL
+```
+
+```{r Re-arrange columns comparison}
+UCjoin <- UCjoin[c(1,3,2,4,5)]
+```
+
+```{r Gather data about unemployment comparison}
+library(tidyr)
+
+UCjoinTest <- gather(data = UCjoin, key = TYPE, value = VAL, Advanced_EducationC, Intermediate_EducationC, Basic_EducationC)
+```
+
+```{r Graphic about unemployment rate by education level comparison}
+qplot(data = UCjoinTest, y = VAL, x = year, color = TYPE, geom = "line") + 
+  labs(y = "Unemployment rate in %", title = "Unemployment rate by education level") +
+  facet_wrap(~ country) +
+  theme_linedraw()
+```
+
+----------------------------------------
+
+As we can see from the graph, *Switzerland* has had a relatively stable unemployment rate since the early 2000s. An increase of about **2.2% in 18 years for those with a high or intermediate level of education** and an increase of about **3.8% for those with a low level of education**.
+Only *Germany* is doing better than *Switzerland* in terms of unemployment at the end of 2018 for those with a high or intermediate level of education. Nevertheless, the gap remains small, **1.6% for the advanced education category** and **1.9% for the intermediate level**. *Switzerland* is doing better than *Germany* in terms of employability in the low education category, with a **0.7% gap** in favour of *Switzerland*.
+
+In contrast, *France and Italy* are the worst performers, with unemployment rates for all education categories combined far higher than *Germany and Switzerland*. 
+For example, the unemployment rate for the low and intermediate education categories is **twice as high** in *France* as in *Switzerland* in 2018.
+*Italy* shows similar results to *France*.
+
+Finally, it is interesting to note that *Germany* has seen its **unemployment rate fall since 2005**, *Switzerland* remains **stable**, while *France and Italy* have seen their **unemployment rates rise since 2006**, although there has been a **slight improvement over the last 5 years**.
+
+### Switzerland's imports and exports
+
+```{r Merchandise exports to high-income economies}
+CHExports <- WDI(indicator = "TX.VAL.MRCH.HI.ZS", #Merchandise exports to high-income economies (% of total merchandise exports)
+country = c("CH"),
+                   start = 1971,
+                   end = 2018)
+```
+
+```{r Merchandise imports from low- and middle-income economies}
+CHImports <- WDI(indicator = "TM.VAL.MRCH.OR.ZS", #Merchandise imports from low- and middle-income economies outside region (% of total merchandise imports)
+country = c("CH"),
+                   start = 1971,
+                   end = 2018)
+```
+
+```{r crossing board import export}
+library(dplyr)
+ImportExport <- bind_cols(CHExports, CHImports)
+```
+
+```{r}
+base::colnames(ImportExport)[colnames(ImportExport)=="TX.VAL.MRCH.HI.ZS"] <- "ExportsToHighEconomies"
+base::colnames(ImportExport)[colnames(ImportExport)=="TM.VAL.MRCH.OR.ZS"] <- "ImportsFromLowEconomies"
+```
+
+
+```{r}
+library(tidyr)
+
+CHImportExport <- gather(data = ImportExport, key = TYPE, value = VAL, ExportsToHighEconomies, ImportsFromLowEconomies)
+```
+
+```{r Comparison graphic about imports and exports}
+library(ggplot2)
+ggplot(CHImportExport) +
+ aes(x = year, y = VAL, colour = TYPE) +
+ geom_line(size = 1L) +
+  geom_vline(aes(xintercept = 2010), linetype=2, colour = "black", size = 1) +
+  geom_vline(aes(xintercept = 2017), linetype=2, colour = "black", size = 1) +
+ scale_color_hue() +
+ labs(y = "In % of total trades", title = "Comparison about imports to high economies and 
+      exports from low/middle economies ") +
+ theme_gray()
+```
+
+----------------------------------------
+
+We can see that the *Switzerland* imports a bit (**19,24%**) from *low / middle economies* in 2017 but this is really **increasing since 2010**. About the exports, *Switzerland* exports a lot to *high-income economies* (**75,15%**) in 2017 but this is **decreasing since 2010**.
+As a conclusion, we can say that *Switzerland* tend to import more from low / middle economies but also to export more to these economies. However, the most of exports / imports of Switzerland are made with high-income economies but the low / middle economies **increase their parts during last decade**.
+
+### Government expenditure on education, in comparison with GDP
+
+```{r}
+ExpenditureEducationC <- WDI(indicator = "SE.XPD.TOTL.GD.ZS", #Government expenditure on education, total (% of GDP)
+country = c("CH", "FRA", "DE", "ITA"),
+                   start = 1996,
+                   end = 2016)
+ExpenditureEducationC <- dplyr::rename(ExpenditureEducationC, Government_Expenditure = SE.XPD.TOTL.GD.ZS)
+```
+
+```{r}
+GDPComparison <- WDI(indicator = "NY.GDP.MKTP.CD", #GDP
+country = c("CH", "FRA", "DE", "ITA"),
+                   start = 1996,
+                   end = 2016)
+GDPComparison <- dplyr::rename(GDPComparison, GDP = NY.GDP.MKTP.CD)
+```
+
+```{r}
+library(dplyr)
+PlotEducationGDP <- bind_cols(ExpenditureEducationC, GDPComparison)
+```
+
+```{r}
+library(plotly)
+DynGraphPlotEducationGDP <- ggplot(PlotEducationGDP, aes(year, Government_Expenditure, color = country)) +
+  geom_point(aes(size = GDP, frame = year)) +
+  scale_x_log10() +
+  hrbrthemes::theme_modern_rc() +
+  labs(y = "Government Expenditure in % of GDP", title = "Expenditure on education in % of GDP")
+DynGraphPlotEducationGDP <- ggplotly(DynGraphPlotEducationGDP)
+DynGraphPlotEducationGDP 
+```
+
+----------------------------------------
+
+Texte a mettre
+
+### Switzerland population map
+
+```{r, include=FALSE}
+library(readxl)
+CHdatamap <- read_excel("~/L3pgeprojects/CountryReportCH/MapCH/CHdatamap.xlsx", 
+    sheet = "2018", col_types = c("text", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric"))
+```
+
+```{r, include=FALSE}
+CHdatamap1 <- tidyr::drop_na(CHdatamap)
+```
+
+```{r, include=FALSE}
+CHdatamap1 <- rename(CHdatamap1, NAME_1=...1)
+```
+
+```{r, include=FALSE}
+CHdatamap2 <- ifelse(CHdatamap1$Total >= 1 & CHdatamap1$Total <= 50000, "1-50000", ifelse(CHdatamap1$Total >= 50001 & CHdatamap1$Total <= 100000, "50001-100000", ifelse(CHdatamap1$Total >= 100001 & CHdatamap1$Total <= 200000, "100001-200000", ifelse(CHdatamap1$Total >= 200001 & CHdatamap1$Total <= 300000, "200001-300000", ifelse(CHdatamap1$Total >= 300001 & CHdatamap1$Total <= 400000, "300001-400000", ifelse(CHdatamap1$Total >= 400001 & CHdatamap1$Total <= 500000, "400001-500000", ifelse(CHdatamap1$Total >= 500001 & CHdatamap1$Total <= 700000, "500001-700000", ifelse(CHdatamap1$Total >= 700001 & CHdatamap1$Total <= 1000000, "700001-1000000", ifelse(CHdatamap1$Total >= 1000000 & CHdatamap1$Total <= 1500000, "1000001-1500000", ifelse(CHdatamap1$Total >= 1500001, "1500000+", NA))))))))))
+```
+
+```{r, include=FALSE}
+cut(CHdatamap1$Total, breaks=c(0, 50000, 100000, 200000, 300000, 400000, 500000, 700000, 1000000, 1500000, Inf), labels=c("0-50000", "50001-100000", "100001-200000", "200001-300000", "300001-400000", "400001-500000", "500001-700000", "700001-1000000", "1000001-1500000", "1500000+"))
+```
+
+```{r, include=FALSE}
+mylabels <- c("0-50000", "50001-100000", "100001-200000", "200001-300000", "300001-400000", "400001-500000", "500001-700000", "700001-1000000", "1000001-1500000", "1500000+")
+```
+
+```{r, include=FALSE}
+CHdatamap1$Population <- base::cut(CHdatamap1$Total,
+                        breaks = c(0, 50000, 100000, 200000, 300000, 400000, 500000, 700000, 1000000, 1500000, 2000000), 
+                        labels = mylabels, right = F, ordered_result = T)
+```
+
+```{r}
+myCHmap <- st_read("~/L3pgeprojects/CountryReportCH/MapCH/CHE_adm/CHE_adm1.shp", stringsAsFactors = FALSE)
+
+datamap <- inner_join(myCHmap, CHdatamap1)
+
+tm_shape(datamap) +
+tm_polygons("Population", id = "NAME_1", palette = "Reds")+ 
+
+tmap_mode("view")
+DensityMap <- tmap_last()
+
+
+tmap_save(DensityMap, "PopulationMapCH.html")
+```
+
+----------------------------------------
+
+Texte a mettre
