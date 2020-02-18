@@ -1,0 +1,50 @@
+---
+title: "ExportDataMapBRA"
+author: "Valentin"
+date: "18/02/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(comtradr)
+```
+
+```{r}
+ct_country_lookup("Brazil", "reporter")
+```
+
+```{r}
+ct_commodity_lookup("soy")
+```
+
+```{r}
+SoyaExport <- ct_search(reporters = "Brazil", 
+               partners = ("France"), 
+               trade_direction = "exports",
+               commod_codes = "1201",
+               start_date = 2014, 
+               end_date = 2018)
+```
+
+```{r}
+str(SoyaExport)
+```
+
+```{r}
+quantitysoya <- dplyr::select(SoyaExport, partner, qty, year)
+```
+
+```{r}
+names(quantitysoya)[names(quantitysoya) == "partner"] <- "NAME"
+```
+
+```{r}
+View(quantitysoya)
+```
+
+
+
