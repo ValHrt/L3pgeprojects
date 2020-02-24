@@ -11,6 +11,76 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+# Switzerland population map by canton
+
+```{r}
+library(sf)
+library(ggplot2)
+library(tmap)
+library(tmaptools)
+library(leaflet)
+library(dplyr)
+library(tidyr)
+```
+
+```{r}
+library(readxl)
+CHdatamap <- read_excel("~/L3pgeprojects/CountryReportCH/MapCH/CHdatamap.xlsx", 
+    sheet = "2018", col_types = c("text", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric", 
+        "numeric", "numeric", "numeric"))
+```
+
+```{r}
+CHdatamap1 <- tidyr::drop_na(CHdatamap)
+```
+
+```{r}
+CHdatamap1 <- rename(CHdatamap1, NAME_1=...1)
+```
+
+### Supprimer les lignes depuis Excel
+
+```{r}
+CHdatamap2 <- ifelse(CHdatamap1$Total >= 1 & CHdatamap1$Total <= 50000, "1-50000", ifelse(CHdatamap1$Total >= 50001 & CHdatamap1$Total <= 100000, "50001-100000", ifelse(CHdatamap1$Total >= 100001 & CHdatamap1$Total <= 200000, "100001-200000", ifelse(CHdatamap1$Total >= 200001 & CHdatamap1$Total <= 300000, "200001-300000", ifelse(CHdatamap1$Total >= 300001 & CHdatamap1$Total <= 400000, "300001-400000", ifelse(CHdatamap1$Total >= 400001 & CHdatamap1$Total <= 500000, "400001-500000", ifelse(CHdatamap1$Total >= 500001 & CHdatamap1$Total <= 700000, "500001-700000", ifelse(CHdatamap1$Total >= 700001 & CHdatamap1$Total <= 1000000, "700001-1000000", ifelse(CHdatamap1$Total >= 1000000 & CHdatamap1$Total <= 1500000, "1000001-1500000", ifelse(CHdatamap1$Total >= 1500001, "1500000+", NA))))))))))
+```
+
+```{r}
+cut(CHdatamap1$Total, breaks=c(0, 50000, 100000, 200000, 300000, 400000, 500000, 700000, 1000000, 1500000, Inf), labels=c("0-50000", "50001-100000", "100001-200000", "200001-300000", "300001-400000", "400001-500000", "500001-700000", "700001-1000000", "1000001-1500000", "1500000+"))
+```
+
+```{r}
+mylabels <- c("0-50000", "50001-100000", "100001-200000", "200001-300000", "300001-400000", "400001-500000", "500001-700000", "700001-1000000", "1000001-1500000", "1500000+")
+```
+
+```{r}
+CHdatamap1$Population <- base::cut(CHdatamap1$Total,
+                        breaks = c(0, 50000, 100000, 200000, 300000, 400000, 500000, 700000, 1000000, 1500000, 2000000), 
+                        labels = mylabels, right = F, ordered_result = T)
+```
+
+```{r}
+myCHmap <- st_read("~/L3pgeprojects/CountryReportCH/MapCH/CHE_adm/CHE_adm1.shp", stringsAsFactors = FALSE)
+
+datamap <- inner_join(myCHmap, CHdatamap1)
+
+tm_shape(datamap) +
+tm_polygons("Population", id = "NAME_1", palette = "Reds")+ 
+
+tmap_mode("view")
+DensityMap <- tmap_last()
+
+
+tmap_save(DensityMap, "PopulationMapCH.html")
+```
+
+### Mettre le texte utilisé dans le FlexDashboard
+
+
 # Switzerland main economic indicators
 
 ## Analysis of the GDP
@@ -21,12 +91,10 @@ CHGDP <-WDI(indicator = "NY.GDP.MKTP.KD.ZG",
 country = c("CH"),
                    start = 1971,
                    end = 2018)
-CHGDP
 ```
 
 ```{r delete iso2c column}
 CHGDP$iso2c <- NULL
-CHGDP
 ```
 
 ```{r graphic about Switzerland GDP growth}
@@ -34,12 +102,12 @@ library(ggplot2)
  ggplot(CHGDP) +
  aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
  geom_line(size = 1L, colour = "#0c4c8a") +
- labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)") +
+ labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)", caption = "Source: SKEMA Quantum Studio") +
  theme_minimal()
 ```
 
 ```{r summary Switzerland GDP}
-CHmeangdp <- summary(CHGDP$NY.GDP.MKTP.KD.ZG)
+CHmeangdp <- summary(CHGDP$NY.GDP.MKTP.KD.ZG) 
 CHmeangdp
 ```
 
@@ -55,7 +123,6 @@ comparecountries <-WDI(indicator = "NY.GDP.MKTP.KD.ZG",
 country = c("CH", "DE", "FRA", "IT"),
                    start = 1971,
                    end = 2018)
-comparecountries
 ```
 
 ### Comparison of the data between the 4 countries
@@ -78,14 +145,13 @@ CHGdpPerCapita<- WDI(indicator = "NY.GDP.PCAP.PP.CD",
 country = c("CH"),
                    start = 1990,  #the data start in 1990 for this information
                    end = 2018)
-CHGdpPerCapita
 ```
 
 ```{r Switzerland Gdp per capita evolution graphic}
 ggplot(CHGdpPerCapita) +
  aes(x = year, y = NY.GDP.PCAP.PP.CD) +
  geom_line(size = 1L, colour = "#0c4c8a") +
- labs(y = "Gdp per capita", title = "Switzerland Gdp per capita evolution (in $ constant)") +
+ labs(y = "Gdp per capita", title = "Switzerland Gdp per capita evolution (in $ constant)", caption = "Source: SKEMA Quantum Studio") +
  theme_minimal()
 ```
 
@@ -100,7 +166,6 @@ GdpPerCapitaComparison <- WDI(indicator = "NY.GDP.PCAP.PP.CD",
 country = c("CH", "DE", "FRA", "IT"),
                    start = 1990,
                    end = 2018)
-GdpPerCapitaComparison
 ```
 
 ```{r Comparison graphic about GDP per capita}
@@ -108,7 +173,7 @@ ggplot(GdpPerCapitaComparison) +
  aes(x = year, y = NY.GDP.PCAP.PP.CD, colour = country) +
  geom_line(size = 1L) +
  scale_color_hue() +
- labs(y = "GDP per capita", title = "Comparison GDP per capita") +
+ labs(y = "GDP per capita", title = "Comparison GDP per capita", caption = "Source: SKEMA Quantum Studio") +
  theme_minimal()
 ```
 
@@ -124,12 +189,10 @@ CHUnemploymentadvancededucation <- WDI(indicator = "SL.UEM.ADVN.ZS", #Unemployme
 country = c("CH"),
                    start = 1998,
                    end = 2018)
-CHUnemploymentadvancededucation
 ```
 
 ```{r Renaming column Advanced_Education}
 base::colnames(CHUnemploymentadvancededucation)[colnames(CHUnemploymentadvancededucation)=="SL.UEM.ADVN.ZS"] <- "Advanced_Education"
-CHUnemploymentadvancededucation
 ```
 
 
@@ -138,12 +201,10 @@ CHUnemploymentintermediateeducation <- WDI(indicator = "SL.UEM.INTM.ZS", #Unempl
 country = c("CH"),
                    start = 1998,
                    end = 2018)
-CHUnemploymentintermediateeducation
 ```
 
 ```{r Renaming column Intermediate_Education}
 base::colnames(CHUnemploymentintermediateeducation)[colnames(CHUnemploymentintermediateeducation)=="SL.UEM.INTM.ZS"] <- "Intermediate_Education"
-CHUnemploymentintermediateeducation
 ```
 
 
@@ -152,24 +213,20 @@ CHUnemploymentbasiceducation <- WDI(indicator = "SL.UEM.BASC.ZS", #Unemployment 
 country = c("CH"),
                    start = 1998,
                    end = 2018)
-CHUnemploymentbasiceducation
 ```
 
 ```{r Renaming column Basic_Education}
 base::colnames(CHUnemploymentbasiceducation)[colnames(CHUnemploymentbasiceducation)=="SL.UEM.BASC.ZS"] <- "Basic_Education"
-CHUnemploymentbasiceducation
 ```
 
 
 ```{r First left-join}
 library(dplyr)
 CHjoin1 <- left_join(CHUnemploymentadvancededucation, CHUnemploymentintermediateeducation, by="year") 
-CHjoin1
 ```
 
 ```{r Second left-join}
 CHjoin2 <- left_join(CHjoin1, CHUnemploymentbasiceducation, by="year")
-CHjoin2
 ```
 
 ```{r Delete some columns}
@@ -177,12 +234,10 @@ CHjoin2$iso2c.y <- NULL
 CHjoin2$iso2c <-  NULL
 CHjoin2$country.y <- NULL
 CHjoin2$country <- NULL
-CHjoin2
 ```
 
 ```{r Re-arrange columns}
 CHjoin2 <- CHjoin2[c(1,2,4,3,5,6)]
-CHjoin2
 ```
 
 ## Graphic of the comparison about unemployment rate by education level
@@ -202,7 +257,7 @@ ggplot(
   CHjoin2,
   aes(x = year, y = VAL, color = TYPE)
 ) +
-  labs(y = "Unemployment rate", title = "Unemployment rate by education level") +
+  labs(y = "Unemployment rate", title = "Unemployment rate by education level", caption = "Source: SKEMA Quantum Studio") +
 geom_line()
 ```
 
@@ -216,12 +271,10 @@ UAEcomparison<- WDI(indicator = "SL.UEM.ADVN.ZS", #Unemployment with advanced ed
 country = c("CH", "DE", "FRA", "IT"),
                    start = 2000,
                    end = 2018)
-UAEcomparison
 ```
 
 ```{r Renaming column Advanced_Education comparison}
 base::colnames(UAEcomparison)[colnames(UAEcomparison)=="SL.UEM.ADVN.ZS"] <- "Advanced_EducationC"
-UAEcomparison
 ```
 
 ```{r Unemployment intermediate education comparison}
@@ -229,12 +282,10 @@ UIEcomparison<- WDI(indicator = "SL.UEM.INTM.ZS", #Unemployment with intermediat
 country = c("CH", "DE", "FRA", "IT"),
                    start = 2000,
                    end = 2018)
-UIEcomparison
 ```
 
 ```{r Renaming column Intermediate_Education comparison}
 base::colnames(UIEcomparison)[colnames(UIEcomparison)=="SL.UEM.INTM.ZS"] <- "Intermediate_EducationC"
-UIEcomparison
 ```
 
 ```{r Unemployment basic education comparison}
@@ -242,18 +293,15 @@ UBEcomparison <- WDI(indicator = "SL.UEM.BASC.ZS", #Unemployment with basic educ
 country = c("CH", "DE", "FRA", "IT"),
                    start = 2000,
                    end = 2018)
-UBEcomparison
 ```
 
 ```{r Renaming column Basic_Education comparison}
 base::colnames(UBEcomparison)[colnames(UBEcomparison)=="SL.UEM.BASC.ZS"] <- "Basic_EducationC"
-UBEcomparison
 ```
 
 ```{r Combining columns comparison}
 library(dplyr)
 UCjoin <- bind_cols(UAEcomparison, UIEcomparison, UBEcomparison)
-UCjoin
 ```
 
 ```{r Delete some columns comparison}
@@ -264,12 +312,10 @@ UCjoin$year1 <- NULL
 UCjoin$iso2c2 <- NULL
 UCjoin$country2 <- NULL
 UCjoin$year2 <- NULL
-UCjoin
 ```
 
 ```{r Re-arrange columns comparison}
 UCjoin <- UCjoin[c(1,3,2,4,5)]
-UCjoin
 ```
 
 ### Graphic about unemployment by education level between 4 european countries
@@ -282,7 +328,7 @@ UCjoinTest <- gather(data = UCjoin, key = TYPE, value = VAL, Advanced_EducationC
 
 ```{r Graphic about unemployment rate by education level comparison}
 qplot(data = UCjoinTest, y = VAL, x = year, color = TYPE, geom = "line") + 
-  labs(y = "Unemployment rate in %", title = "Unemployment rate by education level") +
+  labs(y = "Unemployment rate in %", title = "Unemployment rate by education level", caption = "Source: SKEMA Quantum Studio") +
   facet_wrap(~ country) +
   theme_linedraw()
 ```
@@ -298,7 +344,6 @@ CHExports <- WDI(indicator = "TX.VAL.MRCH.HI.ZS", #Merchandise exports to high-i
 country = c("CH"),
                    start = 1971,
                    end = 2018)
-CHExports
 ```
 
 
@@ -309,7 +354,7 @@ ggplot(CHExports) +
  aes(x = year, y = TX.VAL.MRCH.HI.ZS) +
  geom_line(size = 1L, colour = "#0c4c8a") +
  labs(y = "Merchandise Exports", title = "Merchandise exports to high-income economies (% of total 
-      merchandise exports)") +
+      merchandise exports)", caption = "Source: SKEMA Quantum Studio") +
  theme_minimal()
 ```
 
@@ -320,7 +365,6 @@ CHImports <- WDI(indicator = "TM.VAL.MRCH.OR.ZS", #Merchandise imports from low-
 country = c("CH"),
                    start = 1971,
                    end = 2018)
-CHImports
 ```
 
 ```{r Merchandise imports from low- and middle-income economies graphic}
@@ -328,7 +372,7 @@ library(ggplot2)
 ggplot(CHImports) +
  aes(x = year, y = TM.VAL.MRCH.OR.ZS) +
  geom_line(size = 1L, colour = "#0c4c8b") +
- labs(y = "Imports from low_middle economies", title = "Merchandise imports from low- and middle-income economies") +
+ labs(y = "Imports from low_middle economies", title = "Merchandise imports from low- and middle-income economies", caption = "Source: SKEMA Quantum Studio") +
  theme_minimal()
 ```
 
@@ -337,13 +381,11 @@ ggplot(CHImports) +
 ```{r crossing board import export}
 library(dplyr)
 ImportExport <- bind_cols(CHExports, CHImports)
-ImportExport
 ```
 
 ```{r}
 base::colnames(ImportExport)[colnames(ImportExport)=="TX.VAL.MRCH.HI.ZS"] <- "ExportsToHighEconomies"
 base::colnames(ImportExport)[colnames(ImportExport)=="TM.VAL.MRCH.OR.ZS"] <- "ImportsFromLowEconomies"
-ImportExport
 ```
 
 
@@ -362,7 +404,7 @@ ggplot(CHImportExport) +
   geom_vline(aes(xintercept = 2017), linetype=2, colour = "black", size = 1) +
  scale_color_hue() +
  labs(y = "In % of total trades", title = "Comparison about imports to high economies and 
-      exports from low/middle economies ") +
+      exports from low/middle economies ", caption = "Source: SKEMA Quantum Studio") +
  theme_gray()
 ```
 
@@ -384,7 +426,6 @@ library(dplyr)
 SPIc <- sqs_spi_data(country = c("CHE", "FRA", "DEU", "ITA"), 
                        year = c("2014","2015","2016", "2017", "2018", "2019"), 
                        indicators = "SPI")
-SPIc
 ```
 
 ```{r Convert value to numeric SPI}
@@ -418,7 +459,6 @@ country = c("CH", "FRA", "DE", "ITA"),
                    start = 1996,
                    end = 2016)
 ExpenditureEducationC <- dplyr::rename(ExpenditureEducationC, Government_Expenditure = SE.XPD.TOTL.GD.ZS)
-ExpenditureEducationC
 ```
 
 ```{r}
@@ -427,13 +467,11 @@ country = c("CH", "FRA", "DE", "ITA"),
                    start = 1996,
                    end = 2016)
 GDPComparison <- dplyr::rename(GDPComparison, GDP = NY.GDP.MKTP.CD)
-GDPComparison
 ```
 
 ```{r}
 library(dplyr)
 PlotEducationGDP <- bind_cols(ExpenditureEducationC, GDPComparison)
-PlotEducationGDP
 ```
 
 ```{r}
@@ -452,7 +490,6 @@ library(rdbnomics)
 BalanceTransactionsC <- rdb(ids = c('AMECO/UBCA/CHE.1.0.0.0.UBCA', "AMECO/UBCA/FRA.1.0.0.0.UBCA", "AMECO/UBCA/ITA.1.0.0.0.UBCA", "AMECO/UBCA/DEU.1.0.0.0.UBCA")) %>%
   filter(!is.na(value))
 BalanceTransactionsC <- rename(BalanceTransactionsC, country = series_name)
-BalanceTransactionsC
 ```
 
 ```{r}
@@ -468,7 +505,6 @@ ggplot(BalanceTransactionsC, aes(x = period, y = value, color = country)) +
 CPIc<- rdb(ids = c('BIS/long_cpi/A.CH.628', "BIS/long_cpi/A.FR.628", "BIS/long_cpi/A.IT.628", "BIS/long_cpi/A.DE.628")) %>%
   filter(!is.na(value))
 CPIc <- rename(CPIc, Country = series_name)
-CPIc
 ```
 
 ```{r}
