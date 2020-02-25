@@ -493,12 +493,15 @@ BalanceTransactionsC <- rename(BalanceTransactionsC, country = series_name)
 ```
 
 ```{r}
-ggplot(BalanceTransactionsC, aes(x = period, y = value, color = country)) +
+BalanceTransactionsCGraph <- ggplot(BalanceTransactionsC, aes(x = period, y = value, color = country)) +
   geom_line(size = 1) + 
   theme_dark() +
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4)) +
-  labs(y = "Balance transaction", title = "Balance on current transactions with the rest of the world")
+  labs(y = "Balance transaction", title = "Balance on current transactions with the rest of the world", caption = "Source: SKEMA Quantum Studio")
+
+BalanceTransactionsCGraph <- ggplotly(BalanceTransactionsCGraph)
+BalanceTransactionsCGraph
 ```
 
 ```{r Consumer Price Index, Base 2010=100}
@@ -513,10 +516,24 @@ ggplot(CPIc, aes(x = period, y = value, color = Country)) +
   theme_dark() +
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4)) +
-  labs(y = "Consumer Price Index", title = "CPI comparison")
+  labs(y = "Consumer Price Index", title = "CPI comparison", caption = "Source: SKEMA Quantum Studio")
 ```
 
+```{r}
+ForeignPopulation <- rdb(ids = c('OECD/MIG/TOTP.B15.TOT.CHE', "OECD/MIG/TOTP.B15.TOT.FRA", "OECD/MIG/TOTP.B15.TOT.ITA", "OECD/MIG/TOTP.B15.TOT.DEU")) %>%
+  filter(!is.na(value))
+```
 
+### Essayer de faire une flèche sur le graphique dessous
+
+```{r}
+ggplot(ForeignPopulation, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) + 
+  theme_dark() +
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4)) +
+  labs(y = "Foreign population in % of total pop", title = "Stock of foreign population by nationality", caption = "Source: SKEMA Quantum Studio")
+```
 
 
 
