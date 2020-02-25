@@ -524,18 +524,54 @@ ForeignPopulation <- rdb(ids = c('OECD/MIG/TOTP.B15.TOT.CHE', "OECD/MIG/TOTP.B15
   filter(!is.na(value))
 ```
 
-### Essayer de faire une flèche sur le graphique dessous
 
 ```{r}
-ggplot(ForeignPopulation, aes(x = period, y = value, color = Country)) +
+ForeignPopulationPlot <- ggplot(ForeignPopulation, aes(x = period, y = value, color = Country)) +
   geom_line(size = 1) + 
-  theme_dark() +
+  theme_light() +
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4)) +
   labs(y = "Foreign population in % of total pop", title = "Stock of foreign population by nationality", caption = "Source: SKEMA Quantum Studio")
 ```
 
+```{r}
+library(grid)
+my_text <- "Huge gap between Switzerland
+and Germany"
+my_grob = grid.text(my_text, x=0.7,  y=0.6, gp=gpar(col="black", fontsize=12, fontface="bold"))
+```
 
+```{r}
+ForeignPopulationPlot + annotation_custom(my_grob)
+```
 
+```{r}
+CrimesComparison <- rdb(ids = c('Eurostat/crim_hom_soff/A.ICCS0101.PER_CNV.T.P_HTHAB.CH', "Eurostat/crim_hom_soff/A.ICCS0101.PER_CNV.T.P_HTHAB.FR", "Eurostat/crim_hom_soff/A.ICCS0101.PER_CNV.T.P_HTHAB.IT", "Eurostat/crim_hom_soff/A.ICCS0101.PER_CNV.T.P_HTHAB.DE")) %>%
+  filter(!is.na(value))
+CrimesComparison
+```
+
+```{r}
+base::colnames(CrimesComparison)[colnames(CrimesComparison)=="Geopolitical entity (reporting)"] <- "Country" 
+```
+
+```{r}
+CrimesComparisonPlot <- ggplot(CrimesComparison, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) + 
+  theme_gray() +
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4)) +
+  labs(y = "Intentional homicide per 
+       hundred thousand inhabitants", title = "Crimes stats", caption = "Source: SKEMA Quantum Studio")
+```
+
+```{r}
+CrimesComparisonPlot + theme(plot.title=element_text(size=20, 
+                                    face="bold", 
+                                    family="American Typewriter",
+                                    color="#E81232",
+                                    hjust=0.5,
+                                    lineheight=1.2))
+```
 
 
