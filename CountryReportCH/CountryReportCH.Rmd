@@ -505,10 +505,10 @@ BalanceTransactionsCGraph <- ggplotly(BalanceTransactionsCGraph) %>%
 BalanceTransactionsCGraph
 ```
 
-```{r Consumer Price Index, Base 2010=100, include=FALSE}
+```{r Consumer Price Index, include=FALSE}
 CPIc<- rdb(ids = c('BIS/long_cpi/A.CH.628', "BIS/long_cpi/A.FR.628", "BIS/long_cpi/A.IT.628", "BIS/long_cpi/A.DE.628")) %>%
   filter(!is.na(value))
-CPIc <- rename(CPIc, Country = series_name)
+CPIc <- rename(CPIc, Country = series_name) # Base 2010=100 (à inclure sur graphique)
 ```
 
 ```{r}
@@ -594,4 +594,28 @@ ggplot(PovertyComparison, aes(x = period, y = value, color = Country)) +
 ", caption = "Source: SKEMA Quantum Studio")
 ```
 
+```{r include=FALSE}
+CorruptionIndex <- rdb(ids = c('Eurostat/sdg_16_50/A.NR.CH', "Eurostat/sdg_16_50/A.NR.FR", "Eurostat/sdg_16_50/A.NR.IT", "Eurostat/sdg_16_50/A.NR.DE")) %>%
+  filter(!is.na(value))
+```
 
+```{r include=FALSE}
+CorruptionIndex2019 <- filter(CorruptionIndex, original_period == 2019)
+```
+
+```{r include=FALSE}
+base::colnames(CorruptionIndex2019)[colnames(CorruptionIndex2019)=="Geopolitical entity (reporting)"] <- "Country" 
+```
+
+```{r}
+ggplot(CorruptionIndex2019) +
+ aes(x = Country, colour = Country, weight = value) +
+ geom_bar(fill = "#0c4c8a") +
+ scale_color_hue() +
+ labs(y = "Value", title = "Corruption Perceptions Index") +
+ ggthemes::theme_stata()
+```
+
+### Description à ajouter au graphique précédent
+
+The indicator is a composite index based on a combination of surveys and assessments of corruption from 13 different sources and scores and ranks countries based on how corrupt a country’s public sector is perceived to be, with a score of 0 representing a very high level of corruption and a score of 100 representing a very clean country.
