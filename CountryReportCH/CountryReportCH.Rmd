@@ -85,7 +85,7 @@ tmap_save(DensityMap, "PopulationMapCH.html")
 
 ## Analysis of the GDP
 
-```{r search indicator GDP}
+```{r search indicator GDP, include=FALSE}
 library(WDI)
 CHGDP <-WDI(indicator = "NY.GDP.MKTP.KD.ZG",
 country = c("CH"),
@@ -93,7 +93,7 @@ country = c("CH"),
                    end = 2018)
 ```
 
-```{r delete iso2c column}
+```{r delete iso2c column, include=FALSE}
 CHGDP$iso2c <- NULL
 ```
 
@@ -500,7 +500,8 @@ BalanceTransactionsCGraph <- ggplot(BalanceTransactionsC, aes(x = period, y = va
    guides(col = guide_legend(nrow = 4)) +
   labs(y = "Balance transaction", title = "Balance on current transactions with the rest of the world", caption = "Source: SKEMA Quantum Studio")
 
-BalanceTransactionsCGraph <- ggplotly(BalanceTransactionsCGraph)
+BalanceTransactionsCGraph <- ggplotly(BalanceTransactionsCGraph) %>%
+  layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
 BalanceTransactionsCGraph
 ```
 
@@ -572,6 +573,25 @@ CrimesComparisonPlot + theme(plot.title=element_text(size=20,
                                     color="#E81232",
                                     hjust=0.5,
                                     lineheight=1.2))
+```
+
+```{r}
+PovertyComparison <- rdb(ids = c('Eurostat/ilc_peps01/A.PC.TOTAL.T.CH', "Eurostat/ilc_peps01/A.PC.TOTAL.T.IT", "Eurostat/ilc_peps01/A.PC.TOTAL.T.FR", "Eurostat/ilc_peps01/A.PC.TOTAL.T.DE")) %>%
+  filter(!is.na(value))
+```
+
+```{r}
+base::colnames(PovertyComparison)[colnames(PovertyComparison)=="Geopolitical entity (reporting)"] <- "Country" 
+```
+
+```{r}
+ggplot(PovertyComparison, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) + 
+  theme_gray() +
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4)) +
+  labs(y = "% at risk of poverty", title = "People at risk of poverty or social exclusion by age and sex
+", caption = "Source: SKEMA Quantum Studio")
 ```
 
 
