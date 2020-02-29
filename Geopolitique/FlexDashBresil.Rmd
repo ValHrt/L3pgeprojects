@@ -1,0 +1,194 @@
+---
+title: "Le Brésil, puissance régionale ou internationale ?"
+output: 
+  flexdashboard::flex_dashboard:
+    storyboard: true
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(rdbnomics)
+library(dplyr)
+library(WDI)
+library(ggplot2)
+library(plotly)
+```
+
+### Exports extra-MERCOSUR
+
+```{r include=FALSE}
+MercosurTradeExt <- rdb(ids = c('WTO/a2/BR.X.GXM.TO', "WTO/a2/AR.X.GXM.TO", "WTO/a2/UY.X.GXM.TO", "WTO/a2/VE.X.GXM.TO")) %>%
+  filter(!is.na(value))
+```
+
+```{r}
+ggplot(MercosurTradeExt, aes(x = period, y = value, color = series_name)) +
+  geom_line(size = 1) + 
+  theme(legend.position="bottom") + 
+  labs(y = "Valeur en million de $", x = "Année", title = "Exports vers les pays en dehors du MERCOSUR", caption = "Source SKEMA Quantum Studio") +
+   guides(col = guide_legend(nrow = 4))
+```
+
+---------------------------------------
+
+Nous pouvons voir que le *Brésil* est le pays qui exporte le plus vers les pays se trouvant **"hors" du MERCOSUR**. Pour l'année 2017, le total des exportations du *Brésil* vers ces pays s'élevaient à **194.675.695.000 de dollars**. En comparaison, le montant des exportations de l'*Uruguay* s'élevait seulement à **4.680.915.000 de dollars**.
+
+### Exports intra-MERCOSUR
+
+```{r include=FALSE}
+MercosurTradeInt <- rdb(ids = c('WTO/a2/AR.X.G27.TO', "WTO/a2/BR.X.G27.TO", "WTO/a2/UY.X.G27.TO", "WTO/a2/VE.X.G27.TO")) %>%
+  filter(!is.na(value))
+MercosurTradeInt
+```
+
+```{r}
+ggplot(MercosurTradeInt, aes(x = period, y = value, color = series_name)) +
+  geom_line(size = 1) + 
+  theme(legend.position="bottom") + 
+  labs(y = "Valeur en million de $", x = "Année", title = "Exports vers les pays du MERCOSUR", caption = "Source SKEMA Quantum Studio") +
+   guides(col = guide_legend(nrow = 4))
+```
+
+-----------------------------------------
+
+Là encore, c'est le *Brésil* qui exporte le plus à **destination des pays du MERCOSUR**. Néanmoins, la domination est moins marquée que pour les exports hors du *MERCOSUR*. En effet, le *Brésil* est suivi de **"près"** par l'*Argentine* pour les exports auprès des pays du *MERCOSUR*.
+
+### Imports extra-MERCOSUR
+
+```{r include=FALSE}
+MercosurImportExt <- rdb(ids = c('WTO/a2/AR.M.GXM.TO', "WTO/a2/BR.M.GXM.TO", "WTO/a2/UY.M.GXM.TO", "WTO/a2/VE.M.GXM.TO")) %>%
+  filter(!is.na(value))
+```
+
+```{r}
+ggplot(MercosurImportExt, aes(x = period, y = value, color = series_name)) +
+  geom_line(size = 1) + 
+  theme(legend.position="bottom") + 
+  labs(y = "Valeur en million de $", x = "Année", title = "Imports depuis les pays en dehors du MERCOSUR", caption = "Source SKEMA Quantum Studio") +
+   guides(col = guide_legend(nrow = 4))
+```
+
+-----------------------------------------
+
+Le *Brésil* est le pays qui exporte le plus en dehors du *MERCOSUR* mais c'est également celui qui **importe le plus auprès des pays n'appartenant pas au MERCOSUR**. Il est toutefois intéressant de noter que **la balance des échanges extra-MERCOSUR est positive** pour le *Brésil*.
+
+### Imports intra-MERCOSUR
+
+```{r include=FALSE}
+MercosurImportInt <- rdb(ids = c('WTO/a2/AR.M.G27.TO', "WTO/a2/BR.M.G27.TO", "WTO/a2/UY.M.G27.TO", "WTO/a2/VE.M.G27.TO")) %>%
+  filter(!is.na(value))
+MercosurImportInt <- rename(MercosurImportInt, Country = series_name)
+```
+
+```{r}
+ggplot(MercosurImportInt, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) + 
+  theme(legend.position="bottom") + 
+  labs(y = "Valeur en million de $", x = "Année", title = "Imports depuis les pays du MERCOSUR", caption = "Source SKEMA Quantum Studio") +
+   guides(col = guide_legend(nrow = 4))
+```
+
+-----------------------------------------
+
+L'*Argentine* est le pays qui **importe le plus en provenance des pays du MERCOSUR**, démontrant ainsi sa **dépendance aux pays sud-américains**. Le *Brésil* se trouve en seconde place depuis 2015, démontrant une **faible dépendance auprès des pays du MERCOSUR**.
+
+### Exports vers les USA
+
+```{r include=FALSE}
+MercosurTradeNA <- rdb(ids = c('WTO/a2/AR.X.NAX.TO', "WTO/a2/BR.X.NAX.TO", "WTO/a2/UY.X.NAX.TO", "WTO/a2/VE.X.NAX.TO")) %>%
+  filter(!is.na(value)) #export to North America
+MercosurTradeNA <- rename(MercosurTradeNA, Country = series_name)
+```
+
+```{r}
+ggplot(MercosurTradeNA, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) +
+  theme(legend.position="bottom") +
+  labs(y = "Valeur en million de $", x = "Année", title = "Exports vers les USA", caption = "Source SKEMA Quantum Studio") +
+   guides(col = guide_legend(nrow = 4))
+```
+
+-----------------------------------------
+
+Le *Brésil* est le pays qui **exporte le plus** vers les *USA*, l'*Argentine* est en seconde place dans des proportions quasiment **3 fois inférieures**. 
+
+### Balance des paiements
+
+```{r}
+BalancePaiements <- rdb(ids = c('IMF/BOP/A.AR.BGM_BP6_USD', "IMF/BOP/A.BR.BGM_BP6_USD", "IMF/BOP/A.UY.BGM_BP6_USD", "IMF/BOP/A.VE.BGM_BP6_USD")) %>%
+  filter(!is.na(value))
+BalancePaiements <- rename(BalancePaiements, Country = "Reference Area")
+```
+
+```{r}
+ggplot(BalancePaiements, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) +
+  theme(legend.position="bottom") +
+  labs(y = "Valeur en million de $", x = "Année", title = "Balance des paiements en Millions de $", caption = "Source SKEMA Quantum Studio") +
+   guides(col = guide_legend(nrow = 4))
+```
+
+-----------------------------------------
+
+La balance des paiements démontre la puissance du *Brésil* en termes de commerce extérieur puisque le *Brésil* affiche une balance **positive à hauteur de 37 milliards de dollars en 2019**.
+
+### Analyse de la puissance militaire
+
+```{r include=FALSE}
+MilitaryExpenditure <- WDI(indicator = "MS.MIL.XPND.CD", #Military expenditure $
+country = c("BRA", "UY", "VE", "ARG"),
+                   start = 1996,
+                   end = 2017)
+MilitaryExpenditure <- rename(MilitaryExpenditure, Military_Expenditure = MS.MIL.XPND.CD)
+MilitaryExpenditure
+```
+
+```{r include=FALSE}
+NbTroops <- WDI(indicator = "MS.MIL.TOTL.P1", #Armed forces personnel, total
+country = c("BRA", "UY", "VE", "ARG"),
+                   start = 1996,
+                   end = 2017)
+NbTroops <- rename(NbTroops, Troops = MS.MIL.TOTL.P1)
+NbTroops
+```
+
+```{r include=FALSE}
+TroopsAndExpenditure = bind_cols(MilitaryExpenditure, NbTroops)
+TroopsAndExpenditure
+```
+
+
+```{r}
+DynGraphTroopsExp <- ggplot(TroopsAndExpenditure, aes(year, Military_Expenditure, color = country)) +
+  geom_point(aes(size = Troops, frame = year)) +
+  scale_x_log10() +
+  hrbrthemes::theme_modern_rc() +
+  labs(y = "Dépenses militaires en $", x = "Année", title = "Comparaison entre dépenses militaires et nombre 
+       de militaires", caption = "Source SKEMA Quantum Studio")
+DynGraphTroopsExp <- ggplotly(DynGraphTroopsExp)
+DynGraphTroopsExp
+```
+
+-----------------------------------------
+
+En termes de puissance militaire, le *Brésil* domine très largement l'*Argentine*, l'*Uruguay* et le *Vénézuela* puisque comme le montre le graphique, le *Brésil* est le pays qui **alloue le plus gros budget pour son armée et qui compte le plus grand nombre de militaires**.
+
+### Part des militaires en % du total des travailleurs
+
+```{r}
+PovertyCompare <- rdb(ids = c('UNDATA/DF_UNDATA_WDI/A.MS_MIL_TOTL_TF_ZS.ARG', "UNDATA/DF_UNDATA_WDI/A.MS_MIL_TOTL_TF_ZS.BRA", "UNDATA/DF_UNDATA_WDI/A.MS_MIL_TOTL_TF_ZS.URY", "UNDATA/DF_UNDATA_WDI/A.MS_MIL_TOTL_TF_ZS.VEN")) %>%
+  filter(!is.na(value))
+PovertyCompare <- rename(PovertyCompare, Country = REF_AREA)
+```
+
+```{r}
+ggplot(PovertyCompare, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) +
+  theme(legend.position="bottom") +
+  labs(y = "Valeur en %", x = "Année", title = "Part des militaires en % du total des travailleurs", caption = "Source SKEMA Quantum Studio") +
+   guides(col = guide_legend(nrow = 4))
+```
+
+-----------------------------------------
+
+Paradoxalement avec le graphique précédent, le *Brésil* est avec l'*Argentine*, le pays qui compte le **plus bas ratio en termes de militaires par rapport à sa population totale**. Il est intéressant de voir que la crise au *Vénézuela* a entrainé une **hausse record** du ratio militaires / travailleurs totaux.
