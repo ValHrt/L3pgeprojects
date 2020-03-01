@@ -149,6 +149,8 @@ DynGraphTroopsExp <- ggplotly(DynGraphTroopsExp)
 DynGraphTroopsExp
 ```
 
+### Part des militaires en % du total des travailleurs
+
 ```{r}
 PovertyCompare <- rdb(ids = c('UNDATA/DF_UNDATA_WDI/A.MS_MIL_TOTL_TF_ZS.ARG', "UNDATA/DF_UNDATA_WDI/A.MS_MIL_TOTL_TF_ZS.BRA", "UNDATA/DF_UNDATA_WDI/A.MS_MIL_TOTL_TF_ZS.URY", "UNDATA/DF_UNDATA_WDI/A.MS_MIL_TOTL_TF_ZS.VEN")) %>%
   filter(!is.na(value))
@@ -162,4 +164,48 @@ ggplot(PovertyCompare, aes(x = period, y = value, color = Country)) +
   labs(y = "Valeur en %", x = "Année", title = "Part des militaires en % du total des travailleurs", caption = "Source SKEMA Quantum Studio") +
    guides(col = guide_legend(nrow = 4))
 ```
+
+### Test ShapeFile
+
+```{r}
+PIBmercosur <- data.frame(Name=c("BRAZIL", "ARGENTINA", "VENEZUELA", "URUGUAY", "PARAGUAY"), "PIB en milliards"=c(1960, 478, 178, 59, 40))
+```
+
+```{r}
+PIBmercosur$Name <- as.character(PIBmercosur$Name)
+```
+
+```{r}
+PIBmercosur2 <- ifelse(PIBmercosur$PIB.en.milliards >= 1 & PIBmercosur$PIB.en.milliards <= 50, "1-50", ifelse(PIBmercosur$PIB.en.milliards >= 51 & PIBmercosur$PIB.en.milliards <= 100, "51-100", ifelse(PIBmercosur$PIB.en.milliards >= 101 & PIBmercosur$PIB.en.milliards <= 200, "101-200", ifelse(PIBmercosur$PIB.en.milliards >= 201 & PIBmercosur$PIB.en.milliards <= 400, "201-400", ifelse(PIBmercosur$PIB.en.milliards >= 401 & PIBmercosur$PIB.en.milliards <= 800, "401-800", ifelse(PIBmercosur$PIB.en.milliards >= 801 & PIBmercosur$PIB.en.milliards <= 1500, "801-1500", ifelse(PIBmercosur$PIB.en.milliards >= 1501 & PIBmercosur$PIB.en.milliards <= 2000, "1501-2000",  ifelse(PIBmercosur$PIB.en.milliards >= 2001, "2000+", NA))))))))
+```
+
+```{r}
+mylabelsmercosur <- c("1-50", "51-100", "101-200", "201-400", "401-800", "801-1500", "1501-2000", "2000+")
+```
+
+```{r}
+PIBmercosur$PIB.en.milliards <- base::cut(PIBmercosur$PIB.en.milliards,
+                        breaks = c(0, 50, 100, 200, 400, 800, 1500, 2000, 2500), 
+                        labels = mylabelsmercosur, right = F, ordered_result = T)
+```
+
+```{r}
+library(tmap)
+library(tmaptools)
+library(leaflet)
+library(sf)
+MERCOSURmap <- st_read("~/L3pgeprojects/Geopolitique/South_America/SouthAmerica.shp", stringsAsFactors = FALSE)
+
+datamapMERCOSUR <- inner_join(MERCOSURmap, PIBmercosur)
+
+tm_shape(datamapMERCOSUR) +
+tm_polygons("PIB.en.milliards", id = "Name", palette = "Reds")+ 
+
+tmap_mode("view")
+DensityMap <- tmap_last()
+
+
+tmap_save(DensityMap, "PIBmapMERCOSUR.html")
+```
+
 
