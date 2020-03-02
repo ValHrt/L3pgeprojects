@@ -3,15 +3,15 @@ title: "Country Report Switzerland"
 author: "Valentin"
 date: "18/01/2020"
 output:
-  html_document:
-    df_print: paged
+  html_document: 
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-# Switzerland population map by canton
+# **Switzerland population map by canton**
 
 ```{r, include=FALSE}
 library(sf)
@@ -43,8 +43,6 @@ CHdatamap1 <- tidyr::drop_na(CHdatamap)
 CHdatamap1 <- rename(CHdatamap1, NAME_1=...1)
 ```
 
-### Supprimer les lignes depuis Excel
-
 ```{r, include=FALSE}
 CHdatamap2 <- ifelse(CHdatamap1$Total >= 1 & CHdatamap1$Total <= 50000, "1-50000", ifelse(CHdatamap1$Total >= 50001 & CHdatamap1$Total <= 100000, "50001-100000", ifelse(CHdatamap1$Total >= 100001 & CHdatamap1$Total <= 200000, "100001-200000", ifelse(CHdatamap1$Total >= 200001 & CHdatamap1$Total <= 300000, "200001-300000", ifelse(CHdatamap1$Total >= 300001 & CHdatamap1$Total <= 400000, "300001-400000", ifelse(CHdatamap1$Total >= 400001 & CHdatamap1$Total <= 500000, "400001-500000", ifelse(CHdatamap1$Total >= 500001 & CHdatamap1$Total <= 700000, "500001-700000", ifelse(CHdatamap1$Total >= 700001 & CHdatamap1$Total <= 1000000, "700001-1000000", ifelse(CHdatamap1$Total >= 1000000 & CHdatamap1$Total <= 1500000, "1000001-1500000", ifelse(CHdatamap1$Total >= 1500001, "1500000+", NA))))))))))
 ```
@@ -63,7 +61,7 @@ CHdatamap1$Population <- base::cut(CHdatamap1$Total,
                         labels = mylabels, right = F, ordered_result = T)
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE}
 myCHmap <- st_read("~/L3pgeprojects/CountryReportCH/MapCH/CHE_adm/CHE_adm1.shp", stringsAsFactors = FALSE)
 
 datamap <- inner_join(myCHmap, CHdatamap1)
@@ -78,10 +76,12 @@ DensityMap <- tmap_last()
 tmap_save(DensityMap, "PopulationMapCH.html")
 ```
 
-### Mettre le texte utilisé dans le FlexDashboard
+### Which cantons are the more (or less) populated?
 
+Here is a map of *Switzerland* divided into **cantons**, showing the **total population** of each canton in **2018**.
+The canton of *Zurich* has the most inhabitants (**1520968 inhabitants**) and the canton of *Appenzell Innerrhoden* the least with only **16145 inhabitants**.
 
-# Switzerland main economic indicators
+# **Switzerland main economic indicators**
 
 ## Analysis of the GDP
 
@@ -125,7 +125,7 @@ country = c("CH", "DE", "FRA", "IT"),
                    end = 2018)
 ```
 
-### Comparison of the data between the 4 countries
+### Comparison of the GDP growth between the 4 countries
 
 ```{r summary of the 4 countries}
 library(dplyr)
@@ -133,7 +133,7 @@ comparecountries %>% group_by(country) %>% summarise(mean_gdp = mean(NY.GDP.MKTP
 ```
 
 
-### Conclusion about the comparison 
+### Conclusion about the GDP growth comparison 
 
 As we can see, Switzerland doesn't have the best results in terms of the variation of his GDP. In fact, Switzerland has the worst results compared to this others countries.
 It'll be interesting to understand why Switzerland has a better economy than these 3 countries even if the results about the variation of his gdp are less good than his neighbours.
@@ -177,7 +177,7 @@ ggplot(GdpPerCapitaComparison) +
  theme_minimal()
 ```
 
-### Conclusion about the comparison 
+### Conclusion about the GDP per capita comparison 
 
 Switzerland seems to be far away from his neighbours regarding the gdp per capita. Germany is in the second place with 53074.54 in 2018 (28% less than Switzerland), France in the third place with 45342.40 in 2018 (50% less than Switzerland).
 The conclusion of this analysis is that Switzerland is better when speaking about economic health into an individual citizens perspective.
@@ -376,7 +376,7 @@ ggplot(CHImports) +
  theme_minimal()
 ```
 
-## Crossing data between imports/exports
+## Comparison between imports and exports on the same graph
 
 ```{r crossing board import export, include=FALSE}
 library(dplyr)
@@ -413,6 +413,8 @@ ggplot(CHImportExport) +
 We can see that the Switzerland imports a bit (19,24%) from low / middle economies in 2017 but this is really increasing since 2010. About the exports, Switzerland exports a lot to high-income economies (75,15%) in 2017 but this is decreasing since 2010.
 As a conclusion, we can say that Switzerland tend to import more from low / middle economies but also to export more to these economies. However, the most of exports / imports of Switzerland are made with high-income economies but the low / middle economies increase their parts during last decade.
 
+# Penser à rajouter des données sur les industries suisses (finance, etc)
+
 ## Social progress index in Switzerland compared to France, Italy and Germany
 
 ```{r Library call, include=FALSE}
@@ -432,7 +434,7 @@ SPIc <- sqs_spi_data(country = c("CHE", "FRA", "DEU", "ITA"),
 SPIc$value <- as.numeric(SPIc$value)
 ```
 
-```{r Generate new board SPI}
+```{r Generate new board SPI, include=FALSE}
 kable(SPIc)%>%
 scroll_box(width = "100%", height = "200px")
 ```
@@ -451,7 +453,7 @@ ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) +
 
 ### Conclusion about comparison of SPI between Switzerland, France, Italy and Germany
 
-### TestTestTest
+## Expenditure on education
 
 ```{r, include=FALSE}
 ExpenditureEducationC <- WDI(indicator = "SE.XPD.TOTL.GD.ZS", #Government expenditure on education, total (% of GDP)
