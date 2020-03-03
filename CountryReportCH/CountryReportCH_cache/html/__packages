@@ -1,0 +1,15 @@
+base
+methods
+datasets
+utils
+grDevices
+graphics
+stats
+sf
+ggplot2
+tmap
+tmaptools
+leaflet
+dplyr
+tidyr
+readxl
