@@ -62,7 +62,7 @@ CHdatamap1$Population <- base::cut(CHdatamap1$Total,
                         labels = mylabels, right = F, ordered_result = T)
 ```
 
-```{r message=FALSE, warning=FALSE, cache=TRUE}
+```{r message=FALSE, warning=FALSE}
 myCHmap <- st_read("~/L3pgeprojects/CountryReportCH/MapCH/CHE_adm/CHE_adm1.shp", stringsAsFactors = FALSE)
 
 datamap <- inner_join(myCHmap, CHdatamap1)
@@ -81,6 +81,8 @@ tmap_save(DensityMap, "PopulationMapCH.html")
 
 Here is a map of *Switzerland* divided into **cantons**, showing the **total population** of each canton in **2018**.
 The canton of *Zurich* has the most inhabitants (**1520968 inhabitants**) and the canton of *Appenzell Innerrhoden* the least with only **16145 inhabitants**.
+
+*Switzerland* had a population of **8.57 million** inhabitants in 2019.
 
 # **Main economic indicators**
 
@@ -103,7 +105,7 @@ library(ggplot2)
  ggplot(CHGDP) +
  aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
  geom_line(size = 1L, colour = "#0c4c8a") +
- labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)", caption = "Source: SKEMA Quantum Studio") +
+ labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)", caption = "Source: SKEMA Quantum Studio (WDI)") +
  theme_minimal()
 ```
 
@@ -112,8 +114,8 @@ CHmeangdp <- summary(CHGDP$NY.GDP.MKTP.KD.ZG)
 CHmeangdp
 ```
 
-As we can see on the graph, the Switzerland GDP growth is sometimes under 0, but the most of the time, it's higher than 0. To better understand these data, i have choosen to compute the mean (1,68) and the median (1,82) of the GDP growth on the period 1971 - 2018.
-As we can see on the graphic, there is an important decrease in 1975 due to the first oil crisis.
+As we can see on the graph, the *Switzerland* GDP growth is sometimes under 0, but the most of the time, it's higher than 0. To better understand these data, i have choosen to compute the mean (1,68) and the median (1,82) of the GDP growth on the period 1971 - 2018.
+As we can see on the graphic, there is an **important decrease in 1975** due to the **first oil crisis**.
 
 ### *Comparison with three european countries (France, Italy and Germany)*
 
@@ -129,8 +131,8 @@ library(dplyr)
 comparecountries %>% group_by(country) %>% summarise(mean_gdp = mean(NY.GDP.MKTP.KD.ZG), max_gdp = max(NY.GDP.MKTP.KD.ZG), min_gdp = min(NY.GDP.MKTP.KD.ZG), median_gdp = median(NY.GDP.MKTP.KD.ZG))
 ```
 
-As we can see, Switzerland doesn't have the best results in terms of the variation of his GDP. In fact, Switzerland has the worst results compared to this others countries.
-It'll be interesting to understand why Switzerland has a better economy than these 3 countries even if the results about the variation of his gdp are less good than his neighbours.
+As we can see, *Switzerland* doesn't have the best results in terms of the variation of his GDP. In fact, Switzerland has the **worst results compared to this others countries**.
+It'll be interesting to understand why *Switzerland* has a better economy than these 3 countries even if the results about the variation of his gdp are less good than his neighbours.
 
 ## Analysis of the GDP per capita
 
@@ -145,11 +147,11 @@ country = c("CH"),
 ggplot(CHGdpPerCapita) +
  aes(x = year, y = NY.GDP.PCAP.PP.CD) +
  geom_line(size = 1L, colour = "#0c4c8a") +
- labs(y = "Gdp per capita", title = "Switzerland Gdp per capita evolution (in $ constant)", caption = "Source: SKEMA Quantum Studio") +
+ labs(y = "Gdp per capita", title = "Switzerland Gdp per capita evolution (in $ constant)", caption = "Source: SKEMA Quantum Studio (WDI)") +
  theme_minimal()
 ```
 
-We can see that the GDP per capita increase during this period, he was at 27594.63 in 1990 and at 68060.94 in 2018 (146,6% increase). It'll be now interesting to compare with the three others countries to see if Switzerland is better in this category.
+We can see that the GDP per capita increase during this period, he was at *27594.63 in 1990* and at *68060.94 in 2018* (**146,6% increase**). It'll be now interesting to compare with the three others countries to see if *Switzerland* is better in this category.
 
 ### *Comparison with three european countries (France, Italy and Germany)*
 
@@ -165,14 +167,14 @@ ggplot(GdpPerCapitaComparison) +
  aes(x = year, y = NY.GDP.PCAP.PP.CD, colour = country) +
  geom_line(size = 1L) +
  scale_color_hue() +
- labs(y = "GDP per capita", title = "Comparison GDP per capita", caption = "Source: SKEMA Quantum Studio") +
+ labs(y = "GDP per capita", title = "Comparison GDP per capita", caption = "Source: SKEMA Quantum Studio (WDI)") +
  theme_minimal()
 ```
 
-Switzerland seems to be far away from his neighbours regarding the gdp per capita. Germany is in the second place with 53074.54 in 2018 (28% less than Switzerland), France in the third place with 45342.40 in 2018 (50% less than Switzerland).
-The conclusion of this analysis is that Switzerland is better when speaking about economic health into an individual citizens perspective.
+*Switzerland* seems to be *far away* from his neighbours regarding the gdp per capita. *Germany* is in the second place with 53074.54 in 2018 (**28% less than Switzerland**), France in the third place with 45342.40 in 2018 (**50% less than Switzerland**).
+The conclusion of this analysis is that *Switzerland* is better when speaking about economic health into an **individual citizens perspective**.
 
-## What are Switzerland's sources of income?
+## Switzerland's trade
 
 ```{r Merchandise exports to high-income economies, include=FALSE}
 CHExports <- WDI(indicator = "TX.VAL.MRCH.HI.ZS", #Merchandise exports to high-income economies (% of total merchandise exports)
@@ -187,11 +189,11 @@ ggplot(CHExports) +
  aes(x = year, y = TX.VAL.MRCH.HI.ZS) +
  geom_line(size = 1L, colour = "#0c4c8a") +
  labs(y = "Merchandise Exports", title = "Merchandise exports to high-income economies (% of total 
-      merchandise exports)", caption = "Source: SKEMA Quantum Studio") +
+      merchandise exports)", caption = "Source: SKEMA Quantum Studio (WDI)") +
  theme_minimal()
 ```
 
-CONCLUSION À FAIRE
+We can see from this graph that *Switzerland* spends most of its exports to the high-income economies. This means that it offers products with *high added value*. Nevertheless, this trend has been *slightly declining* since the early 2000s. This indicates a **diversification** of *Switzerland*'s offer and a willingness to **reach new markets**.
 
 ```{r Merchandise imports from low- and middle-income economies, include=FALSE}
 CHImports <- WDI(indicator = "TM.VAL.MRCH.OR.ZS", #Merchandise imports from low- and middle-income economies outside region (% of total merchandise imports)
@@ -205,11 +207,11 @@ library(ggplot2)
 ggplot(CHImports) +
  aes(x = year, y = TM.VAL.MRCH.OR.ZS) +
  geom_line(size = 1L, colour = "#0c4c8b") +
- labs(y = "Imports from low_middle economies", title = "Merchandise imports from low- and middle-income economies", caption = "Source: SKEMA Quantum Studio") +
+ labs(y = "Imports from low_middle economies", title = "Merchandise imports from low- and middle-income economies", caption = "Source: SKEMA Quantum Studio (WDI)") +
  theme_minimal()
 ```
 
-CONCLUSION À FAIRE
+*Switzerland* imported little from low-income economies until the early 1990s. Since the 1990s, the **trend has been upward**. This is due to **globalisation** and also to the need to have access to products and raw materials at **low prices**. Thus, since 1990, imports from these economies have **quadrupled**.
 
 ### Comparison between imports and exports
 
@@ -239,12 +241,12 @@ ggplot(CHImportExport) +
   geom_vline(aes(xintercept = 2017), linetype=2, colour = "black", size = 1) +
  scale_color_hue() +
  labs(y = "In % of total trades", title = "Comparison about imports to high economies and 
-      exports from low/middle economies ", caption = "Source: SKEMA Quantum Studio") +
+      exports from low/middle economies ", caption = "Source: SKEMA Quantum Studio (WDI)") +
  theme_gray()
 ```
 
-We can see that the Switzerland imports a bit (19,24%) from low / middle economies in 2017 but this is really increasing since 2010. About the exports, Switzerland exports a lot to high-income economies (75,15%) in 2017 but this is decreasing since 2010.
-As a conclusion, we can say that Switzerland tend to import more from low / middle economies but also to export more to these economies. However, the most of exports / imports of Switzerland are made with high-income economies but the low / middle economies increase their parts during last decade.
+As said before, we can see that *Switzerland* imports a bit (19,24%) from low / middle economies in 2017 but this is **really increasing since 1990**. About the exports, Switzerland exports a lot to high-income economies (75,15%) in 2017 but this is **decreasing since 2010**.
+As a conclusion, we can say that *Switzerland* tend to import more from low / middle economies but also to export more to these economies. However, the most of exports / imports of Switzerland are made with high-income economies but the **low / middle economies increase their parts during last decade**.
 
 ## Balance of payments
 
@@ -263,12 +265,15 @@ BalanceTransactionsCGraph <- ggplot(BalanceTransactionsC, aes(x = period, y = va
   theme_dark() +
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4)) +
-  labs(y = "Balance transaction", title = "Balance on current transactions with the rest of the world", caption = "Source: SKEMA Quantum Studio")
+  labs(y = "Balance transaction", title = "Balance on current transactions with the rest of the world", caption = "Source: SKEMA Quantum Studio (AMECO)")
 
 BalanceTransactionsCGraph <- ggplotly(BalanceTransactionsCGraph) %>%
   layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
 BalanceTransactionsCGraph
 ```
+
+*Switzerland* has a positive balance of payments, which means that it **exports more than it imports**, and this is a sign of **good economic health**. It is interesting to note that the Swiss balance of payments has **remained positive since the 1970s** while the other three countries all posted negative balances at some point in the period 1970 - 2020. This demonstrates *Switzerland*'s **trade stability** over a long period of time.
+However, in this graph, *Germany* has the best balance of payments since 2005. *France* is the only country with a negative balance of payments in 2020.
 
 # **Main social indicators**
 
@@ -345,11 +350,11 @@ ggplot(
   CHjoin2,
   aes(x = year, y = VAL, color = TYPE)
 ) +
-  labs(y = "Unemployment rate", title = "Unemployment rate by education level", caption = "Source: SKEMA Quantum Studio") +
+  labs(y = "Unemployment rate", title = "Unemployment rate by education level", caption = "Source: SKEMA Quantum Studio (WDI)") +
 geom_line()
 ```
 
-ANALYSE À REDIGER
+This graph shows the difference between the level of education and the related unemployment rate in *Switzerland.* Very logically, those with a higher level of education are at an advantage and those with a lower level of education are at a disadvantage.  It will now be interesting to compare these unemployment rates with those of three other European countries to see whether **Switzerland** is doing well in terms of managing unemployment or not.
 
 ### *Comparison with three european countries (France, Italy and Germany)*
 
@@ -413,7 +418,7 @@ UCjoinTest <- gather(data = UCjoin, key = TYPE, value = VAL, Advanced_EducationC
 
 ```{r Graphic about unemployment rate by education level comparison}
 qplot(data = UCjoinTest, y = VAL, x = year, color = TYPE, geom = "line") + 
-  labs(y = "Unemployment rate in %", title = "Unemployment rate by education level", caption = "Source: SKEMA Quantum Studio") +
+  labs(y = "Unemployment rate in %", title = "Unemployment rate by education level", caption = "Source: SKEMA Quantum Studio (WDI)") +
   facet_wrap(~ country) +
   theme_linedraw()
 ```
@@ -428,6 +433,8 @@ For example, the unemployment rate for the low and intermediate education catego
 Finally, it is interesting to note that *Germany* has seen its **unemployment rate fall since 2005**, *Switzerland* remains **stable**, while *France and Italy* have seen their **unemployment rates rise since 2006**, although there has been a **slight improvement over the last 5 years**.
 
 ## Social progress index
+
+“The Social Progress Index is a new way to define the success of our societies. It is a comprehensive measure of real quality of life, independent of economic indicators. The Social Progress Index is designed to complement, rather than replace, economic measures such as GDP.” (The Social Progress Imperative, 2018)
 
 ```{r Library call, include=FALSE}
 library(spiR)
@@ -463,7 +470,7 @@ ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) +
        caption = "Source: SKEMA Quantum Studio")
 ```
 
-CONCLUSION À REDIGER
+*Switzerland* is the country with the **highest rate of social progress**. This is a very good sign because, in addition to a very high GDP per capita, the social climate is also very positive (although the two are not related). However, the other three countries are also doing very well.
 
 ## Expenditure on education
 
@@ -499,7 +506,12 @@ DynGraphPlotEducationGDP <- ggplotly(DynGraphPlotEducationGDP)
 DynGraphPlotEducationGDP 
 ```
 
-ANALYSE À REDIGER
+As we can see between these four countries, *France* is the country that spends the most on education in relation to its GDP. *Switzerland* is in second place. It is interesting to note that France spends more on education but that nevertheless its **unemployment rate is much higher** than *Switzerland* (see previous graph). *Germany* is in third place, very close to *Switzerland*. *Italy* is the country that spends the least on education in relation to its GDP in all years. Finally, this graph highlights the fact that Switzerland is the country with the **lowest GDP** (among the 4 countries compared) but that it is the country with the **highest GDP per capita** (see previous graph). 
+To conclude, we can deduce that *Switzerland's* expenditure on education is certainly **lower** than *France's*, but that graduates will **find work more easily** and will **benefit from higher salaries** (although this must be balanced with the **Consumer Price Index**).
+
+## Consumer Price Index
+
+The Consumer Price Index (CPI) is a measure of the average change over time in the prices paid by urban consumers for a market basket of consumer goods and services.
 
 ```{r Consumer Price Index, include=FALSE}
 CPIc<- rdb(ids = c('BIS/long_cpi/A.CH.628', "BIS/long_cpi/A.FR.628", "BIS/long_cpi/A.IT.628", "BIS/long_cpi/A.DE.628")) %>%
@@ -513,10 +525,10 @@ ggplot(CPIc, aes(x = period, y = value, color = Country)) +
   theme_dark() +
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4)) +
-  labs(y = "Consumer Price Index", title = "CPI comparison", caption = "Source: SKEMA Quantum Studio")
+  labs(y = "Consumer Price Index", title = "CPI comparison", caption = "Source: SKEMA Quantum Studio (BIS)")
 ```
 
-ANALYSE À REDIGER
+The consumer price index is used to demonstrate the price changes experienced by consumers in a given country. We can see from this graph that *Switzerland* is the **best performer**, since its consumer price index is **lower** than that of the other three countries. Nevertheless, the indices of the other three countries are very close to Switzerland. This means that their price **stability is also good**.
 
 ## Foreign population
 
@@ -531,7 +543,7 @@ ForeignPopulationPlot <- ggplot(ForeignPopulation, aes(x = period, y = value, co
   theme_light() +
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4)) +
-  labs(y = "Foreign population in % of total pop", title = "Stock of foreign population by nationality", caption = "Source: SKEMA Quantum Studio")
+  labs(y = "Foreign population in % of total pop", title = "Stock of foreign population by nationality", caption = "Source: SKEMA Quantum Studio (OECD)")
 ```
 
 ```{r, include=FALSE}
@@ -545,7 +557,8 @@ my_grob = grid.text(my_text, x=0.7,  y=0.6, gp=gpar(col="black", fontsize=12, fo
 ForeignPopulationPlot + annotation_custom(my_grob)
 ```
 
-ANALYSE À REDIGER
+*Switzerland* is a country that welcomes many foreigners, especially to **work**, as is the case for many French people interested in the **high salaries offered by this country**. 
+*Switzerland* therefore has a much higher ratio of foreigners than its European neighbours. Moreover, this can be explained by the fact that it is **very complicated to be naturalized Swiss**. It is, for example, easier in *France.* Thus, once naturalized, the ratio tends to fall since the person no longer counts as a foreigner. These two factors explain why the ratio for *Switzerland* is so high.
 
 ## Intentional homicide
 
@@ -598,7 +611,8 @@ ggplot(PovertyComparison, aes(x = period, y = value, color = Country)) +
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4)) +
   labs(y = "% at risk of poverty", title = "People at risk of poverty or social exclusion by age and sex
-", caption = "Source: SKEMA Quantum Studio")
+", caption = "Source: SKEMA Quantum Studio
+Eurostat")
 ```
 
 ANALYSE À REDIGER
@@ -621,11 +635,18 @@ base::colnames(CorruptionIndex2019)[colnames(CorruptionIndex2019)=="Geopolitical
 ```
 
 ```{r}
+## Recoding CorruptionIndex2019$Country
+CorruptionIndex2019$Country <- recode(CorruptionIndex2019$Country,
+               "Germany (until 1990 former territory of the FRG)" = "Germany")
+```
+
+```{r}
 ggplot(CorruptionIndex2019) +
  aes(x = Country, colour = Country, weight = value) +
  geom_bar(fill = "#0c4c8a") +
  scale_color_hue() +
- labs(y = "Value", title = "Corruption Perceptions Index") +
+ labs(y = "Value", title = "Corruption Perceptions Index", caption = "Source: SKEMA Quantum Studio
+Eurostat") +
  ggthemes::theme_stata()
 ```
 
