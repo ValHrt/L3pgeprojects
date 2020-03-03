@@ -62,7 +62,13 @@ CHdatamap1$Population <- base::cut(CHdatamap1$Total,
                         labels = mylabels, right = F, ordered_result = T)
 ```
 
-```{r message=FALSE, warning=FALSE}
+<style>
+.html-widget {
+    margin: auto;
+}
+</style>
+
+```{r leaflet, message=FALSE, warning=FALSE, fig.align="center"}
 myCHmap <- st_read("~/L3pgeprojects/CountryReportCH/MapCH/CHE_adm/CHE_adm1.shp", stringsAsFactors = FALSE)
 
 datamap <- inner_join(myCHmap, CHdatamap1)
@@ -100,7 +106,7 @@ country = c("CH"),
 CHGDP$iso2c <- NULL
 ```
 
-```{r graphic about Switzerland GDP growth}
+```{r graphic about Switzerland GDP growth, fig.align='center'}
 library(ggplot2)
  ggplot(CHGDP) +
  aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
@@ -143,7 +149,7 @@ country = c("CH"),
                    end = 2018)
 ```
 
-```{r Switzerland Gdp per capita evolution graphic}
+```{r Switzerland Gdp per capita evolution graphic, fig.align='center'}
 ggplot(CHGdpPerCapita) +
  aes(x = year, y = NY.GDP.PCAP.PP.CD) +
  geom_line(size = 1L, colour = "#0c4c8a") +
@@ -162,7 +168,7 @@ country = c("CH", "DE", "FRA", "IT"),
                    end = 2018)
 ```
 
-```{r Comparison graphic about GDP per capita}
+```{r Comparison graphic about GDP per capita, fig.align='center'}
 ggplot(GdpPerCapitaComparison) +
  aes(x = year, y = NY.GDP.PCAP.PP.CD, colour = country) +
  geom_line(size = 1L) +
@@ -183,7 +189,7 @@ country = c("CH"),
                    end = 2018)
 ```
 
-```{r Merchandise exports to high-income economies graphic}
+```{r Merchandise exports to high-income economies graphic, fig.align='center'}
 library(ggplot2)
 ggplot(CHExports) +
  aes(x = year, y = TX.VAL.MRCH.HI.ZS) +
@@ -202,7 +208,7 @@ country = c("CH"),
                    end = 2018)
 ```
 
-```{r Merchandise imports from low- and middle-income economies graphic}
+```{r Merchandise imports from low- and middle-income economies graphic, fig.align='center'}
 library(ggplot2)
 ggplot(CHImports) +
  aes(x = year, y = TM.VAL.MRCH.OR.ZS) +
@@ -232,7 +238,7 @@ library(tidyr)
 CHImportExport <- gather(data = ImportExport, key = TYPE, value = VAL, ExportsToHighEconomies, ImportsFromLowEconomies)
 ```
 
-```{r Comparison graphic about imports and exports}
+```{r Comparison graphic about imports and exports, fig.align='center'}
 library(ggplot2)
 ggplot(CHImportExport) +
  aes(x = year, y = VAL, colour = TYPE) +
@@ -269,7 +275,9 @@ BalanceTransactionsCGraph <- ggplot(BalanceTransactionsC, aes(x = period, y = va
 
 BalanceTransactionsCGraph <- ggplotly(BalanceTransactionsCGraph) %>%
   layout(legend = list(orientation = "h", x = 0.4, y = -0.2))
-BalanceTransactionsCGraph
+BalanceTransactionsC1 <- htmltools::div(BalanceTransactionsCGraph, align="center" )  # Result is now an HTML object
+htmltools::save_html( BalanceTransactionsC1, "BalanceTransaction.html" )
+BalanceTransactionsC1
 ```
 
 *Switzerland* has a positive balance of payments, which means that it **exports more than it imports**, and this is a sign of **good economic health**. It is interesting to note that the Swiss balance of payments has **remained positive since the 1970s** while the other three countries all posted negative balances at some point in the period 1970 - 2020. This demonstrates *Switzerland*'s **trade stability** over a long period of time.
@@ -335,7 +343,7 @@ CHjoin2$country <- NULL
 CHjoin2 <- CHjoin2[c(1,2,4,3,5,6)]
 ```
 
-```{r Graphic about unemployment rate by education level, warning=FALSE}
+```{r Graphic about unemployment rate by education level, warning=FALSE, fig.align='center'}
 library(tidyr)
 
 CHjoin2 <- gather(
@@ -416,7 +424,7 @@ library(tidyr)
 UCjoinTest <- gather(data = UCjoin, key = TYPE, value = VAL, Advanced_EducationC, Intermediate_EducationC, Basic_EducationC)
 ```
 
-```{r Graphic about unemployment rate by education level comparison}
+```{r Graphic about unemployment rate by education level comparison, fig.align='center'}
 qplot(data = UCjoinTest, y = VAL, x = year, color = TYPE, geom = "line") + 
   labs(y = "Unemployment rate in %", title = "Unemployment rate by education level", caption = "Source: SKEMA Quantum Studio (WDI)") +
   facet_wrap(~ country) +
@@ -458,7 +466,7 @@ kable(SPIc)%>%
 scroll_box(width = "100%", height = "200px")
 ```
 
-```{r Generate SPI graphic}
+```{r Generate SPI graphic, fig.align='center'}
 ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) + 
   geom_line() +
   theme_grey() +
@@ -519,7 +527,7 @@ CPIc<- rdb(ids = c('BIS/long_cpi/A.CH.628', "BIS/long_cpi/A.FR.628", "BIS/long_c
 CPIc <- rename(CPIc, Country = series_name) # Base 2010=100 (à inclure sur graphique)
 ```
 
-```{r}
+```{r, fig.align='center'}
 ggplot(CPIc, aes(x = period, y = value, color = Country)) +
   geom_line(size = 1) + 
   theme_dark() +
@@ -553,7 +561,7 @@ and Germany"
 my_grob = grid.text(my_text, x=0.7,  y=0.6, gp=gpar(col="black", fontsize=12, fontface="bold"))
 ```
 
-```{r}
+```{r, fig.align='center'}
 ForeignPopulationPlot + annotation_custom(my_grob)
 ```
 
@@ -582,7 +590,7 @@ CrimesComparisonPlot <- ggplot(CrimesComparison, aes(x = period, y = value, colo
        hundred thousand inhabitants", title = "Crimes stats", caption = "Source: SKEMA Quantum Studio")
 ```
 
-```{r}
+```{r, fig.align='center'}
 CrimesComparisonPlot + theme(plot.title=element_text(size=20, 
                                     face="bold", 
                                     family="American Typewriter",
@@ -604,7 +612,7 @@ PovertyComparison <- rdb(ids = c('Eurostat/ilc_peps01/A.PC.TOTAL.T.CH', "Eurosta
 base::colnames(PovertyComparison)[colnames(PovertyComparison)=="Geopolitical entity (reporting)"] <- "Country" 
 ```
 
-```{r}
+```{r, fig.align='center'}
 ggplot(PovertyComparison, aes(x = period, y = value, color = Country)) +
   geom_line(size = 1) + 
   theme_gray() +
@@ -640,7 +648,7 @@ CorruptionIndex2019$Country <- recode(CorruptionIndex2019$Country,
                "Germany (until 1990 former territory of the FRG)" = "Germany")
 ```
 
-```{r}
+```{r, fig.align='center'}
 ggplot(CorruptionIndex2019) +
  aes(x = Country, colour = Country, weight = value) +
  geom_bar(fill = "#0c4c8a") +
