@@ -22,6 +22,7 @@ library(tmaptools)
 library(leaflet)
 library(dplyr)
 library(tidyr)
+library(rdbnomics)
 ```
 
 ```{r, include=FALSE}
@@ -89,6 +90,7 @@ Here is a map of *Switzerland* divided into **cantons**, showing the **total pop
 The canton of *Zurich* has the most inhabitants (**1520968 inhabitants**) and the canton of *Appenzell Innerrhoden* the least with only **16145 inhabitants**.
 
 *Switzerland* had a population of **8.57 million** inhabitants in 2019.
+
 
 # **Main economic indicators**
 
@@ -179,6 +181,27 @@ ggplot(GdpPerCapitaComparison) +
 
 *Switzerland* seems to be *far away* from his neighbours regarding the gdp per capita. *Germany* is in the second place with 53074.54 in 2018 (**28% less than Switzerland**), France in the third place with 45342.40 in 2018 (**50% less than Switzerland**).
 The conclusion of this analysis is that *Switzerland* is better when speaking about economic health into an **individual citizens perspective**.
+
+## Consumer Price Index
+
+The Consumer Price Index (CPI) is a measure of the average change over time in the prices paid by urban consumers for a market basket of consumer goods and services.
+
+```{r Consumer Price Index, include=FALSE}
+CPIc<- rdb(ids = c('BIS/long_cpi/A.CH.628', "BIS/long_cpi/A.FR.628", "BIS/long_cpi/A.IT.628", "BIS/long_cpi/A.DE.628")) %>%
+  filter(!is.na(value))
+CPIc <- rename(CPIc, Country = series_name) # Base 2010=100 (à inclure sur graphique)
+```
+
+```{r, fig.align='center'}
+ggplot(CPIc, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) + 
+  theme_dark() +
+  theme(legend.position="bottom") + 
+   guides(col = guide_legend(nrow = 4)) +
+  labs(y = "Consumer Price Index", title = "CPI comparison", caption = "Source: SKEMA Quantum Studio (BIS)")
+```
+
+The consumer price index is used to demonstrate the price changes experienced by consumers in a given country. We can see from this graph that *Switzerland* is the **best performer**, since its consumer price index is **lower** than that of the other three countries. Nevertheless, the indices of the other three countries are very close to Switzerland. This means that their price **stability is also good**.
 
 ## Switzerland's trade
 
@@ -282,6 +305,7 @@ BalanceTransactionsC1
 
 *Switzerland* has a positive balance of payments, which means that it **exports more than it imports**, and this is a sign of **good economic health**. It is interesting to note that the Swiss balance of payments has **remained positive since the 1970s** while the other three countries all posted negative balances at some point in the period 1970 - 2020. This demonstrates *Switzerland*'s **trade stability** over a long period of time.
 However, in this graph, *Germany* has the best balance of payments since 2005. *France* is the only country with a negative balance of payments in 2020.
+
 
 # **Main social indicators**
 
@@ -475,7 +499,7 @@ ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) +
        x = "Years",
        y = "Social Progress Index Score",
        colour = "Countries",
-       caption = "Source: SKEMA Quantum Studio")
+       caption = "Source: SKEMA Quantum Studio (spiR)")
 ```
 
 *Switzerland* is the country with the **highest rate of social progress**. This is a very good sign because, in addition to a very high GDP per capita, the social climate is also very positive (although the two are not related). However, the other three countries are also doing very well.
@@ -517,27 +541,6 @@ DynGraphPlotEducationGDP
 As we can see between these four countries, *France* is the country that spends the most on education in relation to its GDP. *Switzerland* is in second place. It is interesting to note that France spends more on education but that nevertheless its **unemployment rate is much higher** than *Switzerland* (see previous graph). *Germany* is in third place, very close to *Switzerland*. *Italy* is the country that spends the least on education in relation to its GDP in all years. Finally, this graph highlights the fact that Switzerland is the country with the **lowest GDP** (among the 4 countries compared) but that it is the country with the **highest GDP per capita** (see previous graph). 
 To conclude, we can deduce that *Switzerland's* expenditure on education is certainly **lower** than *France's*, but that graduates will **find work more easily** and will **benefit from higher salaries** (although this must be balanced with the **Consumer Price Index**).
 
-## Consumer Price Index
-
-The Consumer Price Index (CPI) is a measure of the average change over time in the prices paid by urban consumers for a market basket of consumer goods and services.
-
-```{r Consumer Price Index, include=FALSE}
-CPIc<- rdb(ids = c('BIS/long_cpi/A.CH.628', "BIS/long_cpi/A.FR.628", "BIS/long_cpi/A.IT.628", "BIS/long_cpi/A.DE.628")) %>%
-  filter(!is.na(value))
-CPIc <- rename(CPIc, Country = series_name) # Base 2010=100 (à inclure sur graphique)
-```
-
-```{r, fig.align='center'}
-ggplot(CPIc, aes(x = period, y = value, color = Country)) +
-  geom_line(size = 1) + 
-  theme_dark() +
-  theme(legend.position="bottom") + 
-   guides(col = guide_legend(nrow = 4)) +
-  labs(y = "Consumer Price Index", title = "CPI comparison", caption = "Source: SKEMA Quantum Studio (BIS)")
-```
-
-The consumer price index is used to demonstrate the price changes experienced by consumers in a given country. We can see from this graph that *Switzerland* is the **best performer**, since its consumer price index is **lower** than that of the other three countries. Nevertheless, the indices of the other three countries are very close to Switzerland. This means that their price **stability is also good**.
-
 ## Foreign population
 
 ```{r, include=FALSE}
@@ -568,7 +571,7 @@ ForeignPopulationPlot + annotation_custom(my_grob)
 *Switzerland* is a country that welcomes many foreigners, especially to **work**, as is the case for many French people interested in the **high salaries offered by this country**. 
 *Switzerland* therefore has a much higher ratio of foreigners than its European neighbours. Moreover, this can be explained by the fact that it is **very complicated to be naturalized Swiss**. It is, for example, easier in *France.* Thus, once naturalized, the ratio tends to fall since the person no longer counts as a foreigner. These two factors explain why the ratio for *Switzerland* is so high.
 
-## Intentional homicide
+## Intentional homicide ratio
 
 ```{r, include=FALSE}
 CrimesComparison <- rdb(ids = c('Eurostat/crim_hom_soff/A.ICCS0101.PER_CNV.T.P_HTHAB.CH', "Eurostat/crim_hom_soff/A.ICCS0101.PER_CNV.T.P_HTHAB.FR", "Eurostat/crim_hom_soff/A.ICCS0101.PER_CNV.T.P_HTHAB.IT", "Eurostat/crim_hom_soff/A.ICCS0101.PER_CNV.T.P_HTHAB.DE")) %>%
@@ -587,7 +590,7 @@ CrimesComparisonPlot <- ggplot(CrimesComparison, aes(x = period, y = value, colo
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4)) +
   labs(y = "Intentional homicide per 
-       hundred thousand inhabitants", title = "Crimes stats", caption = "Source: SKEMA Quantum Studio")
+       hundred thousand inhabitants", title = "Crimes stats", caption = "Source: SKEMA Quantum Studio (Eurostat)")
 ```
 
 ```{r, fig.align='center'}
@@ -599,9 +602,14 @@ CrimesComparisonPlot + theme(plot.title=element_text(size=20,
                                     lineheight=1.2))
 ```
 
-ANALYSE À REDIGER
+*Switzerland* is the country with the **lowest crime rate** (compared to France, Italy and Germany). Indeed, its ratio shows a homicide rate of **0.33 per 100,000 inhabitants**. This can be explained in part by the severity of the Swiss justice system but also by all the means put in place for the **well-being of citizens**. This is also why the country's Social Progress Index is so high. *Germany* is doing as well as *Switzerland* in terms of the rate of homicides committed, *France* has a ratio **twice** as high as *Switzerland* and *Italy* **three times** as high, however, their statistics are still **decent**.
 
 ## Risk of poverty or social exclusion
+
+This indicator corresponds to the sum of persons who are: at risk of poverty after social transfers, severely materially deprived or living in households with very low work intensity. Persons are counted only once even if they are affected by more than one of these phenomena.
+• Persons are considered to be at risk of poverty after social transfers, if they have an equivalised disposable income below the risk-of-poverty threshold, which is set at 60 % of the national median equivalised disposable income.
+• Severely materially deprived persons have living conditions severely constrained by a lack of resources, they experience at least 4 out of 9 following deprivations items: cannot afford i) to pay rent or utility bills, ii) keep home adequately warm, iii) face unexpected expenses, iv) eat meat, fish or a protein equivalent every second day, v) a week holiday away from home, vi) a car, vii) a washing machine, viii) a colour TV, or ix) a telephone.
+• People living in households with very low work intensity are those aged 0-59 living in households where the adults (aged 18-59) work 20% or less of their total work potential during the past year.**(Eurostat)**
 
 ```{r, include=FALSE}
 PovertyComparison <- rdb(ids = c('Eurostat/ilc_peps01/A.PC.TOTAL.T.CH', "Eurostat/ilc_peps01/A.PC.TOTAL.T.IT", "Eurostat/ilc_peps01/A.PC.TOTAL.T.FR", "Eurostat/ilc_peps01/A.PC.TOTAL.T.DE")) %>%
@@ -618,12 +626,16 @@ ggplot(PovertyComparison, aes(x = period, y = value, color = Country)) +
   theme_gray() +
   theme(legend.position="bottom") + 
    guides(col = guide_legend(nrow = 4)) +
-  labs(y = "% at risk of poverty", title = "People at risk of poverty or social exclusion by age and sex
-", caption = "Source: SKEMA Quantum Studio
-Eurostat")
+  labs(y = "% at risk of poverty", title = "People at risk of poverty or social exclusion",      caption = "Source: SKEMA Quantum Studio (Eurostat)") +
+  ggthemes::theme_stata()
 ```
 
-ANALYSE À REDIGER
+As we can see, *Switzerland* is the country (on a par with *France*) in which the risk of becoming poor and/or socially excluded is the **lowest.** This is a very good social indicator because it shows that the country puts forward means to **fight against inequalities** but above all to prevent individuals from being in a situation of social isolation.
+
+In 2017, 112.8 million people in the EU lived in households at risk of poverty or social exclusion; 22.4 % of the population. **(Eurostat)**
+
+
+# **Main business indicators**
 
 ## Corruption Perceptions Index
 
@@ -653,14 +665,29 @@ ggplot(CorruptionIndex2019) +
  aes(x = Country, colour = Country, weight = value) +
  geom_bar(fill = "#0c4c8a") +
  scale_color_hue() +
- labs(y = "Value", title = "Corruption Perceptions Index", caption = "Source: SKEMA Quantum Studio
-Eurostat") +
+ labs(y = "Value", title = "Corruption Perceptions Index", caption = "Source: SKEMA Quantum Studio (Eurostat)") +
  ggthemes::theme_stata()
 ```
 
-ANALYSE À REDIGER
+The corruption index shows whether a country is reliable, especially for doing business there. It can be seen here that *Switzerland* has a corruption index of **85** (the highest of the 4 countries). This is a very good indication that the country is **very little affected by corruption**. Thus, potential investors can **invest serenely** in this country without the risk of seeing their funds disappear or having problems with a biased justice system.
 
-# **Main business indicators**
+```{r}
+IndustryCH <- data.frame(Industry=c("Primary_Sector", "Secondary-Sector", "Tertiary_Sector"), NumberOfCompanies=c(53010, 90483, 446760)) ## Office fédéral statistique Suisse, data 2017
+IndustryCH$Industry <- as.character(IndustryCH$Industry)
+```
+
+```{r}
+IndustryGraph <- ggplot(IndustryCH, aes(x="", y=NumberOfCompanies, fill=Industry))+
+geom_bar(width = 1, stat = "identity")
+```
+
+```{r}
+library(scales)
+IndustryPie <- IndustryGraph + coord_polar("y", start=0) #+
+  #geom_text(aes(y = NumberOfCompanies/3 + c(0, cumsum(NumberOfCompanies)[-length(NumberOfCompanies)]), 
+            #label = percent(NumberOfCompanies/100)), size=5)
+IndustryPie ## peut être mettre direct en % dans le data.frame
+```
 
 ## Penser à rajouter des données sur les industries suisses (finance, etc)
 

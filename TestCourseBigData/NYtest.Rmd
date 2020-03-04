@@ -1,6 +1,6 @@
 ---
 title: "New York Test"
-author: "Valentin Henriot, Gabin Coutand, Jules Bayer, ALexis Chabert, Cyprien"
+author: "Valentin Henriot"
 date: "03/02/2020"
 output:
   pdf_document: default
