@@ -662,8 +662,8 @@ CorruptionIndex2019$Country <- recode(CorruptionIndex2019$Country,
 
 ```{r, fig.align='center'}
 ggplot(CorruptionIndex2019) +
- aes(x = Country, colour = Country, weight = value) +
- geom_bar(fill = "white") +
+ aes(x = Country, colour = Country, weight = value, fill = Country) +
+ geom_bar() +
  scale_color_hue() +
  labs(y = "Value", title = "Corruption Perceptions Index", caption = "Source: SKEMA Quantum Studio (Eurostat)") +
  ggthemes::theme_stata()
