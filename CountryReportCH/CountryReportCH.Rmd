@@ -1,11 +1,11 @@
 ---
 title: "Country Report Switzerland"
-author: "Valentin"
+author: "Valentin Henriot / SKEMA BUSINESS SCHOOL"
 date: "18/01/2020"
 output:
   html_document: 
     toc: yes
-    toc_depth: 3
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -538,6 +538,7 @@ DynGraphPlotEducationGDP <- ggplotly(DynGraphPlotEducationGDP)
 DynGraphPlotEducationGDP 
 ```
 
+
 As we can see between these four countries, *France* is the country that spends the most on education in relation to its GDP. *Switzerland* is in second place. It is interesting to note that France spends more on education but that nevertheless its **unemployment rate is much higher** than *Switzerland* (see previous graph). *Germany* is in third place, very close to *Switzerland*. *Italy* is the country that spends the least on education in relation to its GDP in all years. Finally, this graph highlights the fact that Switzerland is the country with the **lowest GDP** (among the 4 countries compared) but that it is the country with the **highest GDP per capita** (see previous graph). 
 To conclude, we can deduce that *Switzerland's* expenditure on education is certainly **lower** than *France's*, but that graduates will **find work more easily** and will **benefit from higher salaries** (although this must be balanced with the **Consumer Price Index**).
 
@@ -725,7 +726,37 @@ SwitzerlandTopIndustries1 <- ggplot(SwitzerlandTopIndustries) +
 SwitzerlandTopIndustries1 + theme(legend.position='none', axis.title.y = element_blank(), axis.text.x = element_text(face="bold", color="black", size = 8), axis.text.y = element_text(color="black", face = "italic"), plot.title = element_text(face="bold", size = 12))
 ```
 
-ANALYSE À FAIRE
+ANALYSE À FAIRE (bien expliquer pour l'or)
+
+## Business Partners Export
+
+```{r include=FALSE}
+BusinessPartnersExport <- data.frame(
+  stringsAsFactors = FALSE,
+                Country = c("Allemagne", "USA", "France", "Italie", "Chine"),
+                Value = c(18.8, 16.3, 6.5, 6.2, 5.2) ## in % of total exports
+) ## Source : Administration fédérale des douanes Suisse
+```
+
+```{r}
+BusinessPartnersExport$Country <- with(BusinessPartnersExport, reorder(Country, -Value))
+```
+
+```{r include=FALSE}
+BusinessPartnersExport1 <- ggplot(BusinessPartnersExport, 
+            aes(x = Country, y = Value, color = Country, fill = Country, label = Value)) +
+  geom_col() +
+  geom_text(nudge_y = 1) + 
+  ggtitle("Where does Switzerland export the most?") + 
+  xlab("None") + ylab("In % of total exports") + 
+  labs(caption = "Source: SKEMA Quantum Studio (Administration fédérale des douanes Suisse)")
+  ggthemes::theme_stata() + theme(legend.position = "none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r fig.align='center'}
+BusinessPartnersExport1 + theme(legend.position='none', axis.title.x = element_blank(), axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
+```
 
 ## Penser à rajouter des données sur les industries suisses (finance, etc)
 
