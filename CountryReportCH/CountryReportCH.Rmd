@@ -654,7 +654,7 @@ CorruptionIndex2019 <- filter(CorruptionIndex, original_period == 2019)
 base::colnames(CorruptionIndex2019)[colnames(CorruptionIndex2019)=="Geopolitical entity (reporting)"] <- "Country" 
 ```
 
-```{r}
+```{r include=FALSE}
 ## Recoding CorruptionIndex2019$Country
 CorruptionIndex2019$Country <- recode(CorruptionIndex2019$Country,
                "Germany (until 1990 former territory of the FRG)" = "Germany")
@@ -663,7 +663,7 @@ CorruptionIndex2019$Country <- recode(CorruptionIndex2019$Country,
 ```{r, fig.align='center'}
 ggplot(CorruptionIndex2019) +
  aes(x = Country, colour = Country, weight = value) +
- geom_bar(fill = "#0c4c8a") +
+ geom_bar(fill = "white") +
  scale_color_hue() +
  labs(y = "Value", title = "Corruption Perceptions Index", caption = "Source: SKEMA Quantum Studio (Eurostat)") +
  ggthemes::theme_stata()
@@ -673,12 +673,12 @@ The corruption index shows whether a country is reliable, especially for doing b
 
 ## Swiss industries
 
-```{r}
+```{r include=FALSE}
 IndustryCH <- data.frame(Industry=c("Primary_Sector", "Secondary-Sector", "Tertiary_Sector"), NumberOfCompanies=c(8.98, 15.33, 75.69)) ## Office fédéral statistique Suisse, data 2017
 IndustryCH$Industry <- as.character(IndustryCH$Industry)
 ```
 
-```{r}
+```{r fig.align='center'}
 pie = ggplot(IndustryCH, aes(x="", y=NumberOfCompanies, fill=Industry)) + geom_bar(stat="identity", width=1)
  
 pie = pie + coord_polar("y", start=0) + geom_text(aes(label = paste0(round(NumberOfCompanies), "%")), position = position_stack(vjust = 0.5))
@@ -694,8 +694,38 @@ pie = pie + theme_classic() + theme(axis.line = element_blank(),
 pie
 ```
 
-
 Nombre d'entreprises de chaque secteur dans l'ordre : 53010, 90483, 446760
+ANALYSE À FAIRE
+
+## Industries that export the most by sector
+
+```{r}
+SwitzerlandTopIndustries <- data.frame(Industry=c("Pharmaceuticals",
+                                                  "Gems, precious metals",
+                               "Machinery including computers","Organic chemicals",
+                               "Clocks , watches including parts",
+                               "Optical, technical, medical apparatus",
+                               "Electrical machinery, equipment",
+                               "Plastics, plastic articles","Perfumes, cosmetics",
+                               "Articles of iron or steel"), ExportValue=c(83, 80.1, 22.9, 22, 21.8, 17.3, 12.6, 5.2, 3.7, 2.9) ## in billion $
+)
+```
+
+```{r include=FALSE}
+SwitzerlandTopIndustries1 <- ggplot(SwitzerlandTopIndustries) +
+ aes(x = reorder(Industry, -ExportValue), fill = Industry, weight = ExportValue) +
+ geom_bar() +
+ scale_fill_hue() +
+ coord_flip() +
+  theme_grey() +
+  labs(y = "Value in billion $", title = "Industries that export the most, in billion $", caption = "Source: SKEMA Quantum Studio (opendata.swiss)")
+```
+
+```{r fig.align='center'}
+SwitzerlandTopIndustries1 + theme(legend.position='none', axis.title.y = element_blank(), axis.text.x = element_text(face="bold", color="black", size = 8), axis.text.y = element_text(color="black", face = "italic"), plot.title = element_text(face="bold", size = 12))
+```
+
+ANALYSE À FAIRE
 
 ## Penser à rajouter des données sur les industries suisses (finance, etc)
 
