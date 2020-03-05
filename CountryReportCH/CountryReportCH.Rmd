@@ -671,23 +671,31 @@ ggplot(CorruptionIndex2019) +
 
 The corruption index shows whether a country is reliable, especially for doing business there. It can be seen here that *Switzerland* has a corruption index of **85** (the highest of the 4 countries). This is a very good indication that the country is **very little affected by corruption**. Thus, potential investors can **invest serenely** in this country without the risk of seeing their funds disappear or having problems with a biased justice system.
 
+## Swiss industries
+
 ```{r}
-IndustryCH <- data.frame(Industry=c("Primary_Sector", "Secondary-Sector", "Tertiary_Sector"), NumberOfCompanies=c(53010, 90483, 446760)) ## Office fédéral statistique Suisse, data 2017
+IndustryCH <- data.frame(Industry=c("Primary_Sector", "Secondary-Sector", "Tertiary_Sector"), NumberOfCompanies=c(8.98, 15.33, 75.69)) ## Office fédéral statistique Suisse, data 2017
 IndustryCH$Industry <- as.character(IndustryCH$Industry)
 ```
 
 ```{r}
-IndustryGraph <- ggplot(IndustryCH, aes(x="", y=NumberOfCompanies, fill=Industry))+
-geom_bar(width = 1, stat = "identity")
+pie = ggplot(IndustryCH, aes(x="", y=NumberOfCompanies, fill=Industry)) + geom_bar(stat="identity", width=1)
+ 
+pie = pie + coord_polar("y", start=0) + geom_text(aes(label = paste0(round(NumberOfCompanies), "%")), position = position_stack(vjust = 0.5))
+ 
+pie = pie + scale_fill_manual(values=c("#C77528", "#F09F27", "#3E7AC9")) 
+ 
+pie = pie + labs(x = NULL, y = NULL, fill = NULL, title = "Switzerland Industries", caption = "Source: SKEMA Quantum Studio (Office fédéral statistique Suisse)")
+ 
+pie = pie + theme_classic() + theme(axis.line = element_blank(),
+          axis.text = element_blank(),
+          axis.ticks = element_blank(),
+          plot.title = element_text(hjust = 0.5, color = "black"))
+pie
 ```
 
-```{r}
-library(scales)
-IndustryPie <- IndustryGraph + coord_polar("y", start=0) #+
-  #geom_text(aes(y = NumberOfCompanies/3 + c(0, cumsum(NumberOfCompanies)[-length(NumberOfCompanies)]), 
-            #label = percent(NumberOfCompanies/100)), size=5)
-IndustryPie ## peut être mettre direct en % dans le data.frame
-```
+
+Nombre d'entreprises de chaque secteur dans l'ordre : 53010, 90483, 446760
 
 ## Penser à rajouter des données sur les industries suisses (finance, etc)
 
