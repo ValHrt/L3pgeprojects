@@ -869,6 +869,28 @@ SwissCompaniesTurnover2 <- ggplotly(SwissCompaniesTurnover2)
 SwissCompaniesTurnover2
 ```
 
+ANALYSE À FAIRE
+
+## Accessibility to setting up a business
+
+```{r include=FALSE}
+BusinessCost <- WDI(indicator = "IC.REG.COST.PC.ZS", ## Cost of business start-up procedures (% of GNI per capita)
+country = c("CH", "DE", "FRA", "IT"),
+                   start = 2005,
+                   end = 2018)
+```
+
+```{r fig.align='center'}
+ggplot(BusinessCost) +
+ aes(x = year, y = IC.REG.COST.PC.ZS, colour = country) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "Cost in % of GNI per capita", title = "Cost of business procedures (% of GNI per capita)", caption = "Source: SKEMA Quantum Studio (WDI)") +
+ ggthemes::theme_gdocs()
+```
+
+ANALYSE À FAIRE
+
 ## Index of Economic Freedom
 
 ```{r include=FALSE}
