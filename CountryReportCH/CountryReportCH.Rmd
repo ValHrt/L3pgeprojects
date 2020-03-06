@@ -23,6 +23,7 @@ library(leaflet)
 library(dplyr)
 library(tidyr)
 library(rdbnomics)
+library(plotly)
 ```
 
 ```{r, include=FALSE}
@@ -280,7 +281,6 @@ As a conclusion, we can say that *Switzerland* tend to import more from low / mi
 ## Balance of payments
 
 ```{r, include=FALSE}
-library(rdbnomics)
 BalanceTransactionsC <- rdb(ids = c('AMECO/UBCA/CHE.1.0.0.0.UBCA', "AMECO/UBCA/FRA.1.0.0.0.UBCA", "AMECO/UBCA/ITA.1.0.0.0.UBCA", "AMECO/UBCA/DEU.1.0.0.0.UBCA")) %>%
   filter(!is.na(value))
 BalanceTransactionsC <- rename(BalanceTransactionsC, country = series_name)
@@ -638,6 +638,8 @@ In 2017, 112.8 million people in the EU lived in households at risk of poverty o
 
 # **Main business indicators**
 
+According to "The Economist", Switzerland ranks second out of 82 rated countries in terms of Business environment. This means that Switzerland is a country in which the environment is favourable for doing business. We will therefore look at the different sectors in which Switzerland is positioned, its different partners and some business-related indices to understand on what basis Switzerland is rated so favourably by "The Economist".
+
 ## Corruption Perceptions Index
 
 The indicator is a composite index based on a combination of surveys and assessments of corruption from 13 different sources and scores and ranks countries based on how corrupt a country’s public sector is perceived to be, with a score of 0 representing a very high level of corruption and a score of 100 representing a very clean country.
@@ -758,6 +760,146 @@ BusinessPartnersExport1 <- ggplot(BusinessPartnersExport,
 BusinessPartnersExport1 + theme(legend.position='none', axis.title.x = element_blank(), axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
 ```
 
-## Penser à rajouter des données sur les industries suisses (finance, etc)
+ANALYSE À FAIRE
+
+## Business Partners Import
+
+```{r include=FALSE}
+BusinessPartnersImport <- data.frame(
+  stringsAsFactors = FALSE,
+                Country = c("Allemagne", "USA", "Chine", "France", "Inde"),
+                Value = c(15.5, 13.2, 9.7, 6.5, 5.7) ## in % of total imports
+) ## Source : Administration fédérale des douanes Suisse
+```
+
+```{r include=FALSE}
+BusinessPartnersImport$Country <- with(BusinessPartnersImport, reorder(Country, -Value))
+```
+
+```{r include=FALSE}
+BusinessPartnersImport1 <- ggplot(BusinessPartnersImport, 
+            aes(x = Country, y = Value, color = Country, fill = Country, label = Value)) +
+  geom_col() +
+  geom_text(nudge_y = 1) + 
+  ggtitle("Where does Switzerland import the most from?") + 
+  xlab("None") + ylab("In % of total imports") + 
+  labs(caption = "Source: SKEMA Quantum Studio (Administration fédérale des douanes Suisse)")
+  ggthemes::theme_stata() + theme(legend.position = "none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r fig.align='center'}
+BusinessPartnersImport1 + theme(legend.position='none', axis.title.x = element_blank(), axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
+```
+
+ANALYSE À FAIRE
+
+## Swiss industries with the most employees
+
+```{r include=FALSE}
+SwissCompaniesEmployees <- data.frame(
+  stringsAsFactors = FALSE,
+                Company = c("Nestlé",
+                       "Glencore International","ABB","Novartis","SGS","Roche","LafargeHolcim",
+                       "Kühne + Nagel International","Migros-Konzern",
+                       "Coop-Gruppe"),
+                NumberOfEmployees = c(323000, 156000, 134800, 
+                       126457, 95000, 93734, 81960, 75876, 75302, 74532) ## Handelszeitung & Bisnode 2017
+)
+```
+
+```{r include=FALSE}
+SwissCompaniesEmployees$Company <- with(SwissCompaniesEmployees, reorder(Company, -NumberOfEmployees))
+```
+
+```{r include=FALSE}
+SwissCompaniesEmployees1 <- ggplot(SwissCompaniesEmployees, 
+            aes(x = Company, y = NumberOfEmployees, color = NumberOfEmployees, label = NumberOfEmployees, fill = Company)) +
+  geom_col() +
+  ggtitle("Swiss industries with the most employees") + 
+  xlab("Company") + ylab("Number of employees") + 
+  coord_flip() +
+  labs(caption = "Source: SKEMA Quantum Studio (Handelszeitung & Bisnode 2017)")
+  ggthemes::theme_stata() + theme(legend.position = "none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r fig.align='center'}
+SwissCompaniesEmployees2 <- SwissCompaniesEmployees1 + theme(legend.position='none', axis.title.y = element_blank(), axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
+
+SwissCompaniesEmployees2 <- ggplotly(SwissCompaniesEmployees2)
+SwissCompaniesEmployees2
+```
+
+ANALYSE À FAIRE
+
+## Swiss companies with the highest turnover
+
+```{r include=FALSE}
+SwissCompaniesTurnover <- data.frame(
+  stringsAsFactors = FALSE,
+                Company = c("Glencore","Vitol",
+                       "Trafigura","Cargill International","Mercuria Energy Trading",
+                       "Nestlé","Gunvor","Roche","Novartis","ABB"),
+                Turnover = c(202311.7,178212.6,136421,
+                       108009.6,102398,89791,62029.8,53299,48352.7,33783.6) ## Handelszeitung & Bisnode 2017
+)
+```
+
+```{r include=FALSE}
+SwissCompaniesTurnover$Company <- with(SwissCompaniesTurnover, reorder(Company, -Turnover))
+```
+
+```{r include=FALSE}
+SwissCompaniesTurnover1 <- ggplot(SwissCompaniesTurnover, 
+            aes(x = Company, y = Turnover, color = Turnover, label = Turnover, fill = Company)) +
+  geom_col() +
+  ggtitle("Swiss industries with the highest turnover") + 
+  xlab("None") + ylab("Turnover in million CHF") + 
+  coord_flip() +
+  labs(caption = "Source: SKEMA Quantum Studio (Handelszeitung & Bisnode 2017)")
+  ggthemes::theme_stata() + theme(legend.position = "none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r fig.align='center'}
+SwissCompaniesTurnover2 <- SwissCompaniesTurnover1 + theme(legend.position='none', axis.title.y = element_blank(), axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
+
+SwissCompaniesTurnover2 <- ggplotly(SwissCompaniesTurnover2)
+SwissCompaniesTurnover2
+```
+
+## Index of Economic Freedom
+
+```{r include=FALSE}
+IndexEcoFree <- data.frame(
+  stringsAsFactors = FALSE,
+  Category=c("Property Rights", "Judical Effectiveness", "Government Integrity", "Tax Burden", "Govt Spending", "Fiscal Health", "Business Freedom", "Labor Freedom", "Monetary Freedom", "Trade Freedom", "Investment Freedom", "Financial Freedom"),
+  Score=c(85.3,	82.0,	88.0,	70.5,	64.8,	96.3,	75.4,	72.5,	85.2,	87.4,	85,	90)) ## 2019 Index of Economic Freedom, Heritage Foundation
+```
+
+```{r include=FALSE}
+IndexEcoFree$Category <- with(IndexEcoFree, reorder(Category, -Score))
+```
+
+```{r include=FALSE}
+IndexEcoFree1 <- ggplot(IndexEcoFree, 
+            aes(x = Category, y = Score, color = Score, label = Score)) +
+  geom_col(aes(fill = Score)) +
+  ggtitle("Index of Economic Freedom, 2019") + 
+  xlab("Category") + ylab("Score") + 
+  coord_flip() +
+  labs(caption = "Source: SKEMA Quantum Studio (Index of Economic Freedom, Heritage Foundation)")
+  ggthemes::theme_stata() + theme(legend.position = "none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r fig.align='center'}
+IndexEcoFree1 + theme(legend.position='none', axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
+```
+
+Ranked 4 on 183 countries
+
+## Banque, indice business
 
 # **Conclusion**
