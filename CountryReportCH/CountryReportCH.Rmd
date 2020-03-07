@@ -335,7 +335,7 @@ IndexEcoFree1 <- ggplot(IndexEcoFree,
 IndexEcoFree1 + theme(legend.position='none', axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
 ```
 
-Ranked 4 on 183 countries / ANALYSE À FAIRE
+*Switzerland* ranks **4th out of 183 countries** rated for all the scores obtained according to the criteria in the graph above. The closer the score is to 100, the more excellent the result is considered. Conversely, a score close to 0 represents a very poor result. We can see that Switzerland **excels in terms of economic health**, on the other hand, it **performs less well on the criterion of government spending**. These indicators highlight the fact that *Switzerland* is a **very low-risk country for anyone wishing to develop a business there**. Later in the analysis, we will see criteria specific to business development in *Switzerland*. Nevertheless, this first approach makes it possible to highlight the country's stability in this area.
 
 # **Main social indicators**
 
@@ -707,7 +707,7 @@ The corruption index shows whether a country is reliable, especially for doing b
 ## Swiss industries
 
 ```{r include=FALSE}
-IndustryCH <- data.frame(Industry=c("Primary_Sector", "Secondary-Sector", "Tertiary_Sector"), NumberOfCompanies=c(8.98, 15.33, 75.69)) ## Office fédéral statistique Suisse, data 2017
+IndustryCH <- data.frame(Industry=c("Primary_Sector", "Secondary_Sector", "Tertiary_Sector"), NumberOfCompanies=c(8.98, 15.33, 75.69)) ## Office fédéral statistique Suisse, data 2018
 IndustryCH$Industry <- as.character(IndustryCH$Industry)
 ```
 
@@ -727,8 +727,10 @@ pie = pie + theme_classic() + theme(axis.line = element_blank(),
 pie
 ```
 
-Nombre d'entreprises de chaque secteur dans l'ordre : 53010, 90483, 446760
-ANALYSE À FAIRE
+In 2018, there were **53010 companies** in *Switzerland* in the **primary sector**, i.e. the sector consisting of the exploitation of natural resources (e.g. agriculture, fisheries, forestry, etc.). This sector accounts for only **9%** of Swiss companies.
+The **secondary sector** represents **90483 companies**, i.e. **15%** of the total number of companies. This is the sector that deals with the transformation of raw materials from the primary sector.
+Finally, the **tertiary sector** is the sector representing the largest number of companies in *Switzerland*. Indeed, this sector accounts for **75%** of all Swiss companies, i.e. **446760 service companies**.
+This sector alone accounts for **73% of Switzerland's GDP**.
 
 ## Industries that export the most by sector
 
@@ -758,7 +760,8 @@ SwitzerlandTopIndustries1 <- ggplot(SwitzerlandTopIndustries) +
 SwitzerlandTopIndustries1 + theme(legend.position='none', axis.title.y = element_blank(), axis.text.x = element_text(face="bold", color="black", size = 8), axis.text.y = element_text(color="black", face = "italic"), plot.title = element_text(face="bold", size = 12))
 ```
 
-ANALYSE À FAIRE (bien expliquer pour l'or)
+The sector with the highest export earnings in *Switzerland* is the **pharmaceutical sector**, closely followed by the **precious metals and gemstones sector**. These two sectors account for the vast majority of exports, contrary to the generally accepted idea that *Switzerland* derives the majority of its income from exports through sales of **high-end watches**. This sector is ranked **fifth** with a value **four times lower** than the pharmaceutical sector.
+As far as the precious metals sector is concerned, this can be explained by *Switzerland*'s position with regard to gold, as Switzerland is the **main hub of the world gold trade**. Gold is purchased as a **raw material**, then **refined** in Switzerland and finally **exported** to other countries, which explains the very important position of this sector in *Switzerland* in terms of export value.
 
 ## Business Partners Export
 
@@ -790,7 +793,8 @@ BusinessPartnersExport1 <- ggplot(BusinessPartnersExport,
 BusinessPartnersExport1 + theme(legend.position='none', axis.title.x = element_blank(), axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
 ```
 
-ANALYSE À FAIRE
+*Switzerland*'s preferred trading partner is *Germany*. The majority of *Switzerland*'s exports go to *Germany*, closely followed by the *United States*. These two partners alone account for **35.1%** of *Switzerland*'s exports.
+Both countries are economically stable, however, such **dependence can have negative consequences** if the *German* or *US* **economy slows down**.
 
 ## Business Partners Import
 
@@ -822,7 +826,8 @@ BusinessPartnersImport1 <- ggplot(BusinessPartnersImport,
 BusinessPartnersImport1 + theme(legend.position='none', axis.title.x = element_blank(), axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
 ```
 
-ANALYSE À FAIRE
+Once again, *Switzerland*'s two most important import partners are *Germany* and the *USA*. Nevertheless, compared to the previous graph, *China* is now in third place for imports, whereas it was in fifth place for exports from *Switzerland*. This is partly due to the **price of labour** in *China*, which is very competitive. Conversely, the fact that the majority of products exported from *Switzerland* to *China* are **high value-added products** and that the Chinese do not have the **same purchasing power as in Europe** (or the USA) explains the "low" rate of exports from *Switzerland* to *China*.
+Another interesting fact in comparison with the previous graph is the disappearance of *Italy* in this ranking of the top five import partners, which gives way to *India*.
 
 ## Swiss industries with the most employees
 
@@ -899,6 +904,7 @@ SwissCompaniesTurnover2 <- ggplotly(SwissCompaniesTurnover2)
 SwissCompaniesTurnover2
 ```
 
+Environ 25 % des transactions mondiales du commerce des matières premières s’effectuent en Suisse
 ANALYSE À FAIRE
 
 ## Accessibility to setting up a business
