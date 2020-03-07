@@ -115,7 +115,7 @@ library(ggplot2)
  aes(x = year, y = NY.GDP.MKTP.KD.ZG) +
  geom_line(size = 1L, colour = "#0c4c8a") +
  labs(y = "Gdp growth in %", title = "Switzerland GDP growth in % (1971-2018)", caption = "Source: SKEMA Quantum Studio (WDI)") +
- theme_minimal()
+ ggthemes::theme_stata()
 ```
 
 ```{r summary Switzerland GDP}
@@ -123,8 +123,8 @@ CHmeangdp <- summary(CHGDP$NY.GDP.MKTP.KD.ZG)
 CHmeangdp
 ```
 
-As we can see on the graph, the *Switzerland* GDP growth is sometimes under 0, but the most of the time, it's higher than 0. To better understand these data, i have choosen to compute the mean (1,68) and the median (1,82) of the GDP growth on the period 1971 - 2018.
-As we can see on the graphic, there is an **important decrease in 1975** due to the **first oil crisis**.
+This graph shows us the percentage change in GDP for *Switzerland* over the period from 1971 to 2018. As we can see, the change in GDP is sometimes negative, notably in **1975 due to the first oil crisis**. Nevertheless, *Switzerland* sees the variation of its GDP most of the time positive. In fact, when the **average** over the period is calculated, the result is **1.67**, and the **median** is **1.82**. 
+Moreover, **since 2009**, the variation of Swiss GDP **has not had a negative variation**.
 
 ### *Comparison with three european countries (France, Italy and Germany)*
 
@@ -157,7 +157,7 @@ ggplot(CHGdpPerCapita) +
  aes(x = year, y = NY.GDP.PCAP.PP.CD) +
  geom_line(size = 1L, colour = "#0c4c8a") +
  labs(y = "Gdp per capita", title = "Switzerland Gdp per capita evolution (in $ constant)", caption = "Source: SKEMA Quantum Studio (WDI)") +
- theme_minimal()
+ ggthemes::theme_stata()
 ```
 
 We can see that the GDP per capita increase during this period, he was at *27594.63 in 1990* and at *68060.94 in 2018* (**146,6% increase**). It'll be now interesting to compare with the three others countries to see if *Switzerland* is better in this category.
@@ -177,7 +177,7 @@ ggplot(GdpPerCapitaComparison) +
  geom_line(size = 1L) +
  scale_color_hue() +
  labs(y = "GDP per capita", title = "Comparison GDP per capita", caption = "Source: SKEMA Quantum Studio (WDI)") +
- theme_minimal()
+  ggthemes::theme_stata()
 ```
 
 *Switzerland* seems to be *far away* from his neighbours regarding the gdp per capita. *Germany* is in the second place with 53074.54 in 2018 (**28% less than Switzerland**), France in the third place with 45342.40 in 2018 (**50% less than Switzerland**).
@@ -306,6 +306,36 @@ BalanceTransactionsC1
 *Switzerland* has a positive balance of payments, which means that it **exports more than it imports**, and this is a sign of **good economic health**. It is interesting to note that the Swiss balance of payments has **remained positive since the 1970s** while the other three countries all posted negative balances at some point in the period 1970 - 2020. This demonstrates *Switzerland*'s **trade stability** over a long period of time.
 However, in this graph, *Germany* has the best balance of payments since 2005. *France* is the only country with a negative balance of payments in 2020.
 
+## Index of Economic Freedom
+
+```{r include=FALSE}
+IndexEcoFree <- data.frame(
+  stringsAsFactors = FALSE,
+  Category=c("Property Rights", "Judical Effectiveness", "Government Integrity", "Tax Burden", "Govt Spending", "Fiscal Health", "Business Freedom", "Labor Freedom", "Monetary Freedom", "Trade Freedom", "Investment Freedom", "Financial Freedom"),
+  Score=c(85.3,	82.0,	88.0,	70.5,	64.8,	96.3,	75.4,	72.5,	85.2,	87.4,	85,	90)) ## 2019 Index of Economic Freedom, Heritage Foundation
+```
+
+```{r include=FALSE}
+IndexEcoFree$Category <- with(IndexEcoFree, reorder(Category, -Score))
+```
+
+```{r include=FALSE}
+IndexEcoFree1 <- ggplot(IndexEcoFree, 
+            aes(x = Category, y = Score, color = Score, label = Score)) +
+  geom_col(aes(fill = Score)) +
+  ggtitle("Index of Economic Freedom, 2019") + 
+  xlab("Category") + ylab("Score") + 
+  coord_flip() +
+  labs(caption = "Source: SKEMA Quantum Studio (Index of Economic Freedom, Heritage Foundation)")
+  ggthemes::theme_stata() + theme(legend.position = "none") + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r fig.align='center'}
+IndexEcoFree1 + theme(legend.position='none', axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
+```
+
+Ranked 4 on 183 countries / ANALYSE À FAIRE
 
 # **Main social indicators**
 
@@ -891,37 +921,22 @@ ggplot(BusinessCost) +
 
 ANALYSE À FAIRE
 
-## Index of Economic Freedom
+## Labor tax and contributions
 
 ```{r include=FALSE}
-IndexEcoFree <- data.frame(
-  stringsAsFactors = FALSE,
-  Category=c("Property Rights", "Judical Effectiveness", "Government Integrity", "Tax Burden", "Govt Spending", "Fiscal Health", "Business Freedom", "Labor Freedom", "Monetary Freedom", "Trade Freedom", "Investment Freedom", "Financial Freedom"),
-  Score=c(85.3,	82.0,	88.0,	70.5,	64.8,	96.3,	75.4,	72.5,	85.2,	87.4,	85,	90)) ## 2019 Index of Economic Freedom, Heritage Foundation
-```
-
-```{r include=FALSE}
-IndexEcoFree$Category <- with(IndexEcoFree, reorder(Category, -Score))
-```
-
-```{r include=FALSE}
-IndexEcoFree1 <- ggplot(IndexEcoFree, 
-            aes(x = Category, y = Score, color = Score, label = Score)) +
-  geom_col(aes(fill = Score)) +
-  ggtitle("Index of Economic Freedom, 2019") + 
-  xlab("Category") + ylab("Score") + 
-  coord_flip() +
-  labs(caption = "Source: SKEMA Quantum Studio (Index of Economic Freedom, Heritage Foundation)")
-  ggthemes::theme_stata() + theme(legend.position = "none") + 
-  theme(plot.title = element_text(hjust = 0.5))
+LaborTax <- rdb(ids = c('WB/DB/PAY.TAX.LABR.TAX.CONTR.ZS-CH', "WB/DB/PAY.TAX.LABR.TAX.CONTR.ZS-FR", "WB/DB/PAY.TAX.LABR.TAX.CONTR.ZS-IT", "WB/DB/PAY.TAX.LABR.TAX.CONTR.ZS-DE")) %>%
+  filter(!is.na(value)) ## Paying taxes: Labor tax and contributions (% of profits) WB
 ```
 
 ```{r fig.align='center'}
-IndexEcoFree1 + theme(legend.position='none', axis.text.y = element_text(face="bold", color="black", size = 8), axis.text.x = element_text(color="black", face = "bold"), plot.title = element_text(face="bold", size = 14))
+ggplot(LaborTax) +
+ aes(x = period, y = value, colour = country) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "Value", title = "Labor tax and contributions (% of profits)", caption = "Source: SKEMA Quantum Studio (World Bank)") +
+ ggthemes::theme_gdocs()
 ```
 
-Ranked 4 on 183 countries
-
-## Banque, indice business
+ANALYSE À FAIRE
 
 # **Conclusion**
