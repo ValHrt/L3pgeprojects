@@ -12,6 +12,17 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+# *Introduction*
+
+I chose Switzerland for my country report because it is a country in the centre of Europe, not part of the European Union and yet has one of the most prosperous economies in the world.
+On the basis of which elements Switzerland is doing well economically, I will therefore study the development of its economy but also of its social components over the last few years. For example, it will be interesting to make a comparison with Switzerland's neighbours, particularly Germany, Italy and France, to understand how and why Switzerland is a model economy.
+
+* First of all, I will study the data on the Swiss economy to try to understand how it works and, above all, to understand on what basis Switzerland derives such a high degree of stability.
+
+* In a second step, my analysis will focus on social indicators in Switzerland, in particular to see whether it is possible to make a link between good economic health in Switzerland and good social health.
+
+* In a third step, my analysis will focus on business indicators in order to understand how companies in Switzerland operate, their sector of activity and their performance. Part of this analysis will also be devoted to the analysis of indicators concerning the creation of companies in Switzerland, in order to determine whether it may be appropriate to consider opening a company in this country.
+
 # **Population map by canton**
 
 ```{r, include=FALSE}
@@ -92,8 +103,16 @@ The canton of *Zurich* has the most inhabitants (**1520968 inhabitants**) and th
 
 *Switzerland* had a population of **8.57 million** inhabitants in 2019.
 
-
 # **Main economic indicators**
+
+This first part will deal with Switzerland's economic indicators. It will help us to better understand the structure of the Swiss economy, in particular through the following points:
+
+* Analysis of the GDP growth in % (Source: WDI)
+* Analysis of the DGP per capita (Source: WDI)
+* Consumer price index (Source: BIS)
+* Switzerland's trade (Source: WDI)
+* Balance of payments (Source: AMECO)
+* Index of Economic freedom (Source: Heritage Foundation)
 
 ## Analysis of the GDP growth in %
 
@@ -339,6 +358,15 @@ IndexEcoFree1 + theme(legend.position='none', axis.text.y = element_text(face="b
 
 # **Main social indicators**
 
+This second part will deal with Switzerland's social indicators, in particular to analyse well-being in this country. To this end, the following indicators will be studied: 
+
+* Unemployment (Source: WDI)
+* Expenditure on education (Source: WDI)
+* Foreign population (Source: OECD)
+* Intentional homicide ratio (Source: Eurostat)
+* Risk of poverty or social exclusion (Source: Eurostat)
+* Social progress Index (Source: spiR)
+
 ## How Switzerland deals with unemployment?
 
 ```{r Unemployment advanced education, include=FALSE}
@@ -494,46 +522,6 @@ For example, the unemployment rate for the low and intermediate education catego
 
 Finally, it is interesting to note that *Germany* has seen its **unemployment rate fall since 2005**, *Switzerland* remains **stable**, while *France and Italy* have seen their **unemployment rates rise since 2006**, although there has been a **slight improvement over the last 5 years**.
 
-## Social progress index
-
-“The Social Progress Index is a new way to define the success of our societies. It is a comprehensive measure of real quality of life, independent of economic indicators. The Social Progress Index is designed to complement, rather than replace, economic measures such as GDP.” (The Social Progress Imperative, 2018)
-
-```{r Library call, include=FALSE}
-library(spiR)
-library(kableExtra)
-library(ggplot2)
-library(dplyr)
-```
-
-```{r Generate SPI data, include=FALSE}
-SPIc <- sqs_spi_data(country = c("CHE", "FRA", "DEU", "ITA"), 
-                       year = c("2014","2015","2016", "2017", "2018", "2019"), 
-                       indicators = "SPI")
-```
-
-```{r Convert value to numeric SPI, include=FALSE}
-SPIc$value <- as.numeric(SPIc$value)
-```
-
-```{r Generate new board SPI, include=FALSE}
-kable(SPIc)%>%
-scroll_box(width = "100%", height = "200px")
-```
-
-```{r Generate SPI graphic, fig.align='center'}
-ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) + 
-  geom_line() +
-  theme_grey() +
-  theme(plot.title = element_text(hjust = 0.5)) + 
-  labs(title = "Social Progress Index of 4 different european countries since 2014",
-       x = "Years",
-       y = "Social Progress Index Score",
-       colour = "Countries",
-       caption = "Source: SKEMA Quantum Studio (spiR)")
-```
-
-*Switzerland* is the country with the **highest rate of social progress**. This is a very good sign because, in addition to a very high GDP per capita, the social climate is also very positive (although the two are not related). However, the other three countries are also doing very well.
-
 ## Expenditure on education
 
 ```{r, include=FALSE}
@@ -638,9 +626,10 @@ CrimesComparisonPlot + theme(plot.title=element_text(size=20,
 ## Risk of poverty or social exclusion
 
 This indicator corresponds to the sum of persons who are: at risk of poverty after social transfers, severely materially deprived or living in households with very low work intensity. Persons are counted only once even if they are affected by more than one of these phenomena.
-• Persons are considered to be at risk of poverty after social transfers, if they have an equivalised disposable income below the risk-of-poverty threshold, which is set at 60 % of the national median equivalised disposable income.
-• Severely materially deprived persons have living conditions severely constrained by a lack of resources, they experience at least 4 out of 9 following deprivations items: cannot afford i) to pay rent or utility bills, ii) keep home adequately warm, iii) face unexpected expenses, iv) eat meat, fish or a protein equivalent every second day, v) a week holiday away from home, vi) a car, vii) a washing machine, viii) a colour TV, or ix) a telephone.
-• People living in households with very low work intensity are those aged 0-59 living in households where the adults (aged 18-59) work 20% or less of their total work potential during the past year.**(Eurostat)**
+
+* Persons are considered to be at risk of poverty after social transfers, if they have an equivalised disposable income below the risk-of-poverty threshold, which is set at 60 % of the national median equivalised disposable income.
+* Severely materially deprived persons have living conditions severely constrained by a lack of resources, they experience at least 4 out of 9 following deprivations items: cannot afford i) to pay rent or utility bills, ii) keep home adequately warm, iii) face unexpected expenses, iv) eat meat, fish or a protein equivalent every second day, v) a week holiday away from home, vi) a car, vii) a washing machine, viii) a colour TV, or ix) a telephone.
+* People living in households with very low work intensity are those aged 0-59 living in households where the adults (aged 18-59) work 20% or less of their total work potential during the past year.**(Eurostat)**
 
 ```{r, include=FALSE}
 PovertyComparison <- rdb(ids = c('Eurostat/ilc_peps01/A.PC.TOTAL.T.CH', "Eurostat/ilc_peps01/A.PC.TOTAL.T.IT", "Eurostat/ilc_peps01/A.PC.TOTAL.T.FR", "Eurostat/ilc_peps01/A.PC.TOTAL.T.DE")) %>%
@@ -665,10 +654,60 @@ As we can see, *Switzerland* is the country (on a par with *France*) in which th
 
 In 2017, 112.8 million people in the EU lived in households at risk of poverty or social exclusion; 22.4 % of the population. **(Eurostat)**
 
+## Social progress index
+
+“The Social Progress Index is a new way to define the success of our societies. It is a comprehensive measure of real quality of life, independent of economic indicators. The Social Progress Index is designed to complement, rather than replace, economic measures such as GDP.” (The Social Progress Imperative, 2018)
+
+```{r Library call, include=FALSE}
+library(spiR)
+library(kableExtra)
+library(ggplot2)
+library(dplyr)
+```
+
+```{r Generate SPI data, include=FALSE}
+SPIc <- sqs_spi_data(country = c("CHE", "FRA", "DEU", "ITA"), 
+                       year = c("2014","2015","2016", "2017", "2018", "2019"), 
+                       indicators = "SPI")
+```
+
+```{r Convert value to numeric SPI, include=FALSE}
+SPIc$value <- as.numeric(SPIc$value)
+```
+
+```{r Generate new board SPI, include=FALSE}
+kable(SPIc)%>%
+scroll_box(width = "100%", height = "200px")
+```
+
+```{r Generate SPI graphic, fig.align='center'}
+ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) + 
+  geom_line() +
+  theme_grey() +
+  theme(plot.title = element_text(hjust = 0.5)) + 
+  labs(title = "Social Progress Index of 4 different european countries since 2014",
+       x = "Years",
+       y = "Social Progress Index Score",
+       colour = "Countries",
+       caption = "Source: SKEMA Quantum Studio (spiR)")
+```
+
+*Switzerland* is the country with the **highest rate of social progress**. This is a very good sign because, in addition to a very high GDP per capita, the social climate is also very positive (although the two are not related). However, the other three countries are also doing very well.
 
 # **Main business indicators**
 
 According to "The Economist", Switzerland ranks second out of 82 rated countries in terms of Business environment. This means that Switzerland is a country in which the environment is favourable for doing business. We will therefore look at the different sectors in which Switzerland is positioned, its different partners and some business-related indices to understand on what basis Switzerland is rated so favourably by "The Economist".
+
+* Corruption Perceptions Index (Source: Eurostat)
+* Swiss industries (Source: Office fédéral statistique Suisse)
+* Industries that export the most by sector (Source: opendata.swiss)
+* Business Partners Export (Source: Administration fédérale des douanes Suisse)
+* Business Partners Import (Source: Administration fédérale des douanes Suisse)
+* Swiss industries with the most employees (Source: Handelszeitung & Bisnode 2017)
+* Swiss companies with the highest turnover (Source: Handelszeitung & Bisnode 2017)
+* Accessibility to setting up a business (Source: WDI)
+* Labor tax and contributions (Source: World Bank)
+
 
 ## Corruption Perceptions Index
 
@@ -866,7 +905,9 @@ SwissCompaniesEmployees2 <- ggplotly(SwissCompaniesEmployees2)
 SwissCompaniesEmployees2
 ```
 
-ANALYSE À FAIRE
+The Swiss company with the most employees is **Nestlé**. Nestlé employs **323,000 people worldwide**. It is followed by **Glencore International**, which employs **156,000 people**, less than half as many as Nestlé.
+Nestlé is a food company known by all, on the other hand, Glencore International is a trading, brokerage and extraction company of raw materials whose name is less well known.
+**Two pharmaceutical companies** appear in this ranking: Novartis and Roche.
 
 ## Swiss companies with the highest turnover
 
@@ -904,8 +945,9 @@ SwissCompaniesTurnover2 <- ggplotly(SwissCompaniesTurnover2)
 SwissCompaniesTurnover2
 ```
 
-Environ 25 % des transactions mondiales du commerce des matières premières s’effectuent en Suisse
-ANALYSE À FAIRE
+The top five companies in this ranking are **raw materials trading companies**. 
+Around **25% of the world's commodity trading transactions are carried out in Switzerland** . This explains the position of these companies in this ranking in terms of turnover. For example, Trafigura, an oil brokerage company, has a turnover of **CHF 136 billion** and only **4,316 employees**!
+However, in this ranking we find the company Nestlé, which is in 6th position. The pharmaceutical companies Novartis and Roche are respectively in 9th and 8th position in this ranking in terms of turnover.
 
 ## Accessibility to setting up a business
 
@@ -925,7 +967,10 @@ ggplot(BusinessCost) +
  ggthemes::theme_gdocs()
 ```
 
-ANALYSE À FAIRE
+This graphic explains the capital requirement for setting up a company. As we can see, this **cost is zero** for *France* and *Italy*. This means that **no contribution is required to set up a company** in these two countries (however, some types of companies still require a contribution).
+As far as *Germany* is concerned, it is the country that **requires the highest contribution** (in % of the GNI per capita) to set up a company. 
+*Switzerland* is in second position and to create a company in this country, it is necessary to have a **capital contribution representing on average 25% of the GNI per capita**. 
+Access to setting up a company is therefore more restricted in *Germany* and *Switzerland* than in *France* or *Italy*. However, the following graph will highlight the taxes on these companies once they have been set up in order to compare the costs charged to Swiss, French, German and Italian companies. 
 
 ## Labor tax and contributions
 
@@ -943,6 +988,10 @@ ggplot(LaborTax) +
  ggthemes::theme_gdocs()
 ```
 
-ANALYSE À FAIRE
+Although the cost of setting up a company is equal to 0 in *France* and *Italy*, the expenses retained (as a % of the profits made) are the **most important once the company is set up**.
+On the other hand, for *Germany* and *Switzerland*, the costs are high to create the company but the **expenses charged once the company is created are lower**.
+For *Switzerland*, it is the country with the **lowest expenses** and represents on average **17.7% of the profit generated** by the company.
+By way of comparison, expenses in *France* represent **50% of the profit generated**, i.e. almost **three times more** than in *Switzerland*!
+Thus, for a person who would like to create a company, the choice of *Switzerland* seems more favourable. Of course, funds will have to be found to be able to set up the company initially, but **taxation will be more favourable there in the long term**.
 
 # **Conclusion**
