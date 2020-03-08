@@ -1,7 +1,7 @@
 ---
 title: "Country Report Switzerland"
 author: "Valentin Henriot / SKEMA BUSINESS SCHOOL"
-date: "18/01/2020"
+date: "08/03/2020"
 output:
   html_document: 
     toc: yes
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
-# *Introduction*
+# **Introduction**
 
 I chose Switzerland for my country report because it is a country in the centre of Europe, not part of the European Union and yet has one of the most prosperous economies in the world.
 On the basis of which elements Switzerland is doing well economically, I will therefore study the development of its economy but also of its social components over the last few years. For example, it will be interesting to make a comparison with Switzerland's neighbours, particularly Germany, Italy and France, to understand how and why Switzerland is a model economy.
@@ -81,7 +81,7 @@ CHdatamap1$Population <- base::cut(CHdatamap1$Total,
 }
 </style>
 
-```{r leaflet, message=FALSE, warning=FALSE, fig.align="center"}
+```{r leaflet, message=FALSE, warning=FALSE, fig.align="center", include=FALSE}
 myCHmap <- st_read("~/L3pgeprojects/CountryReportCH/MapCH/CHE_adm/CHE_adm1.shp", stringsAsFactors = FALSE)
 
 datamap <- inner_join(myCHmap, CHdatamap1)
@@ -96,6 +96,11 @@ DensityMap <- tmap_last()
 tmap_save(DensityMap, "PopulationMapCH.html")
 ```
 
+```{r fig.align="center"}
+DensityMap
+```
+
+
 ### Which cantons are the more (or less) populated?
 
 Here is a map of *Switzerland* divided into **cantons**, showing the **total population** of each canton in **2018**.
@@ -107,12 +112,12 @@ The canton of *Zurich* has the most inhabitants (**1520968 inhabitants**) and th
 
 This first part will deal with Switzerland's economic indicators. It will help us to better understand the structure of the Swiss economy, in particular through the following points:
 
-* Analysis of the GDP growth in % (Source: WDI)
-* Analysis of the DGP per capita (Source: WDI)
-* Consumer price index (Source: BIS)
-* Switzerland's trade (Source: WDI)
-* Balance of payments (Source: AMECO)
-* Index of Economic freedom (Source: Heritage Foundation)
+* __Analysis of the GDP growth in %__ (Source: WDI)
+* __Analysis of the DGP per capita__ (Source: WDI)
+* __Consumer price index__ (Source: BIS)
+* __Switzerland's trade__ (Source: WDI)
+* __Balance of payments__ (Source: AMECO)
+* __Index of Economic freedom__ (Source: Heritage Foundation)
 
 ## Analysis of the GDP growth in %
 
@@ -360,12 +365,12 @@ IndexEcoFree1 + theme(legend.position='none', axis.text.y = element_text(face="b
 
 This second part will deal with Switzerland's social indicators, in particular to analyse well-being in this country. To this end, the following indicators will be studied: 
 
-* Unemployment (Source: WDI)
-* Expenditure on education (Source: WDI)
-* Foreign population (Source: OECD)
-* Intentional homicide ratio (Source: Eurostat)
-* Risk of poverty or social exclusion (Source: Eurostat)
-* Social progress Index (Source: spiR)
+* __Unemployment__ (Source: WDI)
+* __Expenditure on education__ (Source: WDI)
+* __Foreign population__ (Source: OECD)
+* __Intentional homicide ratio__ (Source: Eurostat)
+* __Risk of poverty or social exclusion__ (Source: Eurostat)
+* __Social progress Index__ (Source: spiR)
 
 ## How Switzerland deals with unemployment?
 
@@ -629,7 +634,7 @@ This indicator corresponds to the sum of persons who are: at risk of poverty aft
 
 * Persons are considered to be at risk of poverty after social transfers, if they have an equivalised disposable income below the risk-of-poverty threshold, which is set at 60 % of the national median equivalised disposable income.
 * Severely materially deprived persons have living conditions severely constrained by a lack of resources, they experience at least 4 out of 9 following deprivations items: cannot afford i) to pay rent or utility bills, ii) keep home adequately warm, iii) face unexpected expenses, iv) eat meat, fish or a protein equivalent every second day, v) a week holiday away from home, vi) a car, vii) a washing machine, viii) a colour TV, or ix) a telephone.
-* People living in households with very low work intensity are those aged 0-59 living in households where the adults (aged 18-59) work 20% or less of their total work potential during the past year.**(Eurostat)**
+* People living in households with very low work intensity are those aged 0-59 living in households where the adults (aged 18-59) work 20% or less of their total work potential during the past year. (Eurostat)
 
 ```{r, include=FALSE}
 PovertyComparison <- rdb(ids = c('Eurostat/ilc_peps01/A.PC.TOTAL.T.CH', "Eurostat/ilc_peps01/A.PC.TOTAL.T.IT", "Eurostat/ilc_peps01/A.PC.TOTAL.T.FR", "Eurostat/ilc_peps01/A.PC.TOTAL.T.DE")) %>%
@@ -652,7 +657,7 @@ ggplot(PovertyComparison, aes(x = period, y = value, color = Country)) +
 
 As we can see, *Switzerland* is the country (on a par with *France*) in which the risk of becoming poor and/or socially excluded is the **lowest.** This is a very good social indicator because it shows that the country puts forward means to **fight against inequalities** but above all to prevent individuals from being in a situation of social isolation.
 
-In 2017, 112.8 million people in the EU lived in households at risk of poverty or social exclusion; 22.4 % of the population. **(Eurostat)**
+In 2017, 112.8 million people in the EU lived in households at risk of poverty or social exclusion; 22.4 % of the population. (Eurostat)
 
 ## Social progress index
 
@@ -698,15 +703,15 @@ ggplot(data = SPIc, aes(x = var_year, y = value, color = countryName)) +
 
 According to "The Economist", Switzerland ranks second out of 82 rated countries in terms of Business environment. This means that Switzerland is a country in which the environment is favourable for doing business. We will therefore look at the different sectors in which Switzerland is positioned, its different partners and some business-related indices to understand on what basis Switzerland is rated so favourably by "The Economist".
 
-* Corruption Perceptions Index (Source: Eurostat)
-* Swiss industries (Source: Office fédéral statistique Suisse)
-* Industries that export the most by sector (Source: opendata.swiss)
-* Business Partners Export (Source: Administration fédérale des douanes Suisse)
-* Business Partners Import (Source: Administration fédérale des douanes Suisse)
-* Swiss industries with the most employees (Source: Handelszeitung & Bisnode 2017)
-* Swiss companies with the highest turnover (Source: Handelszeitung & Bisnode 2017)
-* Accessibility to setting up a business (Source: WDI)
-* Labor tax and contributions (Source: World Bank)
+* __Corruption Perceptions Index__ (Source: Eurostat)
+* __Swiss industries__ (Source: Office fédéral statistique Suisse)
+* __Industries that export the most by sector__ (Source: opendata.swiss)
+* __Business Partners Export__ (Source: Administration fédérale des douanes Suisse)
+* __Business Partners Import__ (Source: Administration fédérale des douanes Suisse)
+* __Swiss industries with the most employees__ (Source: Handelszeitung & Bisnode 2017)
+* __Swiss companies with the highest turnover__ (Source: Handelszeitung & Bisnode 2017)
+* __Accessibility to setting up a business__ (Source: WDI)
+* __Labor tax and contributions__ (Source: World Bank)
 
 
 ## Corruption Perceptions Index
@@ -995,3 +1000,22 @@ By way of comparison, expenses in *France* represent **50% of the profit generat
 Thus, for a person who would like to create a company, the choice of *Switzerland* seems more favourable. Of course, funds will have to be found to be able to set up the company initially, but **taxation will be more favourable there in the long term**.
 
 # **Conclusion**
+
+On the basis of the selected indicators, we can first of all see that in most categories Switzerland is in first place or very close to first place in comparison with its three European neighbours, Germany, France and Italy. 
+
+From an economic point of view, Switzerland is a very stable country (no negative development of its GDP over the last 10 years) with one of the highest GDP per capita in the world. This GDP per capita is explained by the high added value produced by Swiss companies, as evidenced by the pharmaceutical sector and the raw materials sector.
+Switzerland also derives its stability from the fact that its trade balance has been positive since the 1970s, further demonstrating its ability to be self-sufficient but also and above all to export products and services at high prices.
+Generally speaking, Switzerland is also competitive because it has been able to establish numerous trade partnerships with a large number of countries and its geographical position in the "centre" of Europe gives it many advantages in terms of transport costs (e.g. for its trade with Germany).
+Finally, Switzerland has always been able to demonstrate excellent know-how in terms of products and services. Moreover, its advantageous tax system encourages many companies to set up their headquarters in Switzerland and thus benefit from the income generated.
+
+From a social point of view, Switzerland excels here too. With one of the lowest unemployment rates in Europe, an excellent integration of young graduates and above all very high salaries which encourage many foreigners to come to Switzerland to work. 
+The statistics in terms of crime also demonstrate Switzerland's ability to be a safe country for those who live there or those who would consider settling there. The risk of becoming poor or socially isolated is also below the European average.
+All these good results logically lead Switzerland to obtain the best social progress index among the four countries compared, with a score of 89.9 out of 100, indicating a particularly high level of well-being for those living in Switzerland.
+Although the social indicators are not directly correlated with the economic indicators, it is still important to note that the latter still have a minimal influence on social well-being. Indeed, a country with a very low GDP per capita and a high risk of poverty or social exclusion could not do as well in terms of the social progress index.
+
+From a business point of view, Switzerland does not derive the majority of its income from watchmaking or luxury goods but from the sale of its services in the first instance. If we then look at its exports, the pharmaceutical industry is by far in the lead with the precious metals resale industry.
+Germany and the USA are the preferred partners of the Swiss, both for imports and exports.
+Returning to the service industry, it is important to note that the top five Swiss companies in terms of turnover are commodity trading companies. Some of them employ very few people but generate billions of CHF in sales. 
+Nestlé remains the Swiss company with the most employees but is in 6th position in terms of turnover.
+As far as the possibility of setting up a business in Switzerland is concerned, it is necessary to have a fairly large amount of start-up capital (unlike in France where this can be free of charge depending on the type of company chosen). Nevertheless, once the company has been created, taxation is much more advantageous in Switzerland. Thus, the entrepreneur will have more funds to be able to possibly carry out research and development, increase his production capacity or simply increase his salary.
+Finally, Switzerland has a very good score on the corruption index, which means that it is a country where the environment is very favourable for entrepreneurship but also for living in general.
