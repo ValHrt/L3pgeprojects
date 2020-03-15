@@ -1,0 +1,118 @@
+---
+title: "Coronavirus"
+author: "Valentin Henriot"
+date: "15/03/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(coronavirus)
+```
+
+```{r}
+data("coronavirus")
+```
+
+```{r}
+library(dplyr)
+
+summary_df <- coronavirus %>% group_by(Country.Region, type) %>%
+  summarise(total_cases = sum(cases)) %>%
+  arrange(-total_cases)
+
+summary_df %>% head(20)
+```
+
+```{r}
+library(tidyr)
+
+coronavirus %>% 
+  filter(date == max(date)) %>%
+  select(country = Country.Region, type, cases) %>%
+  group_by(country, type) %>%
+  summarise(total_cases = sum(cases)) %>%
+  pivot_wider(names_from = type,
+              values_from = total_cases) %>%
+  arrange(-confirmed)
+```
+
+```{r}
+CoronavirusFR <- filter(coronavirus, Country.Region == "France")
+```
+
+```{r}
+CoronavirusFR2 <- filter(CoronavirusFR, Province.State == "France")
+```
+
+```{r}
+library (ggplot2)
+ggplot(CoronavirusFR2) +
+ aes(x = date, fill = type, colour = type, weight = cases) +
+ geom_bar() +
+ scale_fill_hue() +
+ scale_color_hue() +
+ labs(y = "Nombre de cas", title = "Coronavirus en France", caption = "Source : Rami Krispin dataset coronavirus") +
+ ggthemes::theme_stata()
+```
+
+```{r}
+CoronavirusIT <- filter(coronavirus, Country.Region == "Italy")
+```
+
+```{r}
+ggplot(CoronavirusIT) +
+ aes(x = date, fill = type, colour = type, weight = cases) +
+ geom_bar() +
+ scale_fill_hue() +
+ scale_color_hue() +
+ labs(y = "Nombre de cas", title = "Coronavirus en Italie", caption = "Source : Rami Krispin dataset coronavirus") +
+ ggthemes::theme_stata()
+```
+
+```{r}
+CoronavirusDE <- filter(coronavirus, Country.Region == "Germany")
+```
+
+```{r}
+ggplot(CoronavirusDE) +
+ aes(x = date, fill = type, colour = type, weight = cases) +
+ geom_bar() +
+ scale_fill_hue() +
+ scale_color_hue() +
+ labs(y = "Nombre de cas", title = "Coronavirus en Allemagne", caption = "Source : Rami Krispin dataset coronavirus") +
+ ggthemes::theme_stata()
+```
+
+```{r}
+CoronavirusSPA <- filter(coronavirus, Country.Region == "Spain")
+```
+
+```{r}
+ggplot(CoronavirusSPA) +
+ aes(x = date, fill = type, colour = type, weight = cases) +
+ geom_bar() +
+ scale_fill_hue() +
+ scale_color_hue() +
+ labs(y = "Nombre de cas", title = "Coronavirus en Espagne", caption = "Source : Rami Krispin dataset coronavirus") +
+ ggthemes::theme_stata()
+```
+
+```{r}
+CombineCountries <- filter(coronavirus, Country.Region == "France" | Country.Region == "Spain" | Country.Region == "Germany" | Country.Region == "Italy")
+```
+
+```{r}
+qplot(data = CombineCountries, y = cases, x = date, color = type, fill = type, geom = "line") + 
+  labs(y = "Unemployment rate in %", title = "Unemployment rate by education level", caption = "Source: SKEMA Quantum Studio (WDI)") +
+  facet_wrap(~ Country.Region) +
+  theme_linedraw()
+```
+
+```{r}
+qplot(x=date,  data=CombineCountries)+facet_grid(~Country.Region)+geom_bar(aes(fill = type))
+```
+
