@@ -132,6 +132,16 @@ DataCountries2 <- spread(DataCountries, "type", "total_cases")
 ```
 
 ```{r}
+DataCountries2$confirmed <- as.numeric(DataCountries2$confirmed)
+DataCountries2$death <- as.numeric(DataCountries2$death)
+DataCountries2$recovered <- as.numeric(DataCountries2$recovered)
+```
+
+```{r}
+DataCountries2$"Ratio death/confirmed" <- DataCountries2$death/DataCountries2$confirmed*100
+```
+
+```{r}
 library(kableExtra)
 kable(DataCountries2) %>%
   kable_styling("striped", full_width = F) %>%
@@ -140,5 +150,60 @@ kable(DataCountries2) %>%
   row_spec(2, bold = T, color = "white", background = "red") %>%
   row_spec(3, bold = T, color = "white", background = "green") %>%
   row_spec(4, bold = T, color = "white", background = "orange")
+```
+
+```{r}
+library(rdbnomics)
+HospitalEmployment <- rdb(ids = c('Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.IT', "Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.FR", "Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.ES", "Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.DE")) %>%
+  filter(!is.na(value)) # Annual – Hospital employment – Head count per hundred thousand inhabitants
+```
+
+```{r}
+HospitalEmployment2017 <- filter(HospitalEmployment, original_period == 2017)
+```
+
+```{r include=FALSE}
+base::colnames(HospitalEmployment2017)[colnames(HospitalEmployment2017)=="Geopolitical entity (reporting)"] <- "Country" 
+```
+
+```{r include=FALSE}
+HospitalEmployment2017$Country <- recode(HospitalEmployment2017$Country,
+               "Germany (until 1990 former territory of the FRG)" = "Germany")
+```
+
+```{r}
+ggplot(HospitalEmployment2017) +
+ aes(x = Country, fill = Country, weight = value) +
+ geom_bar() +
+ scale_fill_hue() +
+ labs(x = "Pays", y = "Ratio pour 100.000 habitants", title = "Nombre d'employés dans les hôpitaux pour 100.000 habitants", caption = "Source : Eurostat (2017)") +
+ ggthemes::theme_pander()
+```
+
+```{r}
+HospitalBeds <- rdb(ids = c('Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT.FR', "Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT.IT", "Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT.ES", "Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT.DE")) %>%
+  filter(!is.na(value)) # Annual – Per hundred thousand inhabitants – Available beds in hospitals 
+```
+
+```{r}
+HospitalBeds2017 <- filter(HospitalBeds, original_period == 2017)
+```
+
+```{r include=FALSE}
+base::colnames(HospitalBeds2017)[colnames(HospitalBeds2017)=="Geopolitical entity (reporting)"] <- "Country" 
+```
+
+```{r include=FALSE}
+HospitalBeds2017$Country <- recode(HospitalBeds2017$Country,
+               "Germany (until 1990 former territory of the FRG)" = "Germany")
+```
+
+```{r}
+ggplot(HospitalBeds2017) +
+ aes(x = Country, fill = Country, weight = value) +
+ geom_bar() +
+ scale_fill_hue() +
+ labs(y = "Ratio pour 100.000 habitants", title = "Lits d'hôpitaux pour 100.000 habitants", caption = "Source : Eurostat (2017)") +
+ ggthemes::theme_pander()
 ```
 
