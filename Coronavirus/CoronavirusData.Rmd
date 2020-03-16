@@ -106,13 +106,39 @@ CombineCountries <- filter(coronavirus, Country.Region == "France" | Country.Reg
 ```
 
 ```{r}
-qplot(data = CombineCountries, y = cases, x = date, color = type, fill = type, geom = "line") + 
-  labs(y = "Unemployment rate in %", title = "Unemployment rate by education level", caption = "Source: SKEMA Quantum Studio (WDI)") +
+library(plotly)
+CombineGraph <-ggplot(CombineCountries, aes(date, cases))
+
+CombineGraph2 <- CombineGraph + geom_bar(stat = "identity", aes(fill = type)) +
   facet_wrap(~ Country.Region) +
+  xlab("Date") + 
+  ggtitle("Cas de coronavirus") +
   theme_linedraw()
+
+CombineGraph3 <- CombineGraph2 + theme(axis.title.y = element_blank()) 
+
+CombineGraph3 <- ggplotly(CombineGraph3)
+CombineGraph3
 ```
 
 ```{r}
-qplot(x=date,  data=CombineCountries)+facet_grid(~Country.Region)+geom_bar(aes(fill = type))
+DataCountries <- CombineCountries %>% group_by(Country.Region, type) %>%
+  summarise(total_cases = sum(cases)) %>%
+  arrange(Country.Region)
+```
+
+```{r}
+DataCountries2 <- spread(DataCountries, "type", "total_cases")
+```
+
+```{r}
+library(kableExtra)
+kable(DataCountries2) %>%
+  kable_styling("striped", full_width = F) %>%
+  column_spec(3, bold = T) %>%
+  row_spec(1, bold = T, color = "white", background = "blue") %>%
+  row_spec(2, bold = T, color = "white", background = "red") %>%
+  row_spec(3, bold = T, color = "white", background = "green") %>%
+  row_spec(4, bold = T, color = "white", background = "orange")
 ```
 
