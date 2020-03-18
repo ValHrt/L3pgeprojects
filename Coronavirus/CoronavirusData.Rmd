@@ -9,6 +9,8 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## Etude sur les cas de Covid-19 recensés
+
 ```{r}
 library(coronavirus)
 ```
@@ -158,6 +160,8 @@ HospitalEmployment <- rdb(ids = c('Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.IT', 
   filter(!is.na(value)) # Annual – Hospital employment – Head count per hundred thousand inhabitants
 ```
 
+## Etude sur les moyens médicaux
+
 ```{r}
 HospitalEmployment2017 <- filter(HospitalEmployment, original_period == 2017)
 ```
@@ -173,16 +177,18 @@ HospitalEmployment2017$Country <- recode(HospitalEmployment2017$Country,
 
 ```{r}
 ggplot(HospitalEmployment2017) +
- aes(x = Country, fill = Country, weight = value) +
- geom_bar() +
+ aes(x = Country, y = value, fill = Country, label = value) +
+ geom_col() +
+  geom_text(nudge_y = 1) +
  scale_fill_hue() +
  labs(x = "Pays", y = "Ratio pour 100.000 habitants", title = "Nombre d'employés dans les hôpitaux pour 100.000 habitants", caption = "Source : Eurostat (2017)") +
- ggthemes::theme_pander()
+ ggthemes::theme_stata() +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
 ```{r}
-HospitalBeds <- rdb(ids = c('Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT.FR', "Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT.IT", "Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT.ES", "Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT.DE")) %>%
-  filter(!is.na(value)) # Annual – Per hundred thousand inhabitants – Available beds in hospitals 
+HospitalBeds <- rdb(ids = c('Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT_CUR.FR', "Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT_CUR.IT", "Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT_CUR.ES", "Eurostat/hlth_rs_bds/A.P_HTHAB.HBEDT_CUR.DE")) %>%
+  filter(!is.na(value)) # Annual – Per hundred thousand inhabitants – Curative care beds in hospitals 
 ```
 
 ```{r}
@@ -200,10 +206,39 @@ HospitalBeds2017$Country <- recode(HospitalBeds2017$Country,
 
 ```{r}
 ggplot(HospitalBeds2017) +
- aes(x = Country, fill = Country, weight = value) +
- geom_bar() +
- scale_fill_hue() +
- labs(y = "Ratio pour 100.000 habitants", title = "Lits d'hôpitaux pour 100.000 habitants", caption = "Source : Eurostat (2017)") +
- ggthemes::theme_pander()
+ aes(x = Country, y = value, fill = Country, label = value) +
+ geom_col() +
+  geom_text(nudge_y = 1) +
+ labs(y = "Ratio pour 100.000 habitants", x = "Pays", title = "Lits d'hôpitaux en soins intensifs pour 100.000 habitants", caption = "Source : Eurostat (2017)") +
+ ggthemes::theme_stata() +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+## Etude sur la population
+
+```{r}
+TotalPop <- rdb(ids = c('Eurostat/tps00001/A.JAN.FR', "Eurostat/tps00001/A.JAN.IT", "Eurostat/tps00001/A.JAN.ES", "Eurostat/tps00001/A.JAN.DE")) %>%
+  filter(!is.na(value)) # Population totale
+```
+
+```{r}
+TotalPop2019 <- filter(TotalPop, original_period == 2019)
+```
+
+```{r}
+Pop65andMore <- rdb(ids = c('Eurostat/demo_pjanbroad/A.NR.Y_GE65.T.FR', "Eurostat/demo_pjanbroad/A.NR.Y_GE65.T.IT", "Eurostat/demo_pjanbroad/A.NR.Y_GE65.T.ES", "Eurostat/demo_pjanbroad/A.NR.Y_GE65.T.DE")) %>%
+  filter(!is.na(value)) # 65 ans ou plus 
+```
+
+```{r}
+Pop65andMore2019 <- filter(Pop65andMore, original_period == 2019)
+```
+
+```{r}
+Country <- c("France", "Italy", "Spain", "Germany")
+Ratio <- Pop65andMore2019$value/TotalPop2019$value*100
+TableauRatioPop <- data.frame(Country, Ratio) # Ratio 65 ans ou +
+
+colnames(TableauRatioPop)[2] <- "Ratio population > 65 ans"
 ```
 
