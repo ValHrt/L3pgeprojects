@@ -136,7 +136,7 @@ DataCountries2 <- spread(DataCountries, "type", "total_cases")
 ```{r}
 DataCountries2$confirmed <- as.numeric(DataCountries2$confirmed)
 DataCountries2$death <- as.numeric(DataCountries2$death)
-DataCountries2$recovered <- as.numeric(DataCountries2$recovered)
+DataCountries2$recovered <- as.numeric(DataCountries2$recovered) 
 ```
 
 ```{r}
@@ -160,7 +160,41 @@ HospitalEmployment <- rdb(ids = c('Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.IT', 
   filter(!is.na(value)) # Annual – Hospital employment – Head count per hundred thousand inhabitants
 ```
 
+### Faire une courbe cumulative des confirmés et des décédés
+
+```{r}
+summary_df2 <- spread(coronavirus, "type", "cases")
+```
+
+```{r}
+SpreadCountries <- filter(summary_df2, Country.Region == "France" & Province.State == "France" | Country.Region == "Spain" | Country.Region == "Germany" | Country.Region == "Italy") 
+```
+
+```{r}
+SpreadCountries1 <- SpreadCountries[,-1]
+```
+
+```{r}
+SpreadCountries2 <- SpreadCountries1 %>% group_by(Country.Region) %>%  mutate(CumulMort=cumsum(death))
+```
+
+```{r}
+ggplot(SpreadCountries2) +
+ aes(x = date, y = CumulMort, colour = Country.Region) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "Nombre de décès (cumulés)", title = "Décès liés au Covid-19") +
+ ggthemes::theme_stata()
+```
+
+
 ## Etude sur les moyens médicaux
+
+```{r}
+library(rdbnomics)
+HospitalEmployment <- rdb(ids = c('Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.IT', "Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.FR", "Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.ES", "Eurostat/hlth_rs_prshp1/A.HOSP.HC_HTHAB.DE")) %>%
+  filter(!is.na(value)) # Annual – Hospital employment – Head count per hundred thousand inhabitants
+```
 
 ```{r}
 HospitalEmployment2017 <- filter(HospitalEmployment, original_period == 2017)
