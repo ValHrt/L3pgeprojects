@@ -175,11 +175,24 @@ SpreadCountries1 <- SpreadCountries[,-1]
 ```
 
 ```{r}
-SpreadCountries2 <- SpreadCountries1 %>% group_by(Country.Region) %>%  mutate(CumulMort=cumsum(death))
+CountriesConfirmed <- SpreadCountries1 %>% group_by(Country.Region) %>% mutate(CumulConfirmes=cumsum(confirmed))
 ```
 
 ```{r}
-ggplot(SpreadCountries2) +
+ggplot(CountriesConfirmed) +
+ aes(x = date, y = CumulConfirmes, colour = Country.Region) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "Nombre de cas confirmés (cumulés)", title = "Nombre de personnes infectées par le Covid-19") +
+ ggthemes::theme_stata()
+```
+
+```{r}
+CountriesDeath <- SpreadCountries1 %>% group_by(Country.Region) %>%  mutate(CumulMort=cumsum(death))
+```
+
+```{r}
+ggplot(CountriesDeath) +
  aes(x = date, y = CumulMort, colour = Country.Region) +
  geom_line(size = 1L) +
  scale_color_hue() +
@@ -187,6 +200,25 @@ ggplot(SpreadCountries2) +
  ggthemes::theme_stata()
 ```
 
+```{r}
+LeftJoin1 <- left_join(CountriesConfirmed, CountriesDeath, by = c("Country.Region", "Lat", "Long", "date", "confirmed", "death", "recovered"))
+
+CountriesRecovered <- SpreadCountries1 %>% group_by(Country.Region) %>%  mutate(CumulSoigne=cumsum(recovered))
+
+LeftJoin2 <- left_join(LeftJoin1, CountriesRecovered, by = c("Country.Region", "Lat", "Long", "date", "confirmed", "death", "recovered"))
+
+LeftJoin2$confirmed <- NULL
+LeftJoin2$death <- NULL
+LeftJoin2$recovered <- NULL
+LeftJoin2$Lat <- NULL
+LeftJoin2$Long <- NULL
+
+LeftJoin2$CumulConfirmes <- as.numeric(LeftJoin2$CumulConfirmes)
+LeftJoin2$CumulMort <- as.numeric(LeftJoin2$CumulMort)
+LeftJoin2$CumulSoigne <- as.numeric(LeftJoin2$CumulSoigne)
+
+FinalCumul <- LeftJoin2 %>% gather(Total, Value, -Country.Region, -date)
+```
 
 ## Etude sur les moyens médicaux
 
