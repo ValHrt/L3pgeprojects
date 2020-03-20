@@ -220,6 +220,31 @@ LeftJoin2$CumulSoigne <- as.numeric(LeftJoin2$CumulSoigne)
 FinalCumul <- LeftJoin2 %>% gather(Total, Value, -Country.Region, -date)
 ```
 
+```{r}
+ggplot(FinalCumul) +
+ aes(x = date, y = Value, colour = Country.Region, group = Country.Region) +
+ geom_line(size = 1L) +
+ scale_color_hue() +
+ labs(y = "Effectifs cumulés (par catégorie)", title = "Graphique de l'évolution du Covid-19") +
+ ggthemes::theme_stata() +
+ facet_wrap(vars(Total), scales = "free")
+```
+
+```{r}
+CombineCumul <-ggplot(FinalCumul, aes(date, Value))
+
+CombineCumul2 <- CombineCumul + geom_bar(stat = "identity", aes(fill = Total)) +
+  facet_wrap(~ Country.Region) +
+  xlab("Date") + 
+  ggtitle("Effectifs cumulés par catégorie de l'évolution du Covid-19") +
+  theme_linedraw()
+
+CombineCumul3 <- CombineCumul2 + theme(axis.title.y = element_blank()) 
+
+CombineCumul3 <- ggplotly(CombineCumul3)
+CombineCumul3
+```
+
 ## Etude sur les moyens médicaux
 
 ```{r}

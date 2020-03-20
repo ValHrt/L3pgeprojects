@@ -1,0 +1,28 @@
+---
+title: "Coronavirus France"
+author: "Valentin Henriot"
+date: "20/03/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readr)
+library(plotly)
+```
+
+```{r}
+Covid19FR <- read_csv("Coronavirus/chiffres-cles.csv", 
+    col_types = cols(source_nom = col_skip(), 
+         source_url = col_skip()))
+```
+
+```{r}
+Covid19FR1 <- filter(Covid19FR, granularite == "departement" & source_type == "agences-regionales-sante")
+
+Covid19FR2 <- Covid19FR1[,-2]
+```
+
