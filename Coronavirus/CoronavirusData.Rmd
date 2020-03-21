@@ -12,11 +12,18 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Etude sur les cas de Covid-19 recensés
 
 ```{r}
-library(coronavirus)
+#library(coronavirus)
 ```
 
 ```{r}
-data("coronavirus")
+#data("coronavirus")
+#data("covid_south_korea")
+#data("covid_italy")
+#data("covid_iran")
+```
+
+```{r}
+coronavirus <- utils::read.csv("https://raw.githubusercontent.com/RamiKrispin/coronavirus-csv/master/coronavirus_dataset.csv")
 ```
 
 ```{r}
@@ -27,6 +34,10 @@ summary_df <- coronavirus %>% group_by(Country.Region, type) %>%
   arrange(-total_cases)
 
 summary_df %>% head(20)
+```
+
+```{r include=FALSE}
+coronavirus$date <- as.Date(coronavirus$date, "%Y-%m-%d")
 ```
 
 ```{r}

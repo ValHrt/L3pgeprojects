@@ -1,0 +1,50 @@
+---
+title: "EpiModel Package"
+description: |
+  Comment utiliser le package EpiModel ?
+author:
+  - name: Valentin Henriot
+date: "`r Sys.Date()`"
+output: distill::distill_article
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+### Appeler la librairie EpiModel
+
+```{r}
+suppressMessages(library(EpiModel))
+```
+
+La fonction suppressMessages permet d'enlever les messages liés à l'appel de la librairie (qui sont nombreux concernant cette dernière).
+
+### Définir la durée de l'épidémie et le nombre d'hypothèses
+
+```{r}
+Covid19Duree <- control.icm(type = "SIR", nsteps = 90, nsims = 5)
+```
+
+Ici, nous allons faire comme si l'épidémie allait durer 90 jours et nous étudierons 5 scénarios différents.
+
+### Définir la population totale
+
+```{r}
+init <- init.icm(s.num = 67000000, i.num = 50, r.num = 0)
+```
+
+Ici, nous définissons la population totale, dans cet exemple, il s'agit de la population française avec une estimation de 50 personnes infectées au tout début de l'épidémie. Le chiffre 0 dans r.num, indique le nombre de personnes guéris, 0 au début de l'épidémie donc.
+
+### Définir les paramètres de taux de transmission
+
+```{r}
+Covid19Parametres <- param.icm(inf.prob = 0.2, act.rate = 10, rec.rate = 1/5)
+```
+
+Nous estimons dans ce cas le risque de contracter le Covid-19 pour une personne qui y est exposée, ici 20%. Ensuite, on définit le nombre de fois où un individu y est exposé sur une journée (10 fois, ici donc, nous faisons comme si les mesures de confinement n'avaient pas été prises). Enfin, nous définissons le taux de guérison, ce dernier est défini par le modèle comme étant la réciproque de la durée moyenne de la maladie (5 jours).
+
+```{r}
+Simulation <- icm(Covid19Parametres, Covid19Pop, Covid19Duree)
+```
+
