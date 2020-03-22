@@ -22,10 +22,6 @@ DataEFS <- read_excel("~/L3pgeprojects/MarketResearch/EFSfichier.xlsx",
 ```
 
 ```{r}
-str(DataEFS)
-```
-
-```{r}
 delete.na <- function(DataEFS, n=0) {
   DataEFS[rowSums(is.na(DataEFS)) <= n,]
 }
@@ -44,6 +40,16 @@ DataEFS1$sex <- as.factor(DataEFS1$sex)
 DataEFS1$Ageofresidence <- as.numeric(DataEFS1$Ageofresidence)
 DataEFS1$RespBirth <- as.factor(DataEFS1$RespBirth)
 DataEFS1$Bloodneed <- as.factor(DataEFS1$Bloodneed)
+DataEFS1$blood <- as.factor(DataEFS1$blood)
+DataEFS1$religion <- as.factor(DataEFS1$religion)
+
+DataEFS1$Scenariopsychologicaldistance_DO_closefamil <- as.logical(DataEFS1$Scenariopsychologicaldistance_DO_closefamil)
+
+DataEFS1$Scenariopsychologicaldistance_DO_closestrang <- as.logical(DataEFS1$Scenariopsychologicaldistance_DO_closestrang)
+
+DataEFS1$Scenariopsychologicaldistance_DO_distantFamil <- as.logical(DataEFS1$Scenariopsychologicaldistance_DO_distantFamil)
+
+DataEFS1$Scenariopsychologicaldistance_DO_totalstrang <- as.logical(DataEFS1$Scenariopsychologicaldistance_DO_totalstrang)
 ```
 
 ```{r}
@@ -58,5 +64,47 @@ DataEFS1$friends <- recode(DataEFS1$friends, "1" = "Aucun de mes amis", "2" = "P
 DataEFS1$sex <- recode(DataEFS1$sex, "1"= "Femme", "2" = "Homme")
 
 DataEFS1$Bloodneed <- recode(DataEFS1$Bloodneed, "1" = "Oui", "2" = "Non")
+
+DataEFS1$blood <- recode(DataEFS1$blood, "3" = "Groupe_Recherché", "4" = "Commun", "5" = "ContreIndicationMedic", "6" = "NeSaitPas")
+
+DataEFS1$religion <- recode(DataEFS1$religion, "1" = "Désapprouve", "2" = "Désapprouve", "3" = "Désapprouve", "4" = "Ni l'un ni l'autre", "5" = "Ni l'un ni l'autre", "6" = "Ni l'un ni l'autre", "7" = "Approuve")
+```
+
+```{r}
+DataEFS1$RespMDP <- NULL
+DataEFS1$RespMDPLP <- NULL
+DataEFS1$motherMDP <- NULL
+DataEFS1$motherMDPLP <- NULL
+DataEFS1$fatherMDP <- NULL
+DataEFS1$fatherMDPLP <- NULL
+```
+
+```{r}
+DataEFS1 <- DataEFS1[c(1, 12, 14, 16, 17, 30, 34, 36, 38, 39, 40, 41, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 15, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 31, 32, 33, 35, 37, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60)] # 1 / 12 / 14 / 16 / 17 / 30 / 34 / 36 à mettre en premier
+```
+
+```{r}
+summary(DataEFS1)
+```
+
+```{r}
+delete.na2 <- function(DataEFS1, n=0) {
+  DataEFS[rowSums(is.na(DataEFS1)) <= n,]
+}
+```
+
+```{r}
+DataEFS2 <- delete.na(DataEFS, 33)
+```
+
+```{r}
+DataEFS1_norm <- DataEFS1
+DataEFS1_norm[,13:60] <- as.data.frame(apply(DataEFS1_norm[,13:60], 2, function(x) (x - min(x))/(max(x)-min(x))))
+DataEFS1_norm
+```
+
+```{r}
+correlationData = cor(DataEFS1_norm[13:22])
+corrplot(correlationData, method = "number")
 ```
 
