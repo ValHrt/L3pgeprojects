@@ -1,0 +1,62 @@
+---
+title: "MarketingResearch"
+author: "Valentin Henriot"
+date: "22/03/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r warning=FALSE, include=FALSE}
+library(readxl)
+library(readr)
+library(dplyr)
+library(tidyr)
+```
+
+```{r warning=FALSE, include=FALSE}
+DataEFS <- read_excel("~/L3pgeprojects/MarketResearch/EFSfichier.xlsx", 
+    na = "#NULL!")
+```
+
+```{r}
+str(DataEFS)
+```
+
+```{r}
+delete.na <- function(DataEFS, n=0) {
+  DataEFS[rowSums(is.na(DataEFS)) <= n,]
+}
+```
+
+```{r}
+DataEFS1 <- delete.na(DataEFS, 33)
+```
+
+```{r}
+DataEFS1$MotherBirth <- as.factor(DataEFS1$MotherBirth)
+DataEFS1$FatherBirth <- as.factor(DataEFS1$FatherBirth)
+DataEFS1$friends <- as.factor(DataEFS1$friends)
+DataEFS1$age <- as.numeric(DataEFS1$age)
+DataEFS1$sex <- as.factor(DataEFS1$sex)
+DataEFS1$Ageofresidence <- as.numeric(DataEFS1$Ageofresidence)
+DataEFS1$RespBirth <- as.factor(DataEFS1$RespBirth)
+DataEFS1$Bloodneed <- as.factor(DataEFS1$Bloodneed)
+```
+
+```{r}
+DataEFS1$MotherBirth <- recode(DataEFS1$MotherBirth,"1" = "Métropole", "2" = "OutreMer", "3" = "AutrePays")
+
+DataEFS1$FatherBirth <- recode(DataEFS1$FatherBirth,"1" = "Métropole", "2" = "OutreMer", "3" = "AutrePays")
+
+DataEFS1$RespBirth <- recode(DataEFS1$RespBirth,"1" = "Métropole", "2" = "OutreMer", "3" = "AutrePays")
+
+DataEFS1$friends <- recode(DataEFS1$friends, "1" = "Aucun de mes amis", "2" = "Presque aucun", "3" = "La moitié de mes amis", "4" = "Presque tous", "5" = "Tous mes amis")
+
+DataEFS1$sex <- recode(DataEFS1$sex, "1"= "Femme", "2" = "Homme")
+
+DataEFS1$Bloodneed <- recode(DataEFS1$Bloodneed, "1" = "Oui", "2" = "Non")
+```
+

@@ -31,7 +31,7 @@ Ici, nous allons faire comme si l'épidémie allait durer 90 jours et nous étud
 ### Définir la population totale
 
 ```{r}
-init <- init.icm(s.num = 67000000, i.num = 50, r.num = 0)
+Covid19Pop <- init.icm(s.num = 67000000, i.num = 50, r.num = 0)
 ```
 
 Ici, nous définissons la population totale, dans cet exemple, il s'agit de la population française avec une estimation de 50 personnes infectées au tout début de l'épidémie. Le chiffre 0 dans r.num, indique le nombre de personnes guéris, 0 au début de l'épidémie donc.
