@@ -14,6 +14,10 @@ library(readxl)
 library(readr)
 library(dplyr)
 library(tidyr)
+library(ggplot2)
+library(scales)
+library(plotly)
+library(ggpirate)
 ```
 
 ```{r warning=FALSE, include=FALSE}
@@ -103,15 +107,33 @@ Pour pouvoir réaliser l'analyse de corrélation, on garde uniquement les indivi
 ```{r}
 DataEFS2_norm <- DataEFS2
 DataEFS2_norm[,13:59] <- as.data.frame(apply(DataEFS2_norm[,13:59], 2, function(x) (x - min(x))/(max(x)-min(x))))
-DataEFS2_norm
 ```
 
 ```{r}
+library(corrplot)
 correlationData = cor(DataEFS2_norm [13:22])
 corrplot(correlationData, method = "pie")
 ```
 
 ```{r}
+ggplot(DataEFS1) +
+  aes(x = age, y = donor) +
+  geom_count(colour = "red", alpha = .3) +
+  xlab("Âge") +
+  ylab("Fréquence de don de sang ou plasma") +
+  ggtitle("Qui sont ceux qui donnent le plus en fonction de l'âge ?") +
+  labs(size = "effectifs")+
+ggthemes::theme_stata()
+```
 
+```{r}
+ggplot(DataEFS2) +
+  aes(x = blood, y = donor, colour = blood, fill = blood)  +
+  geom_pirate() +
+  xlab("Type de sang") +
+  ylab("Fréquence de don de sang ou plasma") +
+  ggtitle("Qui sont ceux qui donnent le plus en fonction du type de sang ?") +
+  ggthemes::theme_stata() +
+  theme(panel.grid.minor = element_blank())
 ```
 
