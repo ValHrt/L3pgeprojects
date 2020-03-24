@@ -92,6 +92,51 @@ DataEFS1 <- DataEFS1[c(1, 12, 14, 15, 16, 29, 33, 35, 37, 38, 39, 40, 2, 3, 4, 5
 summary(DataEFS1)
 ```
 
+### Réussir à mettre Métrople, OM, autres pays en colonnes
+
+```{r}
+DataEFS1 %>%
+ filter(!is.na(RespBirth)) %>%
+ ggplot() +
+ aes(x = RespBirth, fill = RespBirth) +
+  xlab("Lieu de naissance des répondants") +
+  ylab("Total") +
+  ggtitle("Profil des répondants à l'enquête") +
+ geom_bar() +
+ scale_fill_hue() +
+ ggthemes::theme_stata()
+```
+
+```{r}
+EFSrelation <- select(DataEFS1, blood,  RespBirth)
+
+EFSrelation <- group_by(EFSrelation, blood, RespBirth, add = FALSE) %>%
+  summarise(count = n())
+
+EFSkhideux <- filter(EFSrelation, blood == "Groupe_Recherché" | blood == "Commun") %>% filter(!is.na(RespBirth))
+
+EFSkhideux <- spread(EFSkhideux, "blood", "count")
+
+EFSkhideux$Groupe_Recherché <- as.numeric(EFSkhideux$Groupe_Recherché)
+EFSkhideux$Commun <- as.numeric(EFSkhideux$Commun)
+```
+
+```{r}
+chisq.test(EFSkhideux)
+```
+
+```{r}
+EFSrelation2 <- spread(EFSrelation, "RespBirth", "count", fill = NA, drop = FALSE)
+
+EFSrelation2$Métropole <- as.numeric(EFSrelation2$Métropole)
+EFSrelation2$OutreMer <- as.numeric(EFSrelation2$OutreMer)
+EFSrelation2$AutrePays <- as.numeric(EFSrelation2$AutrePays)
+EFSrelation2$`<NA>` <- as.numeric(EFSrelation2$`<NA>`)
+```
+
+Les individus nés en métropole représentent 71% de l'échantillon des répondants retenus (ceux ayant répondus à au moins 50% des questions), ceux d'OutreMer représentent 6%, ceux étant nés dans un autre pays représentent eux 22% de l'échantillon. Enfin, ceux n'ayant pas indiqué leur lieu de naissance représentent 1% de l'échantillon. Nous les excluerons donc de l'analyse cherchant à mettre en évidence un lien entre le lieu de naissance et le type de sang. De la même manière, nous excluerons ceux qui ne connaissent pas leur groupe sanguin.
+Avant d'exclure le groupe de ceux qui ne connaissent pas leur groupe sanguin, il est intéressant de noter les proportions de cette méconnaissance en fonction du lieu de naissance. Ainsi, les personnes nées en métropole sont 23% à ignorer leur groupe sanguin, 26% pour ceux étant nés en Outre-Mer et enfin 28% pour ceux étant nés dans un autre pays.
+
 ```{r}
 delete.na2 <- function(DataEFS1, n=0) {
   DataEFS1[rowSums(is.na(DataEFS1)) <= n,]
@@ -126,8 +171,10 @@ ggplot(DataEFS1) +
 ggthemes::theme_stata()
 ```
 
+Attention, analyse biaisée car majorité des répondants sont jeunes
+
 ```{r}
-ggplot(DataEFS2) +
+ggplot(DataEFS1) +
   aes(x = blood, y = donor, colour = blood, fill = blood)  +
   geom_pirate() +
   xlab("Type de sang") +
@@ -136,4 +183,16 @@ ggplot(DataEFS2) +
   ggthemes::theme_stata() +
   theme(panel.grid.minor = element_blank())
 ```
+
+```{r}
+ggplot(DataEFS2) +
+  aes(x = RespBirth, y = donor, colour = RespBirth, fill = RespBirth)  +
+  geom_pirate() +
+  xlab("Lieu de naissance") +
+  ylab("Fréquence de don de sang ou plasma") +
+  ggtitle("Qui sont ceux qui donnent le plus en fonction du lieu de naissance ?") +
+  ggthemes::theme_stata() +
+  theme(panel.grid.minor = element_blank())
+```
+
 
