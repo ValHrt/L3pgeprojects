@@ -18,6 +18,7 @@ library(ggplot2)
 library(scales)
 library(plotly)
 library(ggpirate)
+library(gplots)
 ```
 
 ```{r warning=FALSE, include=FALSE}
@@ -108,6 +109,19 @@ DataEFS1 %>%
 ```
 
 ```{r}
+DataEFS1 %>%
+ filter(!is.na(sex)) %>%
+ ggplot() +
+ aes(x = sex, fill = sex) +
+  xlab("Sexe") +
+  ylab("Total") +
+  ggtitle("Profil des répondants à l'enquête") +
+ geom_bar() +
+ scale_fill_hue() +
+ ggthemes::theme_stata()
+```
+
+```{r}
 EFSrelation <- select(DataEFS1, blood,  RespBirth)
 
 EFSrelation <- group_by(EFSrelation, blood, RespBirth, add = FALSE) %>%
@@ -122,7 +136,32 @@ EFSkhideux$Commun <- as.numeric(EFSkhideux$Commun)
 ```
 
 ```{r}
-chisq.test(EFSkhideux)
+EFSkhideux_test <- EFSkhideux
+EFSkhideux_test <- as.data.frame(EFSkhideux_test)
+rownames(EFSkhideux_test) <- EFSkhideux_test[,1]
+EFSkhideux_test[,1] <- NULL
+EFSkhideux_test <- as.matrix(EFSkhideux_test)
+khideuxfinal <- chisq.test(EFSkhideux_test)
+```
+
+```{r}
+khideuxfinal$observed
+```
+
+```{r}
+khideuxfinal$expected
+```
+
+```{r}
+EFSkhideux_plot <- EFSkhideux
+EFSkhideux_plot <- as.data.frame(EFSkhideux_plot)
+rownames(EFSkhideux_plot) <- EFSkhideux_plot[,1]
+EFSkhideux_plot[,1] <- NULL
+
+dt <- as.table(as.matrix(EFSkhideux_plot))
+
+balloonplot(t(dt), main ="Groupe sanguin en fonction du lieu de naissance", xlab ="", ylab="",
+            label = FALSE, show.margins = FALSE)
 ```
 
 ```{r}
