@@ -1,8 +1,10 @@
 ---
-title: "MarketingResearch"
-author: "Valentin Henriot"
+title: "Enquête pour l'Etablissement Français du Sang"
+author: "Valentin Henriot / Marie Rodriguez / Jules Bayer / Renaud Teglia / Carla Pardon / Jimmy Moreau / Laurianne Guinet"
 date: "22/03/2020"
 output: html_document
+toc: yes
+    toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
@@ -26,17 +28,17 @@ DataEFS <- read_excel("~/L3pgeprojects/MarketResearch/EFSfichier.xlsx",
     na = "#NULL!")
 ```
 
-```{r}
+```{r include=FALSE}
 delete.na <- function(DataEFS, n=0) {
   DataEFS[rowSums(is.na(DataEFS)) <= n,]
 }
 ```
 
-```{r}
+```{r include=FALSE}
 DataEFS1 <- delete.na(DataEFS, 33)
 ```
 
-```{r}
+```{r include=FALSE}
 DataEFS1$MotherBirth <- as.factor(DataEFS1$MotherBirth)
 DataEFS1$FatherBirth <- as.factor(DataEFS1$FatherBirth)
 DataEFS1$friends <- as.factor(DataEFS1$friends)
@@ -57,7 +59,7 @@ DataEFS1$Scenariopsychologicaldistance_DO_distantFamil <- as.logical(DataEFS1$Sc
 DataEFS1$Scenariopsychologicaldistance_DO_totalstrang <- as.logical(DataEFS1$Scenariopsychologicaldistance_DO_totalstrang)
 ```
 
-```{r}
+```{r include=FALSE}
 DataEFS1$MotherBirth <- recode(DataEFS1$MotherBirth,"1" = "Métropole", "2" = "OutreMer", "3" = "AutrePays")
 
 DataEFS1$FatherBirth <- recode(DataEFS1$FatherBirth,"1" = "Métropole", "2" = "OutreMer", "3" = "AutrePays")
@@ -75,7 +77,7 @@ DataEFS1$blood <- recode(DataEFS1$blood, "3" = "Groupe_Recherché", "4" = "Commu
 DataEFS1$religion <- recode(DataEFS1$religion, "1" = "Désapprouve", "2" = "Désapprouve", "3" = "Désapprouve", "4" = "Ni l'un ni l'autre", "5" = "Ni l'un ni l'autre", "6" = "Ni l'un ni l'autre", "7" = "Approuve")
 ```
 
-```{r}
+```{r include=FALSE}
 DataEFS1$RespMDP <- NULL
 DataEFS1$RespMDPLP <- NULL
 DataEFS1$motherMDP <- NULL
@@ -85,15 +87,27 @@ DataEFS1$fatherMDPLP <- NULL
 DataEFS1$Ageofresidence <- NULL
 ```
 
-```{r}
+```{r include=FALSE}
 DataEFS1 <- DataEFS1[c(1, 12, 14, 15, 16, 29, 33, 35, 37, 38, 39, 40, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 30, 31, 32, 34, 36, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59)] # 1 / 12 / 14 / 16 / 17 / 30 / 34 / 36 à mettre en premier
 ```
 
-```{r}
+```{r include=FALSE}
 summary(DataEFS1)
 ```
 
-### Réussir à mettre Métrople, OM, autres pays en colonnes
+Dans le cadre de notre cours de Marketing Research, nous avons mené une enquête pour l'établissement français du sang. Cette enquête a été menée auprès d'un échantillon de 3312 individus. Ces individus devaient répondre à 66 questions, certaines sous forme d'une échelle de valeur (ex: le degré d'utilité ressenti au fait de donner son sang), d'autres sous forme de facteur (ex: le type de sang). 
+Pour réaliser cette étude, nous avons utiliser le logiciel open-source Rstudio, qui est un outil de DataScience, notamment utilisé dans l'exploitation statistique des données de masse.
+Dans un premier temps, nous avons défini l'échantillon sur lequel nous souhaitions nous concentrer, ensuite, nous avons transformé certaines valeurs numériques du fichier de base en valeurs texte dans un souci de compréhension de la data.
+
+L'étude s'articule sur 3 axes, le premier concerne le profil des répondants (sexe, âge, lieu de naissance, etc). Le second vise à démontrer des liens de corrélation entre différentes variables (ex : y a t'il un lien entre le fait de trouver utile de donner son sang et réellement le donner ?) Enfin, le dernier axe est la combinaison des deux premiers, c'est à dire, le lien entre le profil des répondants et les réponses données au questionnaire.
+
+
+
+# Profil des répondants
+
+Nous avons choisi de garder un échantillon de 2392 individus, en effet, nous trouvions pertinent de garder uniquement les personnes ayant répondu à au moins 50% des questions du questionnaire. Toutefois, pour pouvoir analyser ces données de la façon la plus précise possible, nous avons fait le choix de réduire encore cette population de 2392 individus suivant les analyses que nous effectuons. Par exemple, dans l'analyse visant à démontrer s'il existe un lien entre le lieu de naissance et le groupe sanguin, nous excluerons tous les individus ayant indiqué qu'ils ne connaissaient pas leur groupe sanguin.
+
+## Lieu de naissance
 
 ```{r}
 DataEFS1 %>%
@@ -108,6 +122,9 @@ DataEFS1 %>%
  ggthemes::theme_stata()
 ```
 
+Les individus nés en métropole représentent 71% de l'échantillon des répondants retenus (ceux ayant répondus à au moins 50% des questions), ceux d'OutreMer représentent 6%, ceux étant nés dans un autre pays représentent eux 22% de l'échantillon. Enfin, ceux n'ayant pas indiqué leur lieu de naissance représentent 1% de l'échantillon.
+
+## Sexe
 ```{r}
 DataEFS1 %>%
  filter(!is.na(sex)) %>%
@@ -121,7 +138,26 @@ DataEFS1 %>%
  ggthemes::theme_stata()
 ```
 
+Les femmes représentent la part la plus importante de cet échantillon, elles représentent 55% de l'échantillon, les hommes représentent 38% et enfin, ceux n'ayant pas indiqué leur sexe représentent 7%.
+
+## Groupe sanguin
+
 ```{r}
+DataEFS1 %>%
+ filter(!is.na(blood)) %>%
+ ggplot() +
+ aes(x = blood, fill = blood) +
+  xlab("Groupe sanguin") +
+  ylab("Total") +
+  ggtitle("Profil des répondants à l'enquête") +
+ geom_bar() +
+ scale_fill_hue() +
+ ggthemes::theme_stata()
+```
+
+Les individus avec un groupe sanguin commun représentent 53% de l'échantillon, ceux avec un groupe sanguin recherché représentent 22% et enfin, ceux ne connaissant pas leur groupe sanguin représentent les 25% restants.
+
+```{r include=FALSE}
 EFSrelation <- select(DataEFS1, blood,  RespBirth)
 
 EFSrelation <- group_by(EFSrelation, blood, RespBirth, add = FALSE) %>%
@@ -135,7 +171,7 @@ EFSkhideux$Groupe_Recherché <- as.numeric(EFSkhideux$Groupe_Recherché)
 EFSkhideux$Commun <- as.numeric(EFSkhideux$Commun)
 ```
 
-```{r}
+```{r include=FALSE}
 EFSkhideux_test <- EFSkhideux
 EFSkhideux_test <- as.data.frame(EFSkhideux_test)
 rownames(EFSkhideux_test) <- EFSkhideux_test[,1]
@@ -144,13 +180,28 @@ EFSkhideux_test <- as.matrix(EFSkhideux_test)
 khideuxfinal <- chisq.test(EFSkhideux_test)
 ```
 
+### Existe t'il un lien de corrélation entre lieu de naissance et groupe sanguin ?
+
+Dans cette première analyse, nous allons essayer de voir s'il existe un lien ou non entre le groupe sanguin de l'individu et le lieu de naissance qu'il a indiqué. Pour cela, nous réalisons un test de khi-deux, permettant de démontrer la dépendance entre deux variables.
+
 ```{r}
 khideuxfinal$observed
 ```
 
+La première variable est le lieu de naissance, nous avons donc exclu les personnes n'ayant pas répondu à cette question. La deuxième variable est le type de sang, là encore, nous avons exclu ceux ayant répondu "Ne sait pas" ou n'ayant tout simplement pas répondu. Le tableau de contingence ci-dessus indique donc les différents effectifs en fonction de ces deux différentes variables. 
+
 ```{r}
 khideuxfinal$expected
 ```
+
+Le tableau ci dessus indique les effectifs que nous aurions normalement dû avoir si le tableau était rempli de manière proportionnelle. Nous pouvons constater que la différence avec le premier tableau n'est pas significative, les valeurs sont proches.
+
+```{r}
+khideuxfinal
+```
+
+Le test de Khi-deux nous indique que nous avons seulement deux degrés de liberté et la p-value du test indique un résultat de 0,5805. Pour prouver un lien de dépendance entre deux variables, il faut que la p-value soit inférieure à 0,05, ici donc, ce test nous démontre qu'il n'y a aucun lien de dépendance entre le lieu de naissance et le type de sang.
+Attention, il faut toutefois nuancer ce constat, en effet, les répondants étant nés à l'étranger ou en outre-mer sont minoritaires dans cette enquête. Ainsi, à plus grande échelle, les résultats auraient pu différer.
 
 ```{r}
 EFSkhideux_plot <- EFSkhideux
@@ -164,6 +215,8 @@ balloonplot(t(dt), main ="Groupe sanguin en fonction du lieu de naissance", xlab
             label = FALSE, show.margins = FALSE)
 ```
 
+Le graphique ci dessus indique le poids de chaque variable, matérialisé par la barre grise (on voit donc que pour le lieu de naissance, c'est la métropole qui représente la part la plus importante pour la variable lieu de naissance). Les ronds représentent le poids de chaque valeur en fonction de chaque variable.
+
 ```{r}
 EFSrelation2 <- spread(EFSrelation, "RespBirth", "count", fill = NA, drop = FALSE)
 
@@ -173,18 +226,20 @@ EFSrelation2$AutrePays <- as.numeric(EFSrelation2$AutrePays)
 EFSrelation2$`<NA>` <- as.numeric(EFSrelation2$`<NA>`)
 ```
 
-Les individus nés en métropole représentent 71% de l'échantillon des répondants retenus (ceux ayant répondus à au moins 50% des questions), ceux d'OutreMer représentent 6%, ceux étant nés dans un autre pays représentent eux 22% de l'échantillon. Enfin, ceux n'ayant pas indiqué leur lieu de naissance représentent 1% de l'échantillon. Nous les excluerons donc de l'analyse cherchant à mettre en évidence un lien entre le lieu de naissance et le type de sang. De la même manière, nous excluerons ceux qui ne connaissent pas leur groupe sanguin.
-Avant d'exclure le groupe de ceux qui ne connaissent pas leur groupe sanguin, il est intéressant de noter les proportions de cette méconnaissance en fonction du lieu de naissance. Ainsi, les personnes nées en métropole sont 23% à ignorer leur groupe sanguin, 26% pour ceux étant nés en Outre-Mer et enfin 28% pour ceux étant nés dans un autre pays.
+Nous avons volontairement exclu les personnes ne connaissant pas leur groupe sanguin de l'analyse précédente. Toutefois, il est intéressant de noter que, les personnes nées en métropole sont 23% à ignorer leur groupe sanguin, 26% pour ceux étant nés en Outre-Mer et enfin 28% pour ceux étant nés dans un autre pays. Enfin, seulement 11 individus n'ont pas indiqué de lieu de naissance.
 
-```{r}
+```{r include=FALSE}
 delete.na2 <- function(DataEFS1, n=0) {
   DataEFS1[rowSums(is.na(DataEFS1)) <= n,]
 }
 ```
 
-```{r}
+```{r include=FALSE}
 DataEFS2 <- delete.na2(DataEFS1, 3)
 ```
+
+
+# Analyse des corrélations entre variables
 
 Pour pouvoir réaliser l'analyse de corrélation, on garde uniquement les individus ayant répondu à l'ensemble des questions (hormis celles qui sont non-chiffrées). L'analyse de corrélation se fait donc sur une population de 956 individus.
 
@@ -193,11 +248,73 @@ DataEFS2_norm <- DataEFS2
 DataEFS2_norm[,13:59] <- as.data.frame(apply(DataEFS2_norm[,13:59], 2, function(x) (x - min(x))/(max(x)-min(x))))
 ```
 
+## Ressenti pour le don du sang
+
 ```{r}
 library(corrplot)
 correlationData = cor(DataEFS2_norm [13:22])
 corrplot(correlationData, method = "pie")
 ```
+
+Notre première analyse porte sur l'analyse de corrélation concernant les réponses aux questions liés aux intitulés des variables ci dessus. Nous pouvons donc constater qu'il existe quelques corrélations entre ces différentes variables. Notamment les suivantes :
+
+* Confortable / Plaisant
+* Confortable / Attrayant
+* Attrayant / Séduisant
+* Bénéfique / Utile
+* Utile / Bien
+
+Concrètement, cela veut dire que les personnes ayant répondu une valeur élevée pour confortable (par exemple), auront tendance également à répondre une valeur élevée pour plaisant et attrayant. Ces corrélations peuvent se révéler utiles notamment en vue d'établir des actions de communication auprès du grand public. 
+
+
+## Relation entre lieu de naissance et intention de donner son sang
+
+```{r}
+EFScorrelation <- select(DataEFS2, RespBirth, intention, intention2, intention3) 
+
+EFScorrelation <- group_by(EFScorrelation, RespBirth, intention, intention2, intention3, add = FALSE) %>%
+  summarise(count = n()) 
+
+EFScorrelation <- filter(EFScorrelation, intention == 1 & intention2 == 1 & intention3 == 1 | 
+                           intention == 7 & intention2 == 7 & intention3 == 7)
+
+EFScorrelation
+```
+
+Le tableau ci-dessus représente les résultats donnés concernant les intentions en fonction du lieu de naissance. Ainsi, il va être intéressant d'étudier les valeurs extrèmes en fonction du lieu de naissance. C'est à dire ceux ayant donné le chiffre 1 (plus basse intention) sur les 3 variables et ceux ayant donné la note maximum. Ensuite, nous calculons la moyenne par rapport à l'effectif total pour le lieu de naissance donné. Cela permettra de voir s'il existe un lien entre le lieu de naissance et les intentions des individus. 
+
+* Pour la métropole en plus basse valeur : 41/662*100 soit 6%
+* Pour la métropole en plus haute valeur : 46,6%
+
+* Pour l'Outremer en plus basse valeur : 5%
+* Pour l'Outremer en plus haute valeur : 41%
+
+* Pour les autres pays en plus basse valeur : 4,6%
+* Pour les autres pays en plus haute valeur : 45%
+
+Cette analyse démontre donc qu'il n'y a pas de lien particulier entre l'intention de donner son sang et le lieu de naissance, en effet, le résultat de l'analyse démontre que les résultats sont très similaires peu importe le lieu de naissance. 
+
+
+## Relation entre religion, groupe sanguin et intention de don
+
+```{r}
+DataEFS2 %>%
+ filter(!(blood %in% "NeSaitPas")) %>%
+ ggplot() +
+ aes(x = blood, y = intention, fill = blood) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ labs(x = "Groupe sanguin", y = "Intention", title = "Intention de don en fonction des moeurs religieuses", fill = "Groupe sanguin") +
+ ggthemes::theme_stata() +
+ facet_wrap(vars(religion))
+```
+
+Ce graphique est intéressant car il permet de mettre en évidence que d'une manière générale, les individus sont enclins à donner leur sang. Autre donnée intéressante, les individus pour lesquels la religion désapprouve le fait de donner son sang mais qui possèdent un groupe sanguin recherché sont aussi prêt à donner leur sang. D'ailleurs, la majorité des réponses pour cette catégorie d'individus se trouvent entre 6 et 7, c'est donc un meilleur résultat que les catégories pour lesquels les individus sont libres (d'un point de vue religieux) de donner leur sang. En revanche, les individus possédant un groupe sanguin commun et dont la religion proscrit cette pratique sont moins enclin à donner.
+
+```{r}
+summary(DataEFS2)
+```
+
 
 ```{r}
 ggplot(DataEFS1) +
