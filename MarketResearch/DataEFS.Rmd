@@ -2,14 +2,21 @@
 title: "Enquête pour l'Etablissement Français du Sang"
 author: "Valentin Henriot / Marie Rodriguez / Jules Bayer / Renaud Teglia / Carla Pardon / Jimmy Moreau / Laurianne Guinet"
 date: "22/03/2020"
-output: html_document
-toc: yes
+output:
+  html_document: 
+    toc: yes
     toc_depth: 2
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 ```
+
+<style>
+.html-widget {
+    margin: auto;
+}
+</style>
 
 ```{r warning=FALSE, include=FALSE}
 library(readxl)
@@ -21,6 +28,8 @@ library(scales)
 library(plotly)
 library(ggpirate)
 library(gplots)
+library(knitr)
+library(kableExtra)
 ```
 
 ```{r warning=FALSE, include=FALSE}
@@ -103,14 +112,14 @@ L'étude s'articule sur 3 axes, le premier concerne le profil des répondants (s
 
 
 
-# Profil des répondants
+# **Profil des répondants**
 
 Nous avons choisi de garder un échantillon de 2392 individus, en effet, nous trouvions pertinent de garder uniquement les personnes ayant répondu à au moins 50% des questions du questionnaire. Toutefois, pour pouvoir analyser ces données de la façon la plus précise possible, nous avons fait le choix de réduire encore cette population de 2392 individus suivant les analyses que nous effectuons. Par exemple, dans l'analyse visant à démontrer s'il existe un lien entre le lieu de naissance et le groupe sanguin, nous excluerons tous les individus ayant indiqué qu'ils ne connaissaient pas leur groupe sanguin.
 
 
 ## Lieu de naissance
 
-```{r}
+```{r fig.align="center"}
 DataEFS1 %>%
  filter(!is.na(RespBirth)) %>%
  ggplot() +
@@ -128,7 +137,7 @@ Les individus nés en métropole représentent 71% de l'échantillon des répond
 
 ## Sexe
 
-```{r}
+```{r fig.align="center"}
 DataEFS1 %>%
  filter(!is.na(sex)) %>%
  ggplot() +
@@ -145,7 +154,7 @@ Les femmes représentent la part la plus importante de cet échantillon, elles r
 
 ## Groupe sanguin
 
-```{r}
+```{r fig.align="center"}
 DataEFS1 %>%
  filter(!is.na(blood)) %>%
  ggplot() +
@@ -188,13 +197,17 @@ khideuxfinal <- chisq.test(EFSkhideux_test)
 Dans cette première analyse, nous allons essayer de voir s'il existe un lien ou non entre le groupe sanguin de l'individu et le lieu de naissance qu'il a indiqué. Pour cela, nous réalisons un test de khi-deux, permettant de démontrer la dépendance entre deux variables.
 
 ```{r}
-khideuxfinal$observed
+khideuxfinal$observed %>%
+  kable() %>%
+  kable_styling()
 ```
 
 La première variable est le lieu de naissance, nous avons donc exclu les personnes n'ayant pas répondu à cette question. La deuxième variable est le type de sang, là encore, nous avons exclu ceux ayant répondu "Ne sait pas" ou n'ayant tout simplement pas répondu. Le tableau de contingence ci-dessus indique donc les différents effectifs en fonction de ces deux différentes variables. 
 
 ```{r}
-khideuxfinal$expected
+khideuxfinal$expected %>%
+  kable() %>%
+  kable_styling()
 ```
 
 Le tableau ci dessus indique les effectifs que nous aurions normalement dû avoir si le tableau était rempli de manière proportionnelle. Nous pouvons constater que la différence avec le premier tableau n'est pas significative, les valeurs sont proches.
@@ -206,9 +219,9 @@ khideuxfinal
 Le test de Khi-deux nous indique que nous avons seulement deux degrés de liberté et la p-value du test indique un résultat de 0,5805. Pour prouver un lien de dépendance entre deux variables, il faut que la p-value soit inférieure à 0,05, ici donc, ce test nous démontre qu'il n'y a aucun lien de dépendance entre le lieu de naissance et le type de sang.
 Attention, il faut toutefois nuancer ce constat, en effet, les répondants étant nés à l'étranger ou en outre-mer sont minoritaires dans cette enquête. Ainsi, à plus grande échelle, les résultats auraient pu différer.
 
-Dans la deuxième partie de cette analyse, nous analyserons si le lieu des naissances parents influe sur le groupe sanguin ou non.
+Dans la deuxième partie de cette analyse, nous analyserons si le lieu de naissance des parents influe sur le groupe sanguin ou non.
 
-```{r}
+```{r fig.align="center"}
 EFSkhideux_plot <- EFSkhideux
 EFSkhideux_plot <- as.data.frame(EFSkhideux_plot)
 rownames(EFSkhideux_plot) <- EFSkhideux_plot[,1]
@@ -230,7 +243,9 @@ EFSrelation2$OutreMer <- as.numeric(EFSrelation2$OutreMer)
 EFSrelation2$AutrePays <- as.numeric(EFSrelation2$AutrePays)
 EFSrelation2$`<NA>` <- as.numeric(EFSrelation2$`<NA>`)
 
-EFSrelation2
+EFSrelation2 %>%
+  kable() %>%
+  kable_styling()
 ```
 
 Nous avons volontairement exclu les personnes ne connaissant pas leur groupe sanguin de l'analyse précédente. Toutefois, il est intéressant de noter que, les personnes nées en métropole sont 23% à ignorer leur groupe sanguin, 26% pour ceux étant nés en Outre-Mer et enfin 28% pour ceux étant nés dans un autre pays. Enfin, seulement 11 individus n'ont pas indiqué de lieu de naissance.
@@ -246,7 +261,7 @@ DataEFS2 <- delete.na2(DataEFS1, 3)
 ```
 
 
-# Analyse des corrélations entre variables
+# **Analyse des corrélations entre variables**
 
 Pour pouvoir réaliser l'analyse de corrélation, on garde uniquement les individus ayant répondu à l'ensemble des questions (hormis celles qui sont non-chiffrées). L'analyse de corrélation se fait donc sur une population de 956 individus.
 
@@ -260,6 +275,10 @@ EFSparents <- select(DataEFS2, MotherBirth, FatherBirth)
 
 EFSparents <- group_by(EFSparents, MotherBirth, FatherBirth, add = FALSE) %>%
   summarise(count = n())
+
+EFSparents %>%
+  kable() %>%
+  kable_styling()
 ```
 
 Ce premier tableau montre la répartition de l'effectif en fonction du lieu de naissance des parents. Comme nous pouvons constater, parmis les personnes interrogées, ce sont les individus donc les deux parents sont nés dans un autre pays qui représentent la part la plus importante (407 individus). Suivi par les individus dont les deux parents sont nés en métropole (336 individus). Ce tableau permettra de servir de base avec le tableau suivant. Nous calculerons un ratio entre le lieu de naissance des parents et les effectifs ayant un groupe sanguin recherché.
@@ -271,6 +290,10 @@ EFSparents2 <- filter(EFSparents2, blood == "Groupe_Recherché")
 
 EFSparents2 <- group_by(EFSparents2, blood, MotherBirth, FatherBirth, add = FALSE) %>%
   summarise(count = n())
+
+EFSparents2 %>%
+  kable() %>%
+  kable_styling()
 ```
 
 Ce tableau représente les effectifs ayant un groupe sanguin recherché en fonction du lieu de naissance des parents. Pour la base de notre calcul, nous choisissons uniquement les effectifs représentant une valeur supérieure à 20 afin de ne pas biaiser le résultat (ex : ceux ayant une mère née en outre mer et un père né dans un autre pays représentent 4 personnes sur l'échantillon total, sur ces 4 individus, 2 déclarent avoir un groupe sanguin recherché. L'effectif est donc trop bas pour en tirer une conclusion fiable).
@@ -292,7 +315,7 @@ DataEFS2_norm <- DataEFS2
 DataEFS2_norm[,13:59] <- as.data.frame(apply(DataEFS2_norm[,13:59], 2, function(x) (x - min(x))/(max(x)-min(x))))
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE, fig.align="center"}
 library(corrplot)
 correlationData = cor(DataEFS2_norm [13:22])
 corrplot(correlationData, method = "pie")
@@ -320,7 +343,9 @@ EFScorrelation <- group_by(EFScorrelation, RespBirth, intention, intention2, int
 EFScorrelation <- filter(EFScorrelation, intention == 1 & intention2 == 1 & intention3 == 1 | 
                            intention == 7 & intention2 == 7 & intention3 == 7)
 
-EFScorrelation
+EFScorrelation %>%
+  kable() %>%
+  kable_styling()
 ```
 
 Le tableau ci-dessus représente les résultats donnés concernant les intentions en fonction du lieu de naissance. Ainsi, il va être intéressant d'étudier les valeurs extrèmes en fonction du lieu de naissance. C'est à dire ceux ayant donné le chiffre 1 (plus basse intention) sur les 3 variables et ceux ayant donné la note maximum. Ensuite, nous calculons la moyenne par rapport à l'effectif total pour le lieu de naissance donné. Cela permettra de voir s'il existe un lien entre le lieu de naissance et les intentions des individus. 
@@ -339,7 +364,7 @@ Cette analyse démontre donc qu'il n'y a pas de lien particulier entre l'intenti
 
 ## Relation entre religion, groupe sanguin et intention de don
 
-```{r}
+```{r fig.align="center"}
 DataEFS2 %>%
  filter(!(blood %in% "NeSaitPas")) %>%
  ggplot() +
@@ -357,7 +382,7 @@ Enfin, ce graphique permet de mettre en évidence que d'une manière générale,
 
 ## Fréquence de don du sang en fonction du lieu de naissance et groupe sanguin
 
-```{r}
+```{r fig.align="center"}
 DataEFS2 %>%
  filter(!(blood %in% "NeSaitPas")) %>%
  ggplot() +
@@ -373,14 +398,14 @@ Ca graphique démontre que les individus nés en métropole et ayant un groupe s
 Cette analyse permet de mettre évidence le fait qu'il faut communiquer davantage auprès des individus nés en métropole avec un groupe sanguin recherché et auprès de ceux d'Outremer avec un groupe sanguin commun.
 
 
-# Analyses complémentaires
+# **Analyses complémentaires**
 
 Dans cette dernière section, nous allons étudier les relations qu'il peut exister entre des variables factorielles et des variables numériques sur la base des réponses de 2392 répondants (ceux ayant répondu à au moins 50% des questions). Le panel sera donc plus large sur sur la section précédente relative aux corrélations et ratios qui nécessitaient d'avoir des individus ayant répondu à l'ensemble des questions chiffrées (soit 956 individus).
 
 
 ## Relation entre âge et fréquence de don du sang
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, fig.align="center"}
 ggplot(DataEFS1) +
   aes(x = age, y = donor) +
   geom_count(colour = "red", alpha = .3) +
@@ -399,7 +424,7 @@ De plus, cette analyse permet de démontrer qu'il existe des "faux-répondants" 
 
 ## La peur de donner son sang en fonction du sexe
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, fig.align="center"}
 ggplot(DataEFS2) +
   aes(x = sex, y = fear1, colour = sex, fill = sex)  +
   geom_pirate() +
@@ -416,7 +441,7 @@ Nous allons donc maintenant étudier dans les faits, la fréquence de don du san
 
 ## Fréquence de don du sang en fonction du sexe
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, fig.align="center"}
 ggplot(DataEFS2) +
   aes(x = sex, y = donor, colour = sex, fill = sex)  +
   geom_pirate() +
@@ -432,7 +457,7 @@ Aussi surprenant que cela puisse paraitre par rapport au graphique précédent, 
 
 ## Conscience de l'importance de donner son sang
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, fig.align="center"}
 ggplot(DataEFS2) +
   aes(x = Bloodneed, y = need_1, colour = Bloodneed, fill = Bloodneed)  +
   geom_pirate() +
@@ -448,7 +473,7 @@ Les individus ayant déjà eu besoin (ou un de leurs proches) d'une tranfusion s
 
 ## Confiance en l'Etablissement Français du Sang
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, fig.align="center"}
 ggplot(DataEFS2) +
   aes(x = Bloodneed, y = Trust1, colour = Bloodneed, fill = Bloodneed)  +
   geom_pirate() +
@@ -462,7 +487,7 @@ ggplot(DataEFS2) +
 Ce dernier graphique montre la confiance accordée à l'Établissement Français du Sang en fonction des antécédents en termes de transfusion sanguine. Nous pouvons voir que la moyenne entre ceux ayant déjà reçu du sang et ceux n'en ayant pas eu besoin est quasiment la même, ce qui démontre une bonne confiance envers l'EFS. Cependant, pour les individus ayant déjà eu besoin d'une transfusion sanguine, les réponses "basses" (c'est à dire 1, 2, 3) ont été beaucoup moins nombreuses par rapport à l'autre groupe, preuve ainsi de la qualité des "services reçus" pour les individus en ayant eu besoin.
 
 
-# Conclusion
+# **Conclusion**
 
 ## Recommendations à L'EFS
 
