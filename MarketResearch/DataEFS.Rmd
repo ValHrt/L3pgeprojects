@@ -8,7 +8,7 @@ toc: yes
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r warning=FALSE, include=FALSE}
@@ -107,6 +107,7 @@ L'étude s'articule sur 3 axes, le premier concerne le profil des répondants (s
 
 Nous avons choisi de garder un échantillon de 2392 individus, en effet, nous trouvions pertinent de garder uniquement les personnes ayant répondu à au moins 50% des questions du questionnaire. Toutefois, pour pouvoir analyser ces données de la façon la plus précise possible, nous avons fait le choix de réduire encore cette population de 2392 individus suivant les analyses que nous effectuons. Par exemple, dans l'analyse visant à démontrer s'il existe un lien entre le lieu de naissance et le groupe sanguin, nous excluerons tous les individus ayant indiqué qu'ils ne connaissaient pas leur groupe sanguin.
 
+
 ## Lieu de naissance
 
 ```{r}
@@ -124,7 +125,9 @@ DataEFS1 %>%
 
 Les individus nés en métropole représentent 71% de l'échantillon des répondants retenus (ceux ayant répondus à au moins 50% des questions), ceux d'OutreMer représentent 6%, ceux étant nés dans un autre pays représentent eux 22% de l'échantillon. Enfin, ceux n'ayant pas indiqué leur lieu de naissance représentent 1% de l'échantillon.
 
+
 ## Sexe
+
 ```{r}
 DataEFS1 %>%
  filter(!is.na(sex)) %>%
@@ -180,7 +183,7 @@ EFSkhideux_test <- as.matrix(EFSkhideux_test)
 khideuxfinal <- chisq.test(EFSkhideux_test)
 ```
 
-### Existe t'il un lien de corrélation entre lieu de naissance et groupe sanguin ?
+### Lien entre groupe sanguin et lieu de naissance ?
 
 Dans cette première analyse, nous allons essayer de voir s'il existe un lien ou non entre le groupe sanguin de l'individu et le lieu de naissance qu'il a indiqué. Pour cela, nous réalisons un test de khi-deux, permettant de démontrer la dépendance entre deux variables.
 
@@ -203,6 +206,8 @@ khideuxfinal
 Le test de Khi-deux nous indique que nous avons seulement deux degrés de liberté et la p-value du test indique un résultat de 0,5805. Pour prouver un lien de dépendance entre deux variables, il faut que la p-value soit inférieure à 0,05, ici donc, ce test nous démontre qu'il n'y a aucun lien de dépendance entre le lieu de naissance et le type de sang.
 Attention, il faut toutefois nuancer ce constat, en effet, les répondants étant nés à l'étranger ou en outre-mer sont minoritaires dans cette enquête. Ainsi, à plus grande échelle, les résultats auraient pu différer.
 
+Dans la deuxième partie de cette analyse, nous analyserons si le lieu des naissances parents influe sur le groupe sanguin ou non.
+
 ```{r}
 EFSkhideux_plot <- EFSkhideux
 EFSkhideux_plot <- as.data.frame(EFSkhideux_plot)
@@ -224,6 +229,8 @@ EFSrelation2$Métropole <- as.numeric(EFSrelation2$Métropole)
 EFSrelation2$OutreMer <- as.numeric(EFSrelation2$OutreMer)
 EFSrelation2$AutrePays <- as.numeric(EFSrelation2$AutrePays)
 EFSrelation2$`<NA>` <- as.numeric(EFSrelation2$`<NA>`)
+
+EFSrelation2
 ```
 
 Nous avons volontairement exclu les personnes ne connaissant pas leur groupe sanguin de l'analyse précédente. Toutefois, il est intéressant de noter que, les personnes nées en métropole sont 23% à ignorer leur groupe sanguin, 26% pour ceux étant nés en Outre-Mer et enfin 28% pour ceux étant nés dans un autre pays. Enfin, seulement 11 individus n'ont pas indiqué de lieu de naissance.
@@ -243,12 +250,47 @@ DataEFS2 <- delete.na2(DataEFS1, 3)
 
 Pour pouvoir réaliser l'analyse de corrélation, on garde uniquement les individus ayant répondu à l'ensemble des questions (hormis celles qui sont non-chiffrées). L'analyse de corrélation se fait donc sur une population de 956 individus.
 
+
+## Relation entre lieu de naissance des parents et groupe sanguin
+
+Pour faire suite à l'analyse en première partie concernant le lieu de naissance de l'individu interrogé et son groupe sanguin, nous estimons qu'il est pertinent d'étudier la corrélation qu'il pourrait y avoir entre le groupe sanguin et le lieu de naissance des parents. En effet, la transmission du groupe sanguin a une part héréditaire.
+
 ```{r}
+EFSparents <- select(DataEFS2, MotherBirth, FatherBirth)
+
+EFSparents <- group_by(EFSparents, MotherBirth, FatherBirth, add = FALSE) %>%
+  summarise(count = n())
+```
+
+Ce premier tableau montre la répartition de l'effectif en fonction du lieu de naissance des parents. Comme nous pouvons constater, parmis les personnes interrogées, ce sont les individus donc les deux parents sont nés dans un autre pays qui représentent la part la plus importante (407 individus). Suivi par les individus dont les deux parents sont nés en métropole (336 individus). Ce tableau permettra de servir de base avec le tableau suivant. Nous calculerons un ratio entre le lieu de naissance des parents et les effectifs ayant un groupe sanguin recherché.
+
+```{r}
+EFSparents2 <- select(DataEFS2, blood,  MotherBirth, FatherBirth)
+
+EFSparents2 <- filter(EFSparents2, blood == "Groupe_Recherché")
+
+EFSparents2 <- group_by(EFSparents2, blood, MotherBirth, FatherBirth, add = FALSE) %>%
+  summarise(count = n())
+```
+
+Ce tableau représente les effectifs ayant un groupe sanguin recherché en fonction du lieu de naissance des parents. Pour la base de notre calcul, nous choisissons uniquement les effectifs représentant une valeur supérieure à 20 afin de ne pas biaiser le résultat (ex : ceux ayant une mère née en outre mer et un père né dans un autre pays représentent 4 personnes sur l'échantillon total, sur ces 4 individus, 2 déclarent avoir un groupe sanguin recherché. L'effectif est donc trop bas pour en tirer une conclusion fiable).
+
+Ratios :
+
+* Les 2 parents nés en métropole : 77/336*100 = 22%
+* Les 2 parents nés en Outremer : 9,6%
+* Les 2 parents nés dans un autre pays : 24%
+* Mère née en métropole / Père né dans un autre pays : 24,6%
+* Mère née dans un autre pays / Père né en métropole : 22%
+
+La conclusion que nous pouvons tirer de cette analyse est que les personnes dont les deux parents sont nés en Outremer ont moins de 10% de "chance" d'avoir un groupe sanguin recherché. Les individus dont les deux parents (ou au moins un des deux) sont nés dans un autre pays ont entre 22% et 24,6% de chance d'avoir un groupe sanguin recherché, ce résultat est un peu plus élevé que pour les individus dont les deux parents sont nés en métropole (22%).
+
+## Ressenti pour le don du sang
+
+```{r include=FALSE}
 DataEFS2_norm <- DataEFS2
 DataEFS2_norm[,13:59] <- as.data.frame(apply(DataEFS2_norm[,13:59], 2, function(x) (x - min(x))/(max(x)-min(x))))
 ```
-
-## Ressenti pour le don du sang
 
 ```{r}
 library(corrplot)
@@ -301,7 +343,7 @@ Cette analyse démontre donc qu'il n'y a pas de lien particulier entre l'intenti
 DataEFS2 %>%
  filter(!(blood %in% "NeSaitPas")) %>%
  ggplot() +
- aes(x = blood, y = intention, fill = blood) +
+ aes(x = blood, y = intention3, fill = blood) +
  geom_boxplot() +
  scale_fill_hue() +
  labs(x = "Groupe sanguin", y = "Intention", title = "Intention de don en fonction des moeurs religieuses", fill = "Groupe sanguin") +
@@ -310,13 +352,35 @@ DataEFS2 %>%
 ```
 
 Ce graphique est intéressant car il permet de mettre en évidence que d'une manière générale, les individus sont enclins à donner leur sang. Autre donnée intéressante, les individus pour lesquels la religion désapprouve le fait de donner son sang mais qui possèdent un groupe sanguin recherché sont aussi prêt à donner leur sang. D'ailleurs, la majorité des réponses pour cette catégorie d'individus se trouvent entre 6 et 7, c'est donc un meilleur résultat que les catégories pour lesquels les individus sont libres (d'un point de vue religieux) de donner leur sang. En revanche, les individus possédant un groupe sanguin commun et dont la religion proscrit cette pratique sont moins enclin à donner.
+Enfin, ce graphique permet de mettre en évidence que d'une manière générale, les individus sont plus enclins à donner leur sang lorsqu'ils savent qu'ils ont un groupe sanguin recherché puisque la médiane est égale à 7 (soit la réponse la plus favorable).
+
+
+## Fréquence de don du sang en fonction du lieu de naissance et groupe sanguin
 
 ```{r}
-summary(DataEFS2)
+DataEFS2 %>%
+ filter(!(blood %in% "NeSaitPas")) %>%
+ ggplot() +
+ aes(x = blood, y = donor, fill = blood) +
+ geom_boxplot() +
+ scale_fill_hue() +
+ labs(x = "Groupe sanguin", y = "Fréquence don du sang", title = "Relation entre lieu de naissance / groupe sanguin / intention de don", fill = "Groupe sanguin") +
+ ggthemes::theme_stata() +
+ facet_wrap(vars(RespBirth))
 ```
 
+Ca graphique démontre que les individus nés en métropole et ayant un groupe sanguin recherché donnent moins souvent leur sang que les individus étant nés en Outremer ou dans un autre pays (ayant également un groupe sanguin recherché). Les individus nés en Outremer et ayant un groupe sanguin commun, donnent moins leur sang que ceux étant nés en métropole ou dans un autre pays.
+Cette analyse permet de mettre évidence le fait qu'il faut communiquer davantage auprès des individus nés en métropole avec un groupe sanguin recherché et auprès de ceux d'Outremer avec un groupe sanguin commun.
 
-```{r}
+
+# Analyses complémentaires
+
+Dans cette dernière section, nous allons étudier les relations qu'il peut exister entre des variables factorielles et des variables numériques sur la base des réponses de 2392 répondants (ceux ayant répondu à au moins 50% des questions). Le panel sera donc plus large sur sur la section précédente relative aux corrélations et ratios qui nécessitaient d'avoir des individus ayant répondu à l'ensemble des questions chiffrées (soit 956 individus).
+
+
+## Relation entre âge et fréquence de don du sang
+
+```{r message=FALSE, warning=FALSE}
 ggplot(DataEFS1) +
   aes(x = age, y = donor) +
   geom_count(colour = "red", alpha = .3) +
@@ -327,28 +391,79 @@ ggplot(DataEFS1) +
 ggthemes::theme_stata()
 ```
 
-Attention, analyse biaisée car majorité des répondants sont jeunes
+Cette analyse nous apprend dans un premier temps qu'une majeure partie des répondants au questionnaire a entre 18 et 26 ans (concentration des points importante pour cette catégorie d'âge). Dans un second temps, nous pouvons voir que cette catégorie d'individus ont répondu en majorité qu'ils donnaient souvent leur sang (concentration des points sur la ligne 5). Néanmoins, beaucoup de jeunes ne donnent pas souvent leur sang voire jamais ! De 26 à 60 ans, les résultats sont relativement similaires à ceux observés pour la population 18-26 ans, c'est à dire, une majeure partie des réponses en 5 mais également une partie ne donnant pas ou peu son sang. 
+À partir de 60 ans et jusqu'à 70, les réponses sont situées uniquement entre 4 et 5. Toutefois, il faut nuancer ce constat car cette population représente une infime partie de l'échantillon et les résultats ne sont pas, de fait, réellement représentatifs du comportement de la majeure partie de cette catégorie d'âge vis à vis du don du sang.
 
-```{r}
-ggplot(DataEFS1) +
-  aes(x = blood, y = donor, colour = blood, fill = blood)  +
-  geom_pirate() +
-  xlab("Type de sang") +
-  ylab("Fréquence de don de sang ou plasma") +
-  ggtitle("Qui sont ceux qui donnent le plus en fonction du type de sang ?") +
-  ggthemes::theme_stata() +
-  theme(panel.grid.minor = element_blank())
-```
+De plus, cette analyse permet de démontrer qu'il existe des "faux-répondants" à cette enquête, en effet, sur la partie gauche du graphique, nous pouvons voir deux individus ayant répondus qu'ils avaient un âge inférieur à 10 ans. Sur la partie droite, nous pouvons voir un individu ayant indiqué un âge supérieur à 90 ans qui a répondu "assez souvent" à la question de la fréquence de donner son sang, or, l'âge limite pour donner son sang est de 70 ans.
 
-```{r}
+
+## La peur de donner son sang en fonction du sexe
+
+```{r message=FALSE, warning=FALSE}
 ggplot(DataEFS2) +
-  aes(x = RespBirth, y = donor, colour = RespBirth, fill = RespBirth)  +
+  aes(x = sex, y = fear1, colour = sex, fill = sex)  +
   geom_pirate() +
-  xlab("Lieu de naissance") +
-  ylab("Fréquence de don de sang ou plasma") +
-  ggtitle("Qui sont ceux qui donnent le plus en fonction du lieu de naissance ?") +
+  xlab("Sexe") +
+  ylab("Crainte") +
+  ggtitle("Crainte de donner son sang en fonction du sexe") +
   ggthemes::theme_stata() +
   theme(panel.grid.minor = element_blank())
 ```
 
+Ce graphique met en avant le fait que d'une manière générale, les femmes sont plus "craintives" à l'idée de donner leur sang que les hommes. L'écart à la moyenne reste cependant léger, toutefois, les femmes sont beaucoup plus nombreuses que les hommes à avoir répondu 5, 6 et 7 aux questions liées à la crainte. Démontrant ainsi pour les femmes que cela pouvait représenter potentiellement un frein au don du sang en raison du sentiment de peur qui accompagne l'idée d'aller donner son sang.
+Nous allons donc maintenant étudier dans les faits, la fréquence de don du sang en fonction du sexe, cela permettra d'établir un lien (ou non), entre le fait d'avoir peur et le fait de donner son sang.
 
+
+## Fréquence de don du sang en fonction du sexe
+
+```{r message=FALSE, warning=FALSE}
+ggplot(DataEFS2) +
+  aes(x = sex, y = donor, colour = sex, fill = sex)  +
+  geom_pirate() +
+  xlab("Sexe") +
+  ylab("Fréquence de don de sang ou plasma") +
+  ggtitle("Fréquence de don du sang en fonction du sexe") +
+  ggthemes::theme_stata() +
+  theme(panel.grid.minor = element_blank())
+```
+
+Aussi surprenant que cela puisse paraitre par rapport au graphique précédent, les femmes donnent en moyenne plus leur sang que les hommes (bien que la différence soit légère). Ainsi, nous pouvons infirmer l'existence d'un lien entre la peur de donner son sang et le passage effectif à l'action. Il faut également prendre en considération le fait que les hommes ayant répondus au questionnaire ont peut être insconsciemment dévalué leurs réponses sur les craintes, biaisant ainsi la relation entre les craintes et le passage à l'action pour donner son sang.
+
+
+## Conscience de l'importance de donner son sang
+
+```{r message=FALSE, warning=FALSE}
+ggplot(DataEFS2) +
+  aes(x = Bloodneed, y = need_1, colour = Bloodneed, fill = Bloodneed)  +
+  geom_pirate() +
+  xlab("À déjà eu besoin d'une tranfusion") +
+  ylab("Conscience") +
+  ggtitle("Conscience de l'importance de don du sang") +
+  ggthemes::theme_stata() +
+  theme(panel.grid.minor = element_blank())
+```
+
+Les individus ayant déjà eu besoin (ou un de leurs proches) d'une tranfusion sanguine, sont "plus" conscients que l'absence de dons du sang peut avoir de graves conséquences. Néanmoins, l'écart est infime avec les personnes n'ayant jamais eu besoin d'une transfusion sanguine et qui semblent tous aussi bien conscients du problème.
+
+
+## Confiance en l'Etablissement Français du Sang
+
+```{r message=FALSE, warning=FALSE}
+ggplot(DataEFS2) +
+  aes(x = Bloodneed, y = Trust1, colour = Bloodneed, fill = Bloodneed)  +
+  geom_pirate() +
+  xlab("À déjà eu besoin d'une tranfusion") +
+  ylab("Confiance") +
+  ggtitle("Confiance accordée à l'EFS") +
+  ggthemes::theme_stata() +
+  theme(panel.grid.minor = element_blank())
+```
+
+Ce dernier graphique montre la confiance accordée à l'Établissement Français du Sang en fonction des antécédents en termes de transfusion sanguine. Nous pouvons voir que la moyenne entre ceux ayant déjà reçu du sang et ceux n'en ayant pas eu besoin est quasiment la même, ce qui démontre une bonne confiance envers l'EFS. Cependant, pour les individus ayant déjà eu besoin d'une transfusion sanguine, les réponses "basses" (c'est à dire 1, 2, 3) ont été beaucoup moins nombreuses par rapport à l'autre groupe, preuve ainsi de la qualité des "services reçus" pour les individus en ayant eu besoin.
+
+
+# Conclusion
+
+## Recommendations à L'EFS
+
+## Plan de communication possible
