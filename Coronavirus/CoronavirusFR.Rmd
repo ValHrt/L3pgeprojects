@@ -15,7 +15,7 @@ library(plotly)
 ```
 
 ```{r}
-Covid19FR <- read_csv("Coronavirus/chiffres-cles.csv", 
+Covid19FR <- read_csv("~/L3pgeprojects/Coronavirus/chiffres-cles.csv", 
     col_types = cols(source_nom = col_skip(), 
          source_url = col_skip()))
 ```

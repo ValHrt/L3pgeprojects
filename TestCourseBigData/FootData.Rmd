@@ -1,0 +1,49 @@
+---
+title: "Football Data"
+author: "Valentin Henriot"
+date: "29/03/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+library(tidyr)
+library(dplyr)
+library(tidyverse)
+```
+
+```{r}
+DataFoot <- read_excel("~/L3pgeprojects/TestCourseBigData/kmeans_footballData.xlsm")
+Support <- DataFoot %>% 
+  select(Overall, Age, Value, Wage, Height, Weight, Dribbling, FKAccuracy, LongPassing, BallControl, Acceleration, SprintSpeed, Agility, ShotPower, Jumping, Stamina, Strength, Aggression, Interceptions, Penalties)
+```
+
+```{r}
+set.seed(2811)
+km_model <- Support %>% 
+kmeans(centers = 5, nstart=20)
+Support$cluster <- km_model$cluster
+ggplot(Support, aes(Overall, Value, col = factor(cluster))) + 
+geom_point(size = 2, alpha = 0.8, position = "jitter")
+```
+
+```{r}
+ratio_ss <- data.frame(cluster = seq(from = 1, to = 9, by = 1)) 
+for (k in 1:9) {
+km_model <- kmeans(Support, k, nstart = 20)
+ratio_ss$ratio[k] <- km_model$tot.withinss / km_model$totss
+}
+
+ggplot(ratio_ss, aes(cluster, ratio)) + 
+geom_line() +
+geom_point()
+```
+
+```{r}
+km_model$withinss
+```
+
