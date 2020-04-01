@@ -380,6 +380,42 @@ Ce graphique est intéressant car il permet de mettre en évidence que d'une man
 Enfin, ce graphique permet de mettre en évidence que d'une manière générale, les individus sont plus enclins à donner leur sang lorsqu'ils savent qu'ils ont un groupe sanguin recherché puisque la médiane est égale à 7 (soit la réponse la plus favorable).
 
 
+### Ecrire ici 
+
+```{r include=FALSE}
+delete.na3 <- function(DataEFS, n=0) {
+  DataEFS[rowSums(is.na(DataEFS)) <= n,]
+}
+```
+
+```{r include=FALSE}
+DataEFSCountry <- delete.na(DataEFS, 33)
+```
+
+```{r}
+DataEFSCountry$blood <- as.factor(DataEFSCountry$blood)
+
+DataEFSCountry$blood <- recode(DataEFS1$blood, "3" = "Groupe_Recherché", "4" = "Commun", "5" = "ContreIndicationMedic", "6" = "NeSaitPas")
+
+View(DataEFSCountry)
+```
+
+```{r}
+EFScountries <- select(DataEFSCountry, blood, motherMDPLP, fatherMDPLP)
+
+base::colnames(EFScountries)[colnames(EFScountries)=="motherMDPLP"] <- "LieuDeNaissanceDesParents"
+
+EFScountries <- filter(EFScountries, LieuDeNaissanceDesParents == "Algérie" & fatherMDPLP == "Algérie" | LieuDeNaissanceDesParents == "Bénin" & fatherMDPLP == "Bénin" | LieuDeNaissanceDesParents == "Cameroun" & fatherMDPLP == "Cameroun" | LieuDeNaissanceDesParents == "Congo" & fatherMDPLP == "Congo" | LieuDeNaissanceDesParents == "Madagascar" & fatherMDPLP == "Madagascar" | LieuDeNaissanceDesParents == "Mali" & fatherMDPLP == "Mali" | LieuDeNaissanceDesParents == "Maroc" & fatherMDPLP =="Maroc" | LieuDeNaissanceDesParents == "Sénégal" & fatherMDPLP == "Sénégal")
+
+EFScountries <- filter(EFScountries, blood == "Groupe_Recherché" | blood == "Commun")
+
+EFScountries <- group_by(EFScountries, blood, LieuDeNaissanceDesParents, fatherMDPLP) %>% 
+  summarise(count = n())
+
+EFScountries %>% select(-fatherMDPLP)
+```
+
+
 ## Fréquence de don du sang en fonction du lieu de naissance et groupe sanguin
 
 ```{r fig.align="center"}
