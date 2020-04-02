@@ -30,6 +30,7 @@ library(ggpirate)
 library(gplots)
 library(knitr)
 library(kableExtra)
+library(shape)
 ```
 
 ```{r warning=FALSE, include=FALSE}
@@ -405,7 +406,7 @@ EFScountries <- select(DataEFSCountry, blood, motherMDPLP, fatherMDPLP)
 
 base::colnames(EFScountries)[colnames(EFScountries)=="motherMDPLP"] <- "LieuDeNaissanceDesParents"
 
-EFScountries <- filter(EFScountries, LieuDeNaissanceDesParents == "Algérie" & fatherMDPLP == "Algérie" | LieuDeNaissanceDesParents == "Bénin" & fatherMDPLP == "Bénin" | LieuDeNaissanceDesParents == "Cameroun" & fatherMDPLP == "Cameroun" | LieuDeNaissanceDesParents == "Congo" & fatherMDPLP == "Congo" | LieuDeNaissanceDesParents == "Madagascar" & fatherMDPLP == "Madagascar" | LieuDeNaissanceDesParents == "Mali" & fatherMDPLP == "Mali" | LieuDeNaissanceDesParents == "Maroc" & fatherMDPLP =="Maroc" | LieuDeNaissanceDesParents == "Sénégal" & fatherMDPLP == "Sénégal")
+EFScountries <- filter(EFScountries, LieuDeNaissanceDesParents == "Algérie" & fatherMDPLP == "Algérie" | LieuDeNaissanceDesParents == "Bénin" & fatherMDPLP == "Bénin" | LieuDeNaissanceDesParents == "Cameroun" & fatherMDPLP == "Cameroun" | LieuDeNaissanceDesParents == "Congo" & fatherMDPLP == "Congo" | LieuDeNaissanceDesParents == "Madagascar" & fatherMDPLP == "Madagascar" | LieuDeNaissanceDesParents == "Mali" & fatherMDPLP == "Mali" | LieuDeNaissanceDesParents == "Sénégal" & fatherMDPLP == "Sénégal")
 
 EFScountries <- filter(EFScountries, blood == "Groupe_Recherché" | blood == "Commun")
 
@@ -415,6 +416,14 @@ EFScountries <- group_by(EFScountries, blood, LieuDeNaissanceDesParents, fatherM
 EFScountries %>% select(-fatherMDPLP)
 ```
 
+```{r}
+CombineCountries <-ggplot(EFScountries, aes(LieuDeNaissanceDesParents, count))
+
+CombineCountries + geom_bar(stat = "identity", position = "dodge", aes(fill = blood)) +
+  xlab("Pays de naissance des parents") + 
+  ggtitle("Groupe sanguin en fonction du pays de naissance des parents") +
+  ggthemes::theme_stata() 
+```
 
 ## Fréquence de don du sang en fonction du lieu de naissance et groupe sanguin
 
