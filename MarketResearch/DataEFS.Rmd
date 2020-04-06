@@ -106,7 +106,7 @@ summary(DataEFS1)
 ```
 
 Dans le cadre de notre cours de Marketing Research, nous avons mené une enquête pour l'établissement français du sang. Cette enquête a été menée auprès d'un échantillon de 3312 individus. Ces individus devaient répondre à 66 questions, certaines sous forme d'une échelle de valeur (ex: le degré d'utilité ressenti au fait de donner son sang), d'autres sous forme de facteur (ex: le type de sang). 
-Pour réaliser cette étude, nous avons utiliser le logiciel open-source Rstudio, qui est un outil de DataScience, notamment utilisé dans l'exploitation statistique des données de masse.
+Pour réaliser cette étude, nous avons utiliser le logiciel open-source Rstudio (sur le serveur de SKEMA Global Lab in AI), qui est un outil de DataScience, notamment utilisé dans l'exploitation statistique des données de masse.
 Dans un premier temps, nous avons défini l'échantillon sur lequel nous souhaitions nous concentrer, ensuite, nous avons transformé certaines valeurs numériques du fichier de base en valeurs texte dans un souci de compréhension de la data.
 
 L'étude s'articule sur 3 axes, le premier concerne le profil des répondants (sexe, âge, lieu de naissance, etc). Le second vise à démontrer des liens de corrélation entre différentes variables (ex : y a t'il un lien entre le fait de trouver utile de donner son sang et réellement le donner ?) Enfin, le dernier axe est la combinaison des deux premiers, c'est à dire, le lien entre le profil des répondants et les réponses données au questionnaire.
@@ -309,6 +309,51 @@ Ratios :
 
 La conclusion que nous pouvons tirer de cette analyse est que les personnes dont les deux parents sont nés en Outremer ont moins de 10% de "chance" d'avoir un groupe sanguin recherché. Les individus dont les deux parents (ou au moins un des deux) sont nés dans un autre pays ont entre 22% et 24,6% de chance d'avoir un groupe sanguin recherché, ce résultat est un peu plus élevé que pour les individus dont les deux parents sont nés en métropole (22%).
 
+### Analyse du groupe sanguin en fonction du pays de naissance
+
+```{r include=FALSE}
+delete.na3 <- function(DataEFS, n=0) {
+  DataEFS[rowSums(is.na(DataEFS)) <= n,]
+}
+```
+
+```{r include=FALSE}
+DataEFSCountry <- delete.na(DataEFS, 33)
+```
+
+```{r}
+DataEFSCountry$blood <- as.factor(DataEFSCountry$blood)
+
+DataEFSCountry$blood <- recode(DataEFS1$blood, "3" = "Groupe_Recherché", "4" = "Commun", "5" = "ContreIndicationMedic", "6" = "NeSaitPas")
+```
+
+```{r}
+EFScountries <- select(DataEFSCountry, blood, motherMDPLP, fatherMDPLP)
+
+base::colnames(EFScountries)[colnames(EFScountries)=="motherMDPLP"] <- "LieuDeNaissanceDesParents"
+
+EFScountries <- filter(EFScountries, LieuDeNaissanceDesParents == "Algérie" & fatherMDPLP == "Algérie" | LieuDeNaissanceDesParents == "Bénin" & fatherMDPLP == "Bénin" | LieuDeNaissanceDesParents == "Cameroun" & fatherMDPLP == "Cameroun" | LieuDeNaissanceDesParents == "Congo" & fatherMDPLP == "Congo" | LieuDeNaissanceDesParents == "Madagascar" & fatherMDPLP == "Madagascar" | LieuDeNaissanceDesParents == "Mali" & fatherMDPLP == "Mali" | LieuDeNaissanceDesParents == "Sénégal" & fatherMDPLP == "Sénégal")
+
+EFScountries <- filter(EFScountries, blood == "Groupe_Recherché" | blood == "Commun")
+
+EFScountries <- group_by(EFScountries, blood, LieuDeNaissanceDesParents, fatherMDPLP) %>% 
+  summarise(count = n())
+
+EFScountries %>% select(-fatherMDPLP)
+```
+
+```{r}
+CombineCountries <-ggplot(EFScountries, aes(LieuDeNaissanceDesParents, count))
+
+CombineCountries + geom_bar(stat = "identity", position = "dodge", aes(fill = blood)) +
+  xlab("Pays de naissance des parents") + 
+  ggtitle("Groupe sanguin en fonction du pays de naissance des parents") +
+  ggthemes::theme_stata() 
+```
+
+Ce graphique vise à démontrer le type du groupe sanguin en fonction du pays de naissance des parents. Dans une précédente analyse, nous avons cherché à savoir si le lieu de naissance pouvait avoir une influence ou non sur le type de sang, cette dernière s'était montrée non concluante. Cette analyse nous apprend que les individus dont les deux parents sont nés au Cameroun ou au Congo, ont plus de chance d'avoir un groupe sanguin recherché qu'un groupe sanguin commun, respectivement 58% et 62,5%. Le Sénégal et Madagascar affichent des proportions intéressantes sur le ratio groupe sanguin recherché / commun, respectivement 40% et 37,5%. Sur notre échantillon, les individus dont les deux parents sont nés au Mali ont uniquement un groupe sanguin commun.
+Il faut toutefois être prudent vis-à-vis de ces chiffres, en effet, ces derniers se basent sur des très petits effectifs, ils servent néanmoins à montrer une tendance.
+
 ## Ressenti pour le don du sang
 
 ```{r include=FALSE}
@@ -379,51 +424,6 @@ DataEFS2 %>%
 
 Ce graphique est intéressant car il permet de mettre en évidence que d'une manière générale, les individus sont enclins à donner leur sang. Autre donnée intéressante, les individus pour lesquels la religion désapprouve le fait de donner son sang mais qui possèdent un groupe sanguin recherché sont aussi prêt à donner leur sang. D'ailleurs, la majorité des réponses pour cette catégorie d'individus se trouvent entre 6 et 7, c'est donc un meilleur résultat que les catégories pour lesquels les individus sont libres (d'un point de vue religieux) de donner leur sang. En revanche, les individus possédant un groupe sanguin commun et dont la religion proscrit cette pratique sont moins enclin à donner.
 Enfin, ce graphique permet de mettre en évidence que d'une manière générale, les individus sont plus enclins à donner leur sang lorsqu'ils savent qu'ils ont un groupe sanguin recherché puisque la médiane est égale à 7 (soit la réponse la plus favorable).
-
-
-### Ecrire ici 
-
-```{r include=FALSE}
-delete.na3 <- function(DataEFS, n=0) {
-  DataEFS[rowSums(is.na(DataEFS)) <= n,]
-}
-```
-
-```{r include=FALSE}
-DataEFSCountry <- delete.na(DataEFS, 33)
-```
-
-```{r}
-DataEFSCountry$blood <- as.factor(DataEFSCountry$blood)
-
-DataEFSCountry$blood <- recode(DataEFS1$blood, "3" = "Groupe_Recherché", "4" = "Commun", "5" = "ContreIndicationMedic", "6" = "NeSaitPas")
-
-View(DataEFSCountry)
-```
-
-```{r}
-EFScountries <- select(DataEFSCountry, blood, motherMDPLP, fatherMDPLP)
-
-base::colnames(EFScountries)[colnames(EFScountries)=="motherMDPLP"] <- "LieuDeNaissanceDesParents"
-
-EFScountries <- filter(EFScountries, LieuDeNaissanceDesParents == "Algérie" & fatherMDPLP == "Algérie" | LieuDeNaissanceDesParents == "Bénin" & fatherMDPLP == "Bénin" | LieuDeNaissanceDesParents == "Cameroun" & fatherMDPLP == "Cameroun" | LieuDeNaissanceDesParents == "Congo" & fatherMDPLP == "Congo" | LieuDeNaissanceDesParents == "Madagascar" & fatherMDPLP == "Madagascar" | LieuDeNaissanceDesParents == "Mali" & fatherMDPLP == "Mali" | LieuDeNaissanceDesParents == "Sénégal" & fatherMDPLP == "Sénégal")
-
-EFScountries <- filter(EFScountries, blood == "Groupe_Recherché" | blood == "Commun")
-
-EFScountries <- group_by(EFScountries, blood, LieuDeNaissanceDesParents, fatherMDPLP) %>% 
-  summarise(count = n())
-
-EFScountries %>% select(-fatherMDPLP)
-```
-
-```{r}
-CombineCountries <-ggplot(EFScountries, aes(LieuDeNaissanceDesParents, count))
-
-CombineCountries + geom_bar(stat = "identity", position = "dodge", aes(fill = blood)) +
-  xlab("Pays de naissance des parents") + 
-  ggtitle("Groupe sanguin en fonction du pays de naissance des parents") +
-  ggthemes::theme_stata() 
-```
 
 ## Fréquence de don du sang en fonction du lieu de naissance et groupe sanguin
 
