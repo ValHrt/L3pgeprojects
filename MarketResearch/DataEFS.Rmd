@@ -1,9 +1,10 @@
 ---
 title: "Enquête pour l'Etablissement Français du Sang"
-author: "Valentin Henriot / Marie Rodriguez / Jules Bayer / Renaud Teglia / Carla Pardon / Jimmy Moreau / Laurianne Guinet"
+author: Valentin Henriot / Marie Rodriguez / Jules Bayer / Renaud Teglia / Carla Pardon
+  / Jimmy Moreau / Laurianne Guinet
 date: "22/03/2020"
 output:
-  html_document: 
+  html_document:
     toc: yes
     toc_depth: 2
 ---
@@ -118,7 +119,7 @@ L'étude s'articule sur 3 axes, le premier concerne le profil des répondants (s
 Nous avons choisi de garder un échantillon de 2392 individus, en effet, nous trouvions pertinent de garder uniquement les personnes ayant répondu à au moins 50% des questions du questionnaire. Toutefois, pour pouvoir analyser ces données de la façon la plus précise possible, nous avons fait le choix de réduire encore cette population de 2392 individus suivant les analyses que nous effectuons. Par exemple, dans l'analyse visant à démontrer s'il existe un lien entre le lieu de naissance et le groupe sanguin, nous excluerons tous les individus ayant indiqué qu'ils ne connaissaient pas leur groupe sanguin.
 
 
-## Lieu de naissance
+## Lien vers l'enquête complète
 
 ```{r fig.align="center"}
 DataEFS1 %>%
