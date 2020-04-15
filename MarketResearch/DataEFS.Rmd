@@ -119,7 +119,7 @@ L'étude s'articule sur 3 axes, le premier concerne le profil des répondants (s
 Nous avons choisi de garder un échantillon de 2392 individus, en effet, nous trouvions pertinent de garder uniquement les personnes ayant répondu à au moins 50% des questions du questionnaire. Toutefois, pour pouvoir analyser ces données de la façon la plus précise possible, nous avons fait le choix de réduire encore cette population de 2392 individus suivant les analyses que nous effectuons. Par exemple, dans l'analyse visant à démontrer s'il existe un lien entre le lieu de naissance et le groupe sanguin, nous excluerons tous les individus ayant indiqué qu'ils ne connaissaient pas leur groupe sanguin.
 
 
-## Lien vers l'enquête complète
+## Lieu de naissance
 
 ```{r fig.align="center"}
 DataEFS1 %>%
@@ -310,7 +310,7 @@ Ratios :
 
 La conclusion que nous pouvons tirer de cette analyse est que les personnes dont les deux parents sont nés en Outremer ont moins de 10% de "chance" d'avoir un groupe sanguin recherché. Les individus dont les deux parents (ou au moins un des deux) sont nés dans un autre pays ont entre 22% et 24,6% de chance d'avoir un groupe sanguin recherché, ce résultat est un peu plus élevé que pour les individus dont les deux parents sont nés en métropole (22%).
 
-### Analyse du groupe sanguin en fonction du pays de naissance
+### Analyse du groupe sanguin en fonction du pays de naissance des parents
 
 ```{r include=FALSE}
 delete.na3 <- function(DataEFS, n=0) {
@@ -328,7 +328,7 @@ DataEFSCountry$blood <- as.factor(DataEFSCountry$blood)
 DataEFSCountry$blood <- recode(DataEFS1$blood, "3" = "Groupe_Recherché", "4" = "Commun", "5" = "ContreIndicationMedic", "6" = "NeSaitPas")
 ```
 
-```{r}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 EFScountries <- select(DataEFSCountry, blood, motherMDPLP, fatherMDPLP)
 
 base::colnames(EFScountries)[colnames(EFScountries)=="motherMDPLP"] <- "LieuDeNaissanceDesParents"
@@ -343,7 +343,7 @@ EFScountries <- group_by(EFScountries, blood, LieuDeNaissanceDesParents, fatherM
 EFScountries %>% select(-fatherMDPLP)
 ```
 
-```{r}
+```{r fig.align="center"}
 CombineCountries <-ggplot(EFScountries, aes(LieuDeNaissanceDesParents, count))
 
 CombineCountries + geom_bar(stat = "identity", position = "dodge", aes(fill = blood)) +
@@ -531,10 +531,3 @@ ggplot(DataEFS2) +
 ```
 
 Ce dernier graphique montre la confiance accordée à l'Établissement Français du Sang en fonction des antécédents en termes de transfusion sanguine. Nous pouvons voir que la moyenne entre ceux ayant déjà reçu du sang et ceux n'en ayant pas eu besoin est quasiment la même, ce qui démontre une bonne confiance envers l'EFS. Cependant, pour les individus ayant déjà eu besoin d'une transfusion sanguine, les réponses "basses" (c'est à dire 1, 2, 3) ont été beaucoup moins nombreuses par rapport à l'autre groupe, preuve ainsi de la qualité des "services reçus" pour les individus en ayant eu besoin.
-
-
-# **Conclusion**
-
-## Recommendations à L'EFS
-
-## Plan de communication possible
