@@ -1,0 +1,113 @@
+---
+title: "Economie monétaire France / Brésil"
+author: "Valentin Henriot"
+date: "12/05/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Ce document rmd a uniquement vocation à générer des graphiques dans le cadre d'une recherche économique universitaire.
+
+```{r message=FALSE, warning=FALSE}
+library(rdbnomics)
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+library(WDI)
+```
+
+```{r}
+BalanceCommerciale <- rdb(ids = c('IMF/BOP/A.FR.BGM_BP6_USD', "IMF/BOP/A.BR.BGM_BP6_USD")) %>%
+  filter(!is.na(value))
+BalanceCommerciale <- rename(BalanceCommerciale, Country = "Reference Area")
+```
+
+```{r}
+ggplot(BalanceCommerciale, aes(x = period, y = value, color = Country)) +
+  geom_line(size = 1) +
+  theme(legend.position="bottom") +
+  labs(y = "Valeur en million de $", x = "Année", title = "Balance des paiements en Millions de $", caption = "Source : Fonds monétaire international") +
+   guides(col = guide_legend(nrow = 2)) +
+  ggthemes::theme_stata()
+```
+
+```{r Unemployment with advanced education comparison, include=FALSE}
+ChomageBRFR <- WDI(indicator = "SL.UEM.ADVN.ZS", #Unemployment with advanced education (% of total labor force with advanced education)
+country = c("FRA", "BRA"),
+                   start = 2000,
+                   end = 2018)
+```
+
+```{r Renaming column Advanced_Education comparison, include=FALSE}
+base::colnames(ChomageBRFR)[colnames(ChomageBRFR)=="SL.UEM.ADVN.ZS"] <- "Advanced_EducationC"
+```
+
+```{r Unemployment intermediate education comparison, include=FALSE}
+ChomageBRFR2 <- WDI(indicator = "SL.UEM.INTM.ZS", #Unemployment with intermediate education (% of total labor force with advanced education)
+country = c("FRA", "BRA"),
+                   start = 2000,
+                   end = 2018)
+```
+
+```{r Renaming column Intermediate_Education comparison, include=FALSE}
+base::colnames(ChomageBRFR2)[colnames(ChomageBRFR2)=="SL.UEM.INTM.ZS"] <- "Intermediate_EducationC"
+```
+
+```{r Unemployment basic education comparison, include=FALSE}
+ChomageBRFR3 <- WDI(indicator = "SL.UEM.BASC.ZS", #Unemployment with basic education (% of total labor force with advanced education)
+country = c("FRA", "BRA"),
+                   start = 2000,
+                   end = 2018)
+```
+
+```{r Renaming column Basic_Education comparison, include=FALSE}
+base::colnames(ChomageBRFR3)[colnames(ChomageBRFR3)=="SL.UEM.BASC.ZS"] <- "Basic_EducationC"
+```
+
+```{r Combining columns comparison, include=FALSE}
+ChomageJoin <- bind_cols(ChomageBRFR, ChomageBRFR2, ChomageBRFR3)
+```
+
+```{r Delete some columns comparison, include=FALSE}
+ChomageJoin$iso2c <- NULL
+ChomageJoin$iso2c1 <- NULL
+ChomageJoin$country1 <- NULL
+ChomageJoin$year1 <- NULL
+ChomageJoin$iso2c2 <- NULL
+ChomageJoin$country2 <- NULL
+ChomageJoin$year2 <- NULL
+```
+
+```{r Re-arrange columns comparison, include=FALSE}
+ChomageJoin <- ChomageJoin[c(1,3,2,4,5)]
+```
+
+```{r Gather data about unemployment comparison, include=FALSE}
+ChomagePlot <- gather(data = ChomageJoin, key = TYPE, value = VAL, Advanced_EducationC, Intermediate_EducationC, Basic_EducationC)
+```
+
+```{r Graphic about unemployment rate by education level comparison, fig.align='center'}
+qplot(data = ChomagePlot, y = VAL, x = year, color = TYPE, geom = "line") + 
+  labs(y = "Taux de chômage en %", title = "Taux de chômage en fonction du niveau d'études", caption = "Source : WDI") +
+  facet_wrap(~ country) +
+  ggthemes::theme_stata()
+```
+
+```{r}
+IndiceCapitalHumain <- rdb(ids = c('WB/WDI/HD.HCI.OVRL-FR', "WB/WDI/HD.HCI.OVRL-BR")) %>%
+  filter(!is.na(value))
+```
+
+```{r}
+ggplot(IndiceCapitalHumain) +
+ aes(x = country, fill = country, weight = value) +
+ geom_bar() +
+ scale_fill_hue() +
+ labs(x = "Pays", y = "Valeur de l'indice", title = "Indice de capital humain (2017)", subtitle = "Le score maximum est de 1", caption = "Source : Banque Mondiale") +
+ ggthemes::theme_stata()
+```
+
+
